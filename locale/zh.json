@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Dev Workflow",
+    "description": "新增一个非默认的 Dev Workflow 智能体预设，内置固定的十阶段交付流程：项目约定优先、独立 UI 评分、隔离测试、只读验收、用户预览，最后按项目文档交付。在新会话的预设菜单中选择它；不会修改默认预设或其他会话。",
+    "detail": "docs/DETAIL.zh.md"
+  }
+}

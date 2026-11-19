@@ -1,0 +1,96 @@
+# Project conventions
+
+Project documents are natural language, not a fixed configuration schema. Read
+them, quote the relevant procedure, and follow it. Do not map them to a
+predefined checklist that overrides what they actually say.
+
+## Discovery order
+
+Read in this order and stop looking for a field only when a more specific
+document does not exist:
+
+1. `AGENTS.md` - repository instructions, command conventions, boundaries.
+2. `docs/DEV_WORKFLOW.md` - development, review, and testing process.
+3. `docs/DELIVERY.md` - release and delivery process.
+4. `README.md` - project purpose, setup, common commands.
+5. Other docs and manifests - `docs/`, `CONTRIBUTING`, `Makefile`, CI config,
+   package manifests, migration directories, deployment scripts.
+
+Also inspect the repository shape: top-level directories, test layout, CI
+files, container files, and migration folders. A README can be stale; the
+build and test configuration is evidence of the real commands.
+
+## What to extract
+
+- Install, dev, test, lint, typecheck, and build commands, including the
+  working directory and environment prerequisites.
+- Branch, commit, review, and merge rules.
+- Delivery path: local commit only, push a branch, open an MR/PR, merge after
+  CI, deploy over SSH/rsync/containers, publish manually, or produce a patch.
+- CI gates and what counts as red.
+- Migration and rollback rules, backups, and who may run production commands.
+- Styling, component, and accessibility conventions.
+- Anything the document says is forbidden or requires approval.
+
+Quote the source path when reporting what you followed.
+
+## Example: AGENTS.md
+
+```markdown
+# Agent instructions
+
+- Package manager: <pnpm/npm/...>; do not mix lockfiles.
+- Test command: `<command>`; lint: `<command>`; typecheck: `<command>`.
+- Keep changes inside `src/` and `tests/`; ask before editing `migrations/`.
+- Do not commit generated files or `.env` values.
+- UI changes must reuse the components in `src/components/` and follow
+  `docs/UI.md`.
+- Run the full test command before reporting a change.
+```
+
+## Example: docs/DEV_WORKFLOW.md
+
+```markdown
+# Development workflow
+
+1. Describe the change and the non-goals in the issue or PR description.
+2. For visual changes, attach a desktop and a mobile screenshot.
+3. Tests must cover the primary flow and failure states.
+4. A change is ready for review when tests and lint pass.
+5. Review requires one approval from a code owner.
+```
+
+## Example: docs/DELIVERY.md
+
+```markdown
+# Delivery
+
+- Default: commit to a feature branch and open a merge request.
+- The merge request must have green CI and one approval.
+- Staging deploys automatically from the main branch.
+- Production deploys are manual and require the release owner.
+- Migrations must be reversible; run the backup step before applying.
+```
+
+These are examples of natural-language conventions, not required fields. A
+project may use a different process, no MR at all, or a manual patch. Follow
+what it documents.
+
+## When delivery is undocumented
+
+Do not invent an MR, CI pipeline, registry, or deployment. Keep the change
+local, prepare a patch/diff or commit on a local branch as the environment
+allows, and ask once how the user wants it delivered. Record the answer in the
+final report. Do not repeatedly ask.
+
+## Secrets
+
+Never copy credentials, passwords, private keys, tokens, or secret values into
+`AGENTS.md`, workflow docs, delivery docs, commits, fixtures, or reports. Refer
+to secret names and the mechanism that supplies them. If a project document
+contains a secret, do not repeat it; flag it to the user as a security issue.
+
+## Updating conventions
+
+If the user asks to change the project process, update the relevant document
+instead of leaving the rule only in chat. Keep the edit scoped and report it.

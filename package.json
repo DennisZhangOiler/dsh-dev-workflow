@@ -1,0 +1,52 @@
+{
+  "name": "dsh-dev-workflow",
+  "version": "0.1.0",
+  "description": "Non-default Dev Workflow agent preset for DeepSeek Harness: a fixed ten-phase delivery pipeline with independent UI scoring, isolated testing, and read-only verification.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "prompt.md",
+    "cordis.patch.yml",
+    "skills",
+    "locale/*.json",
+    "docs",
+    "icon.svg",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent-preset",
+    "dev-workflow",
+    "ui-review",
+    "subagents"
+  ],
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.2-rc.5 <0.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test test/plugin.test.mjs",
+    "check": "node test/check.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Dev Workflow",
+    "description": "Adds a non-default Dev Workflow agent preset with a fixed ten-phase delivery pipeline: project conventions first, independent UI scoring, isolated testing, read-only verification, user preview, then documented delivery. Pick it in the new-session preset menu; it does not change the default preset or other sessions.",
+    "detail": "docs/DETAIL.md"
+  }
+}
