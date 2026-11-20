@@ -73,7 +73,7 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 其他会话。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。当前 release 是 `v0.2.0`；CLI 命令已在本仓库验证。
+探测），或安装 release tarball。当前 release 是 `v0.2.1`；CLI 命令已在本仓库验证。
 
 ### 安装前备份
 
@@ -97,7 +97,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow
 # 或已打包的 release tarball：
-plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.2.0.tgz
+plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.2.1.tgz
 ```
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的

@@ -14,7 +14,7 @@ const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
 assert.equal(manifest.name, 'dsh-dev-workflow')
-assert.equal(manifest.version, '0.2.0')
+assert.equal(manifest.version, '0.2.1')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)

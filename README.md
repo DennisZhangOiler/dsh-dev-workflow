@@ -80,7 +80,7 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.2.0`; the CLI command was verified on this repo.
+current release is `v0.2.1`; the CLI command was verified on this repo.
 
 ### Before installing
 
@@ -104,7 +104,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.2.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.2.1.tgz
 ```
 
 The target is the bundle directory containing `package.json` and

@@ -90,7 +90,8 @@ test('registers the four playbook skills', () => {
     assert.equal(skill.source, 'bundled')
     assert.equal(skill.resourceBase.kind, 'directory')
     assert.ok(skill.content.length > 1000)
-    assert.ok(skill.content.length <= 8192, `${skill.name} is ${skill.content.length} chars`)
+    const limit = skill.name === 'dev-workflow' ? 7800 : 8192
+    assert.ok(skill.content.length <= limit, `${skill.name} is ${skill.content.length} chars`)
   }
 })
 

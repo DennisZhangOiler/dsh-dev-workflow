@@ -19,17 +19,8 @@ wins on conflict.
 
 ## Phase 0 - Project brief
 
-Write this before proposing anything:
-
-```text
-Project: <name and purpose>
-Stack: <languages, frameworks, package managers>
-UI: <yes/no; entry points; design system/component library>
-Commands: <install, dev, test, lint, typecheck, build>
-Delivery: <exact procedure from project docs, or "not documented">
-Constraints: <branch rules, CI gates, environments, data policies>
-Relevant code: <key directories/files>
-```
+Record the project purpose, stack, UI surfaces, install/dev/test/lint/typecheck/
+build commands, delivery, constraints, and key files before proposing anything.
 
 Read in order: `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`,
 `README.md`, then other docs (`docs/`, `CONTRIBUTING`, `Makefile`, CI config,
@@ -58,29 +49,15 @@ Use this template, omitting fields the triage makes irrelevant:
 
 ```markdown
 ## Goal
-<user problem and desired outcome in 1-2 sentences>
-
+<problem and desired outcome>
 ## Scope
-- In: <pages/components/behaviors>
-- Out: <explicit non-goals>
-
+In: <...>; Out: <non-goals>
 ## UI contract (UI design/UI behavior only)
-- Pages/components:
-- Primary task and primary action:
-- States: normal / empty / loading / error / long text / large data
-- Desktop viewport:
-- Mobile viewport:
-
+Pages/components; primary task/action; states; desktop/mobile viewports
 ## Data and interfaces
-- API/schema changes:
-- Migration:
-- Backward compatibility:
-
+API/schema; migration; compatibility
 ## Test scope
-- Unit/integration/e2e:
-- Real services:
-- Edge cases:
-
+Unit/integration/e2e; real services; edge cases
 ## Risks and rollback
 <what can break, how to detect, how to revert>
 ```
@@ -112,28 +89,9 @@ send the user a menu of failures.
 
 ## Phase 4 - User confirmation
 
-Present:
-
-```markdown
-## Recommended direction
-<name> because <2-3 concrete reasons tied to the contract>
-
-## Direction comparison
-| Direction | Strengths | Costs | Score |
-|---|---|---|---|
-
-## Merged change list
-- Pages/components:
-- Behavior:
-- Data/API:
-- Migration:
-- Test scope:
-- Risks/rollback:
-- Explicitly not doing:
-
-## Screenshots
-<desktop and mobile for each direction>
-```
+For `UI design`, present the recommended direction and why, the direction
+comparison table, one merged change list (pages/components, behavior, data/API,
+migration, tests, risks/rollback, non-goals), and desktop/mobile screenshots.
 
 For `UI behavior`, omit the direction comparison and screenshots; present the
 changed states and behavior. For `No UI`, omit UI sections and present the

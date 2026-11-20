@@ -16,8 +16,8 @@ npm run check
 ```
 
 Result: 6 tests pass, `npm run test:smoke` passes, packaging checks pass, `cordis.patch.yml` parses as YAML
-(with `!!js` handled by the validator). `prompt.md` is 7,937 characters; each
-skill body is below 8,192 characters. `npm pack --dry-run` lists 28 files and
+(with `!!js` handled by the validator). `prompt.md` is 7,937 characters. The main playbook is 7,588 characters and the
+other skill bodies are below 8,192, leaving room for the tool-result wrapper. `npm pack --dry-run` lists 28 files and
 includes every runtime file, locale, icon, detail document, and skill.
 
 ## 2. Install into the disposable profile

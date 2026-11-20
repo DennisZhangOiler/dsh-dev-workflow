@@ -1,6 +1,6 @@
 {
   "name": "dsh-dev-workflow",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Non-default Dev Workflow agent preset for DeepSeek Harness: a fixed ten-phase delivery pipeline with independent UI scoring, isolated testing, and read-only verification.",
   "license": "MIT",
   "type": "module",

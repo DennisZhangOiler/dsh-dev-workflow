@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-11-20
+
+### Fixed
+
+- Reduced the main playbook to 7,588 characters so its rendered skill result
+  stays below the standard preset's 8,192-character tool-result pruner threshold.
+- Added a test limit of 7,800 characters for the main playbook; other skills
+  keep the 8,192 limit.
+
 ## [0.2.0] - 2026-11-20
 
 ### Changed
