@@ -187,7 +187,7 @@ They were unchanged after the test, and all mtimes predate it. No
 ## 9. Display metadata
 
 The Plugins page showed the bundle under **已安装插件** as **开发流程（Dev Workflow）** with
-the local icon, Chinese description, version `v0.2.0`, and the
+the local icon, Chinese description, version `v0.2.1`, and the
 `preset-dev-workflow` component running. The detail page rendered the Chinese
 `meta.description`, the `preview.svg` image, and the source link. See
 The Plugins page and detail page were checked in the disposable GUI; a detail-page screenshot is not shipped because its source link shows a local test path.
@@ -199,7 +199,7 @@ explicit permission and a full profile backup was taken first:
 
 - `@xiaoxie-ide/dsh-devflow` 1.5.1 removed with
   `plugin_manager remove_bundle`; result `application: applied`.
-- `dsh-dev-workflow` 0.2.0 installed from the packed tarball with
+- `dsh-dev-workflow` 0.2.1 installed from the packed tarball with
   `plugin_manager install_bundle`; result `application: applied`.
 - `package.json` and `pnpm-lock.yaml` contain no old DevFlow reference.
 - The composed tree contains `preset-dev-workflow` with the Chinese roster copy
@@ -210,8 +210,8 @@ explicit permission and a full profile backup was taken first:
 - The `plugin_manager` Git target failed its 5-second github.com connection
   probe on this network (`connection to github.com timed out after 5000ms`).
   A CLI Git install in a disposable profile succeeded (about 1m5s). The current
-  profile therefore uses the 0.2.0 tarball; the same runtime is in the GitHub
-  commit `86b8cfc`.
+  profile therefore uses the 0.2.1 tarball; the same runtime is in the GitHub
+  commit `5dd9dd1`.
 
 ## Not verified
 
