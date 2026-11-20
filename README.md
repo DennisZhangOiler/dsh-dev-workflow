@@ -110,7 +110,8 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.3.0`; the CLI command was verified on this repo.
+current release is `v0.3.0`; the CLI command was verified on this repo. A
+preset update may also report `restart-required`.
 
 ### Before installing
 
@@ -140,7 +141,8 @@ plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0
 The target is the bundle directory containing `package.json` and
 `cordis.patch.yml`, or a packed release tarball. Installing runs package
 management and bundle selection; no manual profile edit is needed. Installing
-bundle code requires Full access or approval in DSH.
+bundle code requires Full access or approval in DSH. A preset change can
+report `restart-required`; restart DSH once, then open a new session.
 
 ### Command-line alternative
 

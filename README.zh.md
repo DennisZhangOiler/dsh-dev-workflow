@@ -97,7 +97,8 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 其他会话。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。当前 release 是 `v0.3.0`；CLI 命令已在本仓库验证。
+探测），或安装 release tarball。当前 release 是 `v0.3.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
+`restart-required`。
 
 ### 安装前备份
 
@@ -126,7 +127,8 @@ plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.3.0
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的
 release tarball。安装会执行包管理和 bundle 选择，不需要手工改 profile。安装
-bundle 代码需要 Full access 或审批。
+bundle 代码需要 Full access 或审批。preset 变更可能会返回
+`restart-required`；重启一次 DSH，再新建会话。
 
 ### 命令行替代方式
 
