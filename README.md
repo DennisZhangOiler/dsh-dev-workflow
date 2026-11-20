@@ -40,6 +40,25 @@ explicit confirmation immediately before they run.
 
 ## Install
 
+### From GitHub
+
+The npm name `dsh-dev-workflow` is already used by an unrelated package. **Do
+not install this plugin from npm**; install this repository instead.
+
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+```
+
+For a reproducible release, pin the full commit SHA:
+
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git#<full-40-hex-commit>
+```
+
+Then open a new session, open the preset menu, and choose **开发流程** (Dev
+Workflow). Installing the bundle changes no default preset and affects no other
+session.
+
 ### Before installing
 
 Back up the profile so the change is reversible:
@@ -52,8 +71,8 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ### From the DSH Web UI
 
 1. Open **Plugins**.
-2. Choose **Add plugin** and select the `dsh-dev-workflow` directory (or install
-   the published npm package when one exists).
+2. Choose **Add plugin** and select a local `dsh-dev-workflow` checkout; for the
+   GitHub source use the `plugin_manager` command above instead.
 3. Keep the bundle enabled. It adds the preset only; it does not select it.
 4. Open a new session, open the preset menu, choose **开发流程**.
 
@@ -76,6 +95,9 @@ If you manage the profile from a terminal, the CLI uses the same package
 selection and patch validation and takes effect on the next start:
 
 ```sh
+# GitHub source
+dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+# or a local checkout
 dsh plugin --profile <profile> add /absolute/path/to/dsh-dev-workflow
 # after a restart, verify below; to remove:
 dsh plugin --profile <profile> remove dsh-dev-workflow

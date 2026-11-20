@@ -37,6 +37,24 @@ Host 级的全局行，也不会影响使用 Standard 或其他预设的会话�
 
 ## 安装
 
+### 从 GitHub 安装
+
+npm 上的 `dsh-dev-workflow` 已经被另一个无关的包占用。**不要从 npm 安装本插件**，
+请从本仓库安装：
+
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+```
+
+需要可复现的发布版本时，固定完整 commit SHA：
+
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git#<完整 40 位 commit>
+```
+
+安装后新建会话，打开预设菜单，选择 **开发流程**。安装不会修改默认预设，也不影响
+其他会话。
+
 ### 安装前备份
 
 先备份 profile，保证可回滚：
@@ -49,8 +67,8 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ### 通过 DSH Web UI
 
 1. 打开 **Plugins**。
-2. 选择 **Add plugin**，选中 `dsh-dev-workflow` 目录（如果之后发布了 npm
-   包，也可以安装对应包）。
+2. 选择 **Add plugin** 并选中本地 `dsh-dev-workflow` checkout；GitHub 源请用上面的
+   `plugin_manager` 命令安装。
 3. 保持 bundle 启用。它只新增预设，不会自动选中。
 4. 新建会话，打开预设菜单，选择 **开发流程**。
 
@@ -71,6 +89,9 @@ bundle 代码需要 Full access 或审批。
 如果从终端管理 profile，CLI 使用同样的包选择和 patch 校验，重启后生效：
 
 ```sh
+# GitHub 源
+dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+# 或本地 checkout
 dsh plugin --profile <profile> add /绝对路径/dsh-dev-workflow
 # 重启后按下面步骤验证；卸载：
 dsh plugin --profile <profile> remove dsh-dev-workflow

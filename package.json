@@ -50,5 +50,14 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "author": "DennisZhangOiler",
+  "homepage": "https://github.com/DennisZhangOiler/dsh-dev-workflow#readme",
+  "bugs": {
+    "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git"
   }
 }

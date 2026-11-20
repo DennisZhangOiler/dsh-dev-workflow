@@ -13,6 +13,16 @@ Sources read in the installed DSH package:
 - `@deepseek-ai/dsh-plugin-market` README (Discover, index sources,
   compatibility checks).
 
+## Current status
+
+- GitHub: <https://github.com/DennisZhangOiler/dsh-dev-workflow> (public).
+- Install from Git: see the README. Do not install from npm.
+- npm: **not published**. The npm name `dsh-dev-workflow` is already used by an
+  unrelated package (`0.2.0`, `urzz/lodestar`). Publishing under that name would
+  be wrong; use a scoped name such as `@<your-scope>/dsh-dev-workflow` if npm is
+  needed later.
+- Marketplace index: not served publicly yet.
+
 ## What DSH currently supports
 
 - A plugin index is one UTF-8 JSON file served over `http:`/`https:` without a
@@ -32,8 +42,10 @@ Sources read in the installed DSH package:
 
 ## Before publishing
 
-1. Choose the final npm package name. This repository uses `dsh-dev-workflow`;
-   confirm it is available and you control it.
+1. The plain npm name `dsh-dev-workflow` is taken. Keep the Git package name
+   for GitHub installation, or choose a scoped npm name that you control. A
+   scope change also changes the preset plugin row `name: 'dsh-dev-workflow'`
+   in `cordis.patch.yml` and the installation/uninstallation name.
 2. Fill the metadata deliberately in `package.json`:
    - `repository`, `homepage`, and `bugs` with your real URLs;
    - `author` with the publisher name;
@@ -63,41 +75,51 @@ Sources read in the installed DSH package:
 8. Install from the packed artifact (not the checkout) in a disposable profile
    and verify the preset appears and the default preset is unchanged.
 
-## Publish the npm package
+## Publish an npm package (optional, scoped)
 
-Requires an npm login and explicit user approval; do not run this on the user's
-behalf without confirmation.
+Not used for this release because the plain name is taken. If you choose a
+scoped npm name, update `package.json` `name` and the preset plugin row in
+`cordis.patch.yml` before packing, then:
 
 ```sh
 npm login
 npm publish --access public
 ```
 
-For a prerelease, use a version with a prerelease tag and publish with the
-appropriate tag, for example:
-
-```sh
-npm version 0.1.0-rc.1 --no-git-tag-version
-npm publish --tag next --access public
-```
+Requires npm login and explicit user approval; do not run this on the user's
+behalf without confirmation.
 
 ## Publish a Git-only version
 
-Push this repository to a public HTTPS Git host, tag the release, and record the
-**full 40-character commit SHA** for the index. A Git index entry installs that
-exact commit:
+The public repository is the release source:
+
+```sh
+git remote add origin git@github.com:DennisZhangOiler/dsh-dev-workflow.git
+git push -u origin main
+git tag -a v0.1.0 -m "dsh-dev-workflow 0.1.0"
+git push origin v0.1.0
+```
+
+Install from GitHub (the repository root is the package):
+
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+```
+
+Pin the **full 40-character commit SHA** for a reproducible install. A Git
+index entry installs that exact commit:
 
 ```json
 {
   "type": "git",
-  "url": "https://<host>/<owner>/dsh-dev-workflow",
+  "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow",
   "commit": "<40-hex-sha>",
   "path": "."
 }
 ```
 
-Git entries outside a package root may also use a `path`. Publish only public
-repositories unless you accept that installation may need credentials.
+Publish only a public repository unless you accept that installation may need
+credentials.
 
 ## Build the index entry
 
@@ -117,14 +139,19 @@ before serving):
         "zh": "非默认的十阶段交付预设，包含独立 UI 评分、测试和验收。"
       },
       "icon": "icons/dsh-dev-workflow.svg",
-      "author": "<publisher>",
-      "homepage": "https://<host>/<owner>/dsh-dev-workflow#readme",
-      "repository": { "url": "https://<host>/<owner>/dsh-dev-workflow" },
+      "author": "DennisZhangOiler",
+      "homepage": "https://github.com/DennisZhangOiler/dsh-dev-workflow#readme",
+      "repository": { "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow" },
       "versions": [
         {
           "version": "0.1.0",
           "publishTimestamp": 0,
-          "source": { "type": "npm" },
+          "source": {
+            "type": "git",
+            "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow",
+            "commit": "<40-hex-sha>",
+            "path": "."
+          },
           "engines": { "dsh": ">=0.2.2-rc.5 <0.3.0" }
         }
       ]
@@ -178,9 +205,11 @@ python3 -m http.server 8088 --directory market-site
 
 ## Not done in this repository
 
-- No npm publication has been performed.
-- No Git remote has been created.
+- No npm publication has been performed; the plain name is taken.
+- A public GitHub repository exists; no GitHub Release asset is required for
+  Git installation.
 - No marketplace index has been served publicly.
 - No "listed" or "approved" status is claimed.
 
-Those steps need the user's accounts and explicit confirmation.
+The index and any scoped npm package need the user's account and explicit
+confirmation.
