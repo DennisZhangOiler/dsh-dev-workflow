@@ -20,6 +20,10 @@ Read the project docs and manifests before proposing anything. Record:
   viewport, approval gates, and forbidden changes;
 - open decisions that are the user's, not yours.
 
+If UI policy, delivery, or test commands are missing or unclear, infer from the
+request/code, ask one batched question with defaults, then write or update the
+project convention docs and continue. Do not ask again once recorded.
+
 ## P1 - Architecture and IA
 
 Produce a short decision-complete architecture brief:

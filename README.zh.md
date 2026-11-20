@@ -53,6 +53,19 @@ owner，串行修改；独立模块可以并行。完整规则见 `dev-workflow-
 
 ![Program mode 规划：架构、UI 选择、静态 demo、冻结 UI、模块 Agent 与递归子智能体](docs/screenshot-program.png)
 
+### 约定学一次，后面照着做
+
+Agent 会先读项目里的约定文档。如果缺少它需要的规则（UI 方向数量、静态 demo、
+交付方式、测试命令等），它会先从代码和需求推断，然后**一次性**问清需要用户决定
+的缺口（带推荐默认值），再把答案写进项目文档：优先更新已有文件，没有就写
+`docs/DEV_WORKFLOW.md`、`docs/UI.md` 或 `docs/DELIVERY.md`。后续会话读文档，
+不再重复问。
+
+所以你不需要每次都说“给我出三版 UI”或“本地交付”。说一次（或者让 Agent 问一次），
+规则就沉淀到项目里了。
+
+![新会话直接按项目文档执行，不再重复问](docs/screenshot-bootstrap.png)
+
 ### UI 影响按每次改动判断
 
 Phase 1 判断的是这次改动，而不是项目类型：
@@ -97,7 +110,7 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 其他会话。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。当前 release 是 `v0.3.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
+探测），或安装 release tarball。当前 release 是 `v0.4.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
 `restart-required`。
 
 ### 安装前备份
@@ -122,7 +135,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow
 # 或已打包的 release tarball：
-plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.3.0.tgz
+plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.4.0.tgz
 ```
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的

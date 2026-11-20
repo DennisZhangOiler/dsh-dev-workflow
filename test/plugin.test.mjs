@@ -62,11 +62,13 @@ test('prompt contains every phase and gate', () => {
     'Phase 5', 'Phase 6', 'Phase 7', 'Phase 8', 'Phase 9',
     '>=85', 'P0/P1', 'P0/P1/P2/P3', 'PASS/REJECT',
     'AGENTS.md', 'docs/DEV_WORKFLOW.md', 'docs/DELIVERY.md',
-    'protected branch', 'required CI red', 'credentials',
+    'protected branch', 'red CI', 'credentials',
     'explicit confirmation', 'User must confirm',
     'no mobile horizontal overflow', 'accessibility',
-    'project or bundled rubric', 'fresh `subagent`', 'write scopes disjoint',
+    'project/bundled rubric', '`subagent` for UI direction', 'scopes disjoint',
     'UI design', 'UI behavior', 'No UI', 'UI design only',
+    'Conventions and docs', 'write a concise convention document',
+    'do not ask again',
     'CLI project can get UI design',
     'no UI checks',
     'No UI score for UI behavior/No UI',
@@ -92,7 +94,7 @@ test('registers the five playbook skills', () => {
     assert.equal(skill.source, 'bundled')
     assert.equal(skill.resourceBase.kind, 'directory')
     assert.ok(skill.content.length > 1000)
-    const limit = skill.name === 'dev-workflow' || skill.name === 'dev-workflow-program' ? 7800 : 8192
+    const limit = ['dev-workflow', 'dev-workflow-program', 'dev-workflow-roles'].includes(skill.name) ? 7800 : 8192
     assert.ok(skill.content.length <= limit, `${skill.name} is ${skill.content.length} chars`)
   }
 })
@@ -111,9 +113,11 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['dev-workflow'], /UI behavior/u)
   assert.match(bodies['dev-workflow'], /No UI/u)
   assert.match(bodies['dev-workflow'], /Skip this phase for/u)
+  assert.match(bodies['dev-workflow'], /Conventions bootstrap/u)
   assert.match(bodies['dev-workflow-program'], /Program mode/u)
   assert.match(bodies['dev-workflow-program'], /Frozen UI/u)
   assert.match(bodies['dev-workflow-program'], /module lead/u)
+  assert.match(bodies['dev-workflow-program'], /convention docs/u)
   assert.match(bodies['dev-workflow-ui-rubric'], />= 85/u)
   assert.match(bodies['dev-workflow-ui-rubric'], /P0/u)
   assert.match(bodies['dev-workflow-ui-rubric'], /horizontal overflow/u)
@@ -122,9 +126,12 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['dev-workflow-roles'], /Test author prompt/u)
   assert.match(bodies['dev-workflow-roles'], /VERDICT: PASS or REJECT/u)
   assert.match(bodies['dev-workflow-roles'], /Triage for this change/u)
+  assert.match(bodies['dev-workflow-roles'], /Program and module roles/u)
   assert.match(bodies['dev-workflow-roles'], /No UI/u)
   assert.match(bodies['dev-workflow-project-docs'], /docs\/DELIVERY\.md/u)
   assert.match(bodies['dev-workflow-project-docs'], /When delivery is undocumented/u)
+  assert.match(bodies['dev-workflow-project-docs'], /Bootstrap missing conventions/u)
+  assert.match(bodies['dev-workflow-project-docs'], /UI policy template/u)
 })
 
 test('contributed text has no machine-specific paths or secrets', () => {

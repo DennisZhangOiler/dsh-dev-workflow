@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-11-20
+
+### Added
+
+- Convention bootstrap: when a needed rule is missing or unclear, infer from the
+  request/code, ask one batched question with a default, then write or update
+  `docs/DEV_WORKFLOW.md`, `docs/UI.md`, or `docs/DELIVERY.md`; later sessions
+  follow the document and do not ask again.
+- UI policy template and program/module role prompts for convention ownership.
+- Program mode persists architecture, UI choice, frozen UI, and module contracts
+  in project docs so module agents share the same contract.
+
+### Changed
+
+- The agent no longer relies on the user to restate UI direction count or
+  delivery policy each task; it bootstraps and records the convention once.
+
 ## [0.3.0] - 2026-11-20
 
 ### Added

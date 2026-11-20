@@ -22,13 +22,19 @@ wins on conflict.
 Record the project purpose, stack, UI surfaces, install/dev/test/lint/typecheck/
 build commands, delivery, constraints, and key files before proposing anything.
 
-Read in order: `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`,
-`README.md`, then other docs (`docs/`, `CONTRIBUTING`, `Makefile`, CI config,
-package manifests, migration directories).
+Read the project docs in the order described by `dev-workflow-project-docs`.
 
 Record existing UI surfaces here, but do not decide the pipeline yet: a CLI
 project can add a GUI, and a UI project can have a backend-only change. The
 Phase 1 triage decides which UI phases apply.
+
+## Conventions bootstrap
+
+If a needed rule is missing or unclear (UI direction count, screenshots, static
+demo, delivery, test commands), infer from the request and code, ask one batched
+question with defaults, then update an existing convention file or create
+`docs/DEV_WORKFLOW.md` / `docs/UI.md` / `docs/DELIVERY.md`. Follow it later; do
+not ask again. No secrets in these docs.
 
 ## Phase 1 - Triage and contract
 
@@ -76,8 +82,6 @@ Use `dev-workflow-roles` for the explorer prompt. Skip this phase for
   or fake browser chrome.
 - Prefer an installed design skill and its screenshot tool. Without one, build
   plain static mockups and screenshot them with a real browser.
-- A small change may use one direction; say why exploration is unnecessary.
-- Keep direction files in a scratch task directory.
 
 ## Phase 3 - Independent UI score (UI design only)
 

@@ -60,17 +60,26 @@ Other projects may document a different path, for example:
 
 The agent must follow the project's actual text, not assume one of these.
 
-## `docs/UI.md` (optional)
+## `docs/UI.md` (optional but recommended)
 
 ```markdown
 # UI conventions
 
+- Direction count: 3 for structural changes; 1 for small/local changes.
+- Required screenshots: desktop 1440x900 and mobile 390x844.
+- Static frontend demo before backend: yes.
+- Freeze UI after demo approval: yes.
 - Components: `<design system>`; do not introduce a second one.
 - Tokens: colors, spacing, and radii come from `<tokens file>`.
 - Breakpoints: `<desktop>` and `<mobile>`; verify 390px width.
 - Accessibility target: `<standard>`; keyboard paths for the primary task.
+- Approval gates: direction choice, demo acceptance, final preview.
 - Copy style: `<tone and language rules>`.
 ```
+
+If a rule is missing, the agent asks one batched question with a default, then
+updates this file (or `docs/DEV_WORKFLOW.md` / `docs/DELIVERY.md`) and follows it
+in later sessions. Do not make the user restate the same policy every task.
 
 ## `docs/TESTING.md` (optional)
 

@@ -61,6 +61,21 @@ may run in parallel. See the `dev-workflow-program` skill for the full playbook.
 
 ![Program mode plan: architecture, UI choice, static demo, frozen UI, module agents and recursive subagents](docs/screenshot-program.png)
 
+### Conventions are learned once
+
+The agent reads the project's convention docs first. If a rule it needs is
+missing or unclear (UI direction count, static demo, delivery, test commands),
+it infers what it can, asks **one batched question** with a recommended default,
+then writes the answer into the project's convention docs - updating existing
+files first, otherwise `docs/DEV_WORKFLOW.md`, `docs/UI.md`, or
+`docs/DELIVERY.md`. Later sessions read that document and do not ask again.
+
+So you do not have to restate "give me three UI options" or "deliver locally" on
+every task. State it once (or let the agent ask once), and it becomes part of the
+project.
+
+![A new session follows the project docs instead of asking again](docs/screenshot-bootstrap.png)
+
 ### UI impact is decided per change
 
 Phase 1 classifies the change, not the project:
@@ -110,7 +125,7 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.3.0`; the CLI command was verified on this repo. A
+current release is `v0.4.0`; the CLI command was verified on this repo. A
 preset update may also report `restart-required`.
 
 ### Before installing
@@ -135,7 +150,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.3.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.4.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and

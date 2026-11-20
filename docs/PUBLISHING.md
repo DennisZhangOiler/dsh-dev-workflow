@@ -96,8 +96,8 @@ The public repository is the release source:
 ```sh
 git remote add origin git@github.com:DennisZhangOiler/dsh-dev-workflow.git
 git push -u origin main
-git tag -a v0.3.0 -m "dsh-dev-workflow 0.3.0"
-git push origin v0.3.0
+git tag -a v0.4.0 -m "dsh-dev-workflow 0.4.0"
+git push origin v0.4.0
 ```
 
 Install from GitHub (the repository root is the package):
@@ -144,7 +144,7 @@ before serving):
       "repository": { "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow" },
       "versions": [
         {
-          "version": "0.3.0",
+          "version": "0.4.0",
           "publishTimestamp": 0,
           "source": {
             "type": "git",

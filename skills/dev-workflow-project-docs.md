@@ -76,6 +76,43 @@ These are examples of natural-language conventions, not required fields. A
 project may use a different process, no MR at all, or a manual patch. Follow
 what it documents.
 
+## Bootstrap missing conventions
+
+If a needed rule is missing or unclear, do not silently pick a policy and do not
+make the user restate it every session:
+
+1. Infer what you can from the request, code, manifests, CI, and existing docs.
+2. Ask one batched question for the remaining user-owned choices, with a
+   recommended default. For example: "This project has no UI policy. For this
+   structural change, do you want 1 direction for speed or 3 directions to
+   compare? Should I build a static demo and freeze the UI? I will write the
+   answer to `docs/UI.md` and follow it later."
+3. After the answer, update the most specific existing file, or create
+   `docs/DEV_WORKFLOW.md`, `docs/UI.md`, and `docs/DELIVERY.md` as needed.
+4. Report the paths and follow them in later sessions; do not ask again.
+5. Never write credentials, tokens, private keys, or personal secrets into these
+   docs. If the project forbids doc edits, record the decision in the contract
+   and ask before writing.
+
+## UI policy template
+
+Use this when the project has no UI convention and the user wants one recorded.
+Keep only the fields the project uses.
+
+```markdown
+# UI policy
+
+- Direction count: <1 for small/local; 3 for structural, or the user's choice>
+- Required screenshots: <desktop 1440x900; mobile 390x844>
+- Static frontend demo before backend: <yes/no>
+- UI freeze after demo approval: <yes/no>
+- Design system and tokens: <paths/components>
+- Viewports and breakpoints: <...>
+- Accessibility target: <...>
+- Approval gates: <direction choice; demo; final preview>
+- Known gaps: <...>
+```
+
 ## When delivery is undocumented
 
 Do not invent an MR, CI pipeline, registry, or deployment. Keep the change

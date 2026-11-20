@@ -16,9 +16,9 @@ npm run check
 ```
 
 Result: 6 tests pass, `npm run test:smoke` passes, packaging checks pass, `cordis.patch.yml` parses as YAML
-(with `!!js` handled by the validator). `prompt.md` is 8,000 characters. The main playbook is 7,588 characters and the
-program playbook is 7,517; the other skill bodies are below 8,192, leaving room
-for the tool-result wrapper. `npm pack --dry-run` lists 31 files and
+(with `!!js` handled by the validator). `prompt.md` is 7,988 characters. The main playbook is 7,727 characters, the program playbook is 7,747, and the
+roles playbook is 7,593; other skill bodies are below 8,192. The three larger
+ones stay under 7,800 to leave room for the tool-result wrapper. `npm pack --dry-run` lists 32 files and
 includes every runtime file, locale, icon, detail document, and skill.
 
 ## 2. Install into the disposable profile
@@ -129,6 +129,25 @@ nested delegation succeeded: root -> module-a -> worker-a, worker-a replied
 
 ![Nested subagent chain: root -> module-a -> worker-a](screenshot-recursion.png)
 
+## 3d. Convention bootstrap
+
+A project with no convention docs was asked for a Web admin interface, without
+telling the agent to create docs or how many UI directions to use. The agent:
+
+- read the project and found no UI policy, delivery, or test convention;
+- asked one ordinary message with six grouped decisions (domain, v1 scope,
+  users/auth, stack, process/visual intensity, delivery), each with a default,
+  and did not use a popup tool;
+- after the answer, wrote `docs/DEV_WORKFLOW.md`, `docs/UI.md`, and
+  `docs/DELIVERY.md`; it did not modify `src/`, `test/`, or `package.json`;
+- presented an architecture/IA brief and waited for approval before UI
+  directions or implementation.
+
+A new session on the same project then read those docs and answered "3
+directions, local patch/diff only" without asking the user again.
+
+![A new session follows the project docs instead of asking again](screenshot-bootstrap.png)
+
 ## 4. Prompt injection
 
 The 开发流程 session's log recorded:
@@ -137,8 +156,8 @@ The 开发流程 session's log recorded:
 {"type":"agent-preset/selected","data":{"agentPreset":"dev-workflow"}}
 ```
 
-Its first system message was 13,468 characters and contained `prompt.md`
-verbatim (the contract is 8,000 characters):
+Its first system message was 13,456 characters and contained `prompt.md`
+verbatim (the contract is 7,988 characters):
 
 ```json
 {"type":"system/message","data":{"message":{"role":"system","content":[{"text":"You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Dev Workflow\n\nThis preset runs a fixed delivery pipeline. ..."}]}}}

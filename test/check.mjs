@@ -14,7 +14,7 @@ const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
 assert.equal(manifest.name, 'dsh-dev-workflow')
-assert.equal(manifest.version, '0.3.0')
+assert.equal(manifest.version, '0.4.0')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
@@ -50,6 +50,7 @@ for (const path of [
   'docs/screenshot-triage.png',
   'docs/screenshot-program.png',
   'docs/screenshot-recursion.png',
+  'docs/screenshot-bootstrap.png',
   'locale/en.json',
   'locale/zh.json',
 ]) {
