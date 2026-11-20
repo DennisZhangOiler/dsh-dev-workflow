@@ -72,6 +72,9 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 安装后新建会话，打开预设菜单，选择 **开发流程**。安装不会修改默认预设，也不影响
 其他会话。
 
+如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
+探测），或安装 release tarball。当前 release 是 `v0.2.0`；CLI 命令已在本仓库验证。
+
 ### 安装前备份
 
 先备份 profile，保证可回滚：

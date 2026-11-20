@@ -78,6 +78,10 @@ Then open a new session, open the preset menu, and choose **开发流程** (Dev
 Workflow). Installing the bundle changes no default preset and affects no other
 session.
 
+If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
+install below (it has no 5-second probe), or install a release tarball. The
+current release is `v0.2.0`; the CLI command was verified on this repo.
+
 ### Before installing
 
 Back up the profile so the change is reversible:
