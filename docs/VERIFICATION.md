@@ -41,7 +41,7 @@ contained:
   name: '@deepseek-ai/dsh-agent-preset'
   config:
     id: dev-workflow
-    name: Dev Workflow
+    name: 开发流程
     order: 5
 ```
 
@@ -57,21 +57,31 @@ and the preset registry still read:
 
 `dsh --profile devflow-test --port 3091 --no-open` printed a URL and served the
 GUI. The new-session screen showed the preset menu with **Standard** selected
-and **Dev Workflow** listed last. See
+and **开发流程 (Dev Workflow)** listed last. See
 [`screenshot-preset.png`](screenshot-preset.png).
 
 The page loaded with no console errors, no horizontal overflow, and no failed
 images. The screenshot tool's only warning was low contrast on built-in preset
 description text, which is part of DSH's existing menu, not this bundle.
 
-Selecting **Dev Workflow** changed the composer seat label; a fresh session
+Selecting **开发流程** changed the composer seat label; a fresh session
 afterwards still showed **Standard** as the default. See
 [`screenshot-preset.png`](screenshot-preset.png) and
 the new-session screenshot captured during the test.
 
+## 3b. Language
+
+DSH `0.2.2-rc.5`'s `presetDisplayText` translates only shipped presets;
+user-authored preset metadata is static. This bundle declares Chinese roster
+copy (**开发流程**) to match the `zh_CN` system; the bundle card and detail page
+localize through `locale/*.json`. Changing the DSH UI language alone does not
+retranslate the roster metadata; an English deployment must replace the two
+strings in `cordis.patch.yml` before installing. This is a platform limitation,
+not a missing locale file.
+
 ## 4. Prompt injection
 
-The Dev Workflow session's log recorded:
+The 开发流程 session's log recorded:
 
 ```json
 {"type":"agent-preset/selected","data":{"agentPreset":"dev-workflow"}}
@@ -98,7 +108,7 @@ This is the prompt-injection and project-document evidence; see the session tran
 
 ## 5. Tool availability
 
-The request header for the Dev Workflow session listed 24 tools, including
+The request header for the 开发流程 session listed 24 tools, including
 `subagent`, `subagent_fork`, `workflow`, `todo_write`, `ask_user_question`,
 `skill`, `read`, `write`, `edit`, `glob`, `grep`, `bash`, `job_*`, `web_*`, and
 `present`.
@@ -159,20 +169,37 @@ They were unchanged after the test, and all mtimes predate it. No
 
 ## 9. Display metadata
 
-The Plugins page showed the bundle under **已安装插件** as **Dev Workflow** with
+The Plugins page showed the bundle under **已安装插件** as **开发流程（Dev Workflow）** with
 the local icon, Chinese description, version `v0.1.0`, and the
 `preset-dev-workflow` component running. The detail page rendered the Chinese
 `meta.description`, the `preview.svg` image, and the source link. See
 The Plugins page and detail page were checked in the disposable GUI; a detail-page screenshot is not shipped because its source link shows a local test path.
 
+## 10. Current profile install
+
+After the disposable test, the user's current `web` profile was changed with
+explicit permission and a full profile backup was taken first:
+
+- `@xiaoxie-ide/dsh-devflow` 1.5.1 removed with
+  `plugin_manager remove_bundle`; result `application: applied`.
+- `dsh-dev-workflow` 0.1.0 installed from the packed tarball with
+  `plugin_manager install_bundle`; result `application: applied`.
+- `package.json` and `pnpm-lock.yaml` contain no old DevFlow reference.
+- The composed tree contains `preset-dev-workflow` with the Chinese roster copy
+  and no `preset-devflow`; `agent-preset-registry` still reads
+  `default: standard`.
+- The old plugin's project data directory (`.devflow/` in the workspace) was
+  left untouched because it is user data, not plugin installation residue.
+
 ## Not verified
 
-- Installing through the Web **Plugins > Add plugin** flow or the agent
-  `plugin_manager` tool (both target the current profile; testing them would
-  require approval and a profile change). The CLI path uses the same
-  `runProfilePnpm`/`reconcile` code and was verified.
-- Live HMR application without restart. The disposable server was restarted
-  after install and removed after shutdown.
+- The Web **Plugins > Add plugin** directory-picker flow was not clicked; the
+  agent `plugin_manager` install/remove path was exercised on the current
+  profile.
+- Visual confirmation in the already-open GUI after live HMR. The current
+  profile reported `application: applied`, but the authenticated GUI URL is
+  only in the user's browser; the roster was verified in a fresh disposable GUI
+  and by the current profile's `--dump-config`.
 - `subagent_fork`, plan-mode toggle, `todo_write`, and `ask_user_question` were
   present in the schema but not each exercised end to end.
 - Other DSH versions, Windows/macOS, headless/SDK/ACP profiles.

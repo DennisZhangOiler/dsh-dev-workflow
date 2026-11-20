@@ -3,15 +3,15 @@
 [English](README.md) | [中文](README.zh.md)
 
 A **non-default** agent preset for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-Pick **Dev Workflow** for a session and describe what you want changed; the
-agent follows a fixed ten-phase delivery pipeline instead of asking you to
-paste a long prompt each time.
+Pick **开发流程** (Dev Workflow) for a session and describe what you want
+changed; the agent follows a fixed ten-phase delivery pipeline instead of
+asking you to paste a long prompt each time.
 
 Installing the bundle only adds the preset. It does **not** change the profile's
 default preset, does not add a Host-wide row, and does not affect sessions that
 use Standard or another preset.
 
-![Dev Workflow in the new-session preset menu](docs/screenshot-preset.png)
+![开发流程 (Dev Workflow) in the new-session preset menu](docs/screenshot-preset.png)
 
 ## What it does
 
@@ -55,18 +55,20 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 2. Choose **Add plugin** and select the `dsh-dev-workflow` directory (or install
    the published npm package when one exists).
 3. Keep the bundle enabled. It adds the preset only; it does not select it.
-4. Open a new session, open the preset menu, choose **Dev Workflow**.
+4. Open a new session, open the preset menu, choose **开发流程**.
 
 ### With the `plugin_manager` agent tool
 
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow
+# or a packed release tarball:
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.1.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and
-`cordis.patch.yml`. Installing runs package management and bundle selection;
-no manual profile edit is needed. Installing bundle code requires Full access
-or approval in DSH.
+`cordis.patch.yml`, or a packed release tarball. Installing runs package
+management and bundle selection; no manual profile edit is needed. Installing
+bundle code requires Full access or approval in DSH.
 
 ### Command-line alternative
 
@@ -87,7 +89,7 @@ dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 ```
 
 The second command should still show the original default (for example
-`default: standard`). A new session's preset roster should list **Dev Workflow**.
+`default: standard`). A new session's preset roster should list **开发流程** (Dev Workflow).
 
 ## Use
 
@@ -135,9 +137,13 @@ profile on DSH `0.2.2-rc.5`. Details, evidence, and unverified items are in
 
 ## What it does not do
 
-- It does not make **Dev Workflow** the default.
-- The preset roster description is a single declaration string and is not
-  localized; the bundle card and detail page are localized.
+- It does not make **开发流程** the default.
+- DSH 0.2.2-rc.5 translates only shipped presets (`presetDisplayText`);
+  user-authored preset metadata is static. This bundle declares Chinese roster
+  copy (**开发流程**) to match a zh-CN system. The bundle card and detail page
+  are localized through `locale/*.json`. For an English roster, replace the
+  two strings in `cordis.patch.yml` before installing; changing DSH's UI
+  language alone does not retranslate them.
 - It does not enforce role isolation at the sandbox level; the roles and write
   scopes are enforced by prompts and by the parent's review. If a future DSH
   release adds per-child tool restrictions, wire them in.
