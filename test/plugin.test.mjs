@@ -59,12 +59,16 @@ test('prompt contains every phase and gate', () => {
   for (const marker of [
     'Phase 0', 'Phase 1', 'Phase 2', 'Phase 3', 'Phase 4',
     'Phase 5', 'Phase 6', 'Phase 7', 'Phase 8', 'Phase 9',
-    '>= 85', 'P0/P1', 'P0/P1/P2/P3', 'PASS or REJECT',
+    '>=85', 'P0/P1', 'P0/P1/P2/P3', 'PASS or REJECT',
     'AGENTS.md', 'docs/DEV_WORKFLOW.md', 'docs/DELIVERY.md',
     'protected branch', 'CI is red', 'credentials',
     'explicit confirmation', 'user must explicitly confirm',
     'no mobile horizontal overflow', 'accessibility',
-    'project\'s own rubric', 'fresh `subagent`', 'write scopes disjoint',
+    'project rubric', 'fresh `subagent`', 'write scopes disjoint',
+    'UI design', 'UI behavior', 'No UI', 'UI design only',
+    'A CLI project can get UI design',
+    'no UI or viewport checks',
+    'Do not score UI behavior or No UI',
     'dev-workflow` skill',
   ]) {
     assert.ok(PROMPT.includes(marker), `prompt is missing: ${marker}`)
@@ -100,11 +104,19 @@ test('skill bodies match their files and cover their required rules', () => {
   }
   assert.match(bodies['dev-workflow'], /Phase 0/u)
   assert.match(bodies['dev-workflow'], /Phase 9/u)
+  assert.match(bodies['dev-workflow'], /UI design/u)
+  assert.match(bodies['dev-workflow'], /UI behavior/u)
+  assert.match(bodies['dev-workflow'], /No UI/u)
+  assert.match(bodies['dev-workflow'], /Skip this phase for/u)
   assert.match(bodies['dev-workflow-ui-rubric'], />= 85/u)
   assert.match(bodies['dev-workflow-ui-rubric'], /P0/u)
   assert.match(bodies['dev-workflow-ui-rubric'], /horizontal overflow/u)
+  assert.match(bodies['dev-workflow-ui-rubric'], /only for a `UI design` change/u)
+  assert.match(bodies['dev-workflow-ui-rubric'], /No UI/u)
   assert.match(bodies['dev-workflow-roles'], /Test author prompt/u)
   assert.match(bodies['dev-workflow-roles'], /VERDICT: PASS or REJECT/u)
+  assert.match(bodies['dev-workflow-roles'], /Triage for this change/u)
+  assert.match(bodies['dev-workflow-roles'], /No UI/u)
   assert.match(bodies['dev-workflow-project-docs'], /docs\/DELIVERY\.md/u)
   assert.match(bodies['dev-workflow-project-docs'], /When delivery is undocumented/u)
 })

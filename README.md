@@ -20,16 +20,35 @@ and do not depend on the conversation history.
 
 | Phase | Result |
 |---|---|
-| 0. Project understanding | Reads `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, `README.md`, and other docs; finds commands, delivery, layout, and whether a UI exists |
-| 1. Requirement and contract | Confirms goal, scope, non-goals, UI states, viewports, data/API/schema impact, tests, risks, rollback |
-| 2. UI exploration | Three structurally different directions with real desktop and mobile screenshots (small changes may use fewer) |
-| 3. Independent UI score | A separate child agent scores each direction out of 100 against the project rubric or the bundled generic rubric; gate is >= 85 with no P0/P1 and no mobile overflow |
-| 4. User confirmation | Recommended direction, screenshots, strengths/costs, merged change list, explicit non-goals |
-| 5. Development | One feature agent owns UI and behavior; a separate test author writes tests only |
-| 6. Independent testing | Happy path, negative/permission cases, states, mobile, large data, real API/mutations, marker-based cleanup |
-| 7. Independent verification | Read-only verifier checks diff scope, runs the official tests, re-scores the UI, checks fixture residue; PASS/REJECT |
-| 8. User preview | Preview steps, test data, acceptance checklist; internal PASS is not user acceptance |
+| 0. Project understanding | Reads `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, `README.md`, and other docs; finds commands, delivery, layout, and where UI surfaces live |
+| 1. Requirement, contract, triage | Confirms goal, scope, non-goals; classifies the change as **UI design**, **UI behavior**, or **No UI**; writes only the contract fields the triage needs |
+| 2. UI exploration | **UI design only:** three structurally different directions with real desktop and mobile screenshots (small changes may use fewer) |
+| 3. Independent UI score | **UI design only:** a separate child agent scores each direction out of 100 against the project rubric or the bundled generic rubric; gate is >= 85 with no P0/P1 and no mobile overflow |
+| 4. User confirmation | Direction, screenshots, strengths/costs for UI design; changed states for UI behavior; functional change list for No UI |
+| 5. Development | One feature agent owns the change and, for UI work, both UI and behavior; a separate test author writes tests only |
+| 6. Independent testing | Functional/CLI/API for No UI; changed UI states for UI behavior; viewport/visual/accessibility for UI design; real API/mutations and marker-based cleanup in all cases |
+| 7. Independent verification | Read-only verifier checks diff scope, runs the official tests, checks real data/permissions/edge cases and fixture residue; UI score only for UI design; PASS/REJECT |
+| 8. User preview | Preview steps/test data/checklist; for No UI a command, sample request, or output sample; internal PASS is not user acceptance |
 | 9. Delivery | Follows the project's documented delivery exactly; no assumed MR/PR/CI/deploy |
+
+### UI impact is decided per change
+
+Phase 1 classifies the change, not the project:
+
+- **UI design** - new or materially changed hierarchy, layout, interaction
+  pattern, or UI surface. Runs Phases 2-3 and the independent UI score.
+- **UI behavior** - user-visible behavior, copy, or state change without a new
+  design direction. Skips Phases 2-3; keeps UI functional checks and preview,
+  but no design score.
+- **No UI** - library, CLI, backend, infrastructure, data, build, or docs work.
+  Skips all UI phases and the UI score; tests are functional/CLI/API only.
+
+A project that is CLI-only today can get **UI design** when the change adds a
+GUI; an existing UI project can get **No UI** for a backend-only change. The
+triage is stated in the Phase 1 contract and can be revisited if a new surface
+appears.
+
+![UI triage: No UI vs UI design](docs/screenshot-triage.png)
 
 ![A Dev Workflow session where the agent delegates to a child agent and runs a workflow](docs/screenshot-session.png)
 
@@ -81,7 +100,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.1.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.2.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and

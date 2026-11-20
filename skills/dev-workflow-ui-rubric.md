@@ -1,5 +1,10 @@
 # Generic UI rubric
 
+Use this rubric only for a `UI design` change: a new or materially changed
+visual hierarchy, layout, interaction pattern, or UI surface. For `UI behavior`,
+check the changed states and actions without a 100-point design score. For
+`No UI`, do not use this rubric.
+
 Use the project's own rubric when one exists. This rubric is the fallback. Read
 the contract, then judge the rendered UI itself, not the intent or the code.
 

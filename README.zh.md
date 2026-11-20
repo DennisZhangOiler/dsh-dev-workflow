@@ -18,16 +18,33 @@ Host 级的全局行，也不会影响使用 Standard 或其他预设的会话�
 
 | 阶段 | 结果 |
 |---|---|
-| 0. 项目理解 | 按顺序读 `AGENTS.md`、`docs/DEV_WORKFLOW.md`、`docs/DELIVERY.md`、`README.md` 及其他文档；确认命令、交付方式、目录结构和是否有 UI |
-| 1. 需求与契约 | 确认问题、目标、范围、非目标、UI 状态、视口、数据/API/schema 影响、测试范围、风险与回滚 |
-| 2. UI 方向探索 | 三套结构不同的方向，每套有真实桌面和移动截图（小改动可减少方向） |
-| 3. 独立 UI 评分 | 由独立子智能体按项目 rubric 或内置通用 rubric 百分制评分；门禁为 >=85、无 P0/P1、移动端无横向溢出 |
-| 4. 用户确认 | 推荐方向及理由、各方向截图与代价、合并修改清单、明确不做什么 |
-| 5. 开发 | 同一功能智能体负责 UI 和功能；测试智能体只写测试 |
-| 6. 独立测试 | 正向、负向/权限、状态、移动端、大数据、真实 API/mutation、带 marker 的夹具清理 |
-| 7. 独立验收 | 只读 verifier 检查 diff 越界、跑官方测试、独立重评 UI、检查夹具残留；输出 PASS/REJECT |
-| 8. 用户预览验收 | 给出预览方式、测试数据、操作步骤、验收清单；内部 PASS 不等于用户验收 |
+| 0. 项目理解 | 按顺序读 `AGENTS.md`、`docs/DEV_WORKFLOW.md`、`docs/DELIVERY.md`、`README.md` 及其他文档；确认命令、交付方式、目录结构和 UI 界面所在位置 |
+| 1. 需求、契约与分级 | 确认问题、目标、范围、非目标；把改动分为 **UI design**、**UI behavior** 或 **No UI**；只写该分级需要的契约字段 |
+| 2. UI 方向探索 | **仅 UI design：**三套结构不同的方向，每套有真实桌面和移动截图（小改动可减少方向） |
+| 3. 独立 UI 评分 | **仅 UI design：**由独立子智能体按项目 rubric 或内置通用 rubric 百分制评分；门禁为 >=85、无 P0/P1、移动端无横向溢出 |
+| 4. 用户确认 | UI design 给方向/截图/代价；UI behavior 给变化的状态；No UI 给功能改动清单 |
+| 5. 开发 | 同一功能智能体负责改动；有 UI 时同时负责 UI 和功能；测试智能体只写测试 |
+| 6. 独立测试 | No UI 只测功能/CLI/API；UI behavior 加变化的状态；UI design 加视口/视觉/可访问性；都测真实 API/mutation 和带 marker 的清理 |
+| 7. 独立验收 | 只读 verifier 检查 diff 越界、官方测试、真实数据/权限/边界和夹具残留；仅 UI design 重评 UI；输出 PASS/REJECT |
+| 8. 用户预览验收 | 给出预览方式/测试数据/验收清单；No UI 可用命令、样例请求或输出样例；内部 PASS 不等于用户验收 |
 | 9. 交付 | 严格按项目文档执行；不假设一定有 MR/PR/CI/自动部署 |
+
+### UI 影响按每次改动判断
+
+Phase 1 判断的是这次改动，而不是项目类型：
+
+- **UI design**：新增或明显改变信息层级、布局、交互模式或 UI 界面。走 Phase 2-3
+  和独立 UI 评分。
+- **UI behavior**：用户可见的行为、文案或状态变化，但没有新的设计方向。跳过
+  Phase 2-3；保留 UI 功能检查和预览，但不做设计评分。
+- **No UI**：库、CLI、后端、基础设施、数据、构建或文档改动。跳过所有 UI 阶段
+  和 UI 评分；测试只覆盖功能/CLI/API。
+
+今天的纯 CLI 项目，在“新增 GUI”这次改动里可以判为 **UI design**；已有 UI 的项目，
+后端-only 改动也可以判为 **No UI**。分级会写进 Phase 1 契约，出现新界面时可以
+重新分级。
+
+![UI 分级：No UI 与 UI design](docs/screenshot-triage.png)
 
 ![Dev Workflow 会话中，Agent 派出子智能体并运行 workflow](docs/screenshot-session.png)
 
@@ -77,7 +94,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow
 # 或已打包的 release tarball：
-plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.1.0.tgz
+plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.2.0.tgz
 ```
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的

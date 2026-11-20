@@ -47,6 +47,21 @@ asserts `preset-dev-workflow` and `default: standard`, removes the bundle, and
 asserts there is no package, bundle, node_modules, or lockfile residue. It uses
 no credentials, model, or existing profile.
 
+## A3. UI triage by change
+
+Run these as analysis-only prompts; no code change is needed.
+
+1. **CLI/library change** in a project with no UI: add a function and a test.
+   Expected: `No UI`; skip Phases 2-3 and the UI score; functional/CLI/API tests
+   only; contract omits UI fields.
+2. **CLI project adding a GUI**: add a local Web page to the same project.
+   Expected: `UI design`; Phases 2-3 and the >=85 UI gate apply, even though the
+   project has no UI today.
+3. **UI project, backend-only change**: expected `No UI` unless the change is
+   visible through the UI.
+4. **UI copy/state change**: expected `UI behavior`; skip design directions and
+   the design score, keep the changed UI states/actions in functional tests.
+
 ## B. Disposable install
 
 ```sh

@@ -16,8 +16,8 @@ npm run check
 ```
 
 Result: 6 tests pass, `npm run test:smoke` passes, packaging checks pass, `cordis.patch.yml` parses as YAML
-(with `!!js` handled by the validator). `prompt.md` is 7,998 characters; each
-skill body is below 8,192 characters. `npm pack --dry-run` lists 27 files and
+(with `!!js` handled by the validator). `prompt.md` is 7,937 characters; each
+skill body is below 8,192 characters. `npm pack --dry-run` lists 28 files and
 includes every runtime file, locale, icon, detail document, and skill.
 
 ## 2. Install into the disposable profile
@@ -69,6 +69,23 @@ afterwards still showed **Standard** as the default. See
 [`screenshot-preset.png`](screenshot-preset.png) and
 the new-session screenshot captured during the test.
 
+## 3a. UI triage by change
+
+A real Dev Workflow session on a CLI-only test project asked for two hypothetical
+changes: (A) add a `farewell` function and test; (B) add a local Web page to the
+same CLI project. Both were analysis-only.
+
+The model classified A as `No UI` and B as `UI design`, skipped Phases 2-3 and
+the UI score for A, and required Phases 2-3, the >=85 gate, no P0/P1, and mobile
+overflow checks for B. It also kept local-only delivery from the project docs.
+
+![UI triage: No UI vs UI design](screenshot-triage.png)
+
+Session evidence: system prompt 13,405 characters, containing the 7,937-character
+contract; tool calls read the project docs and loaded the `dev-workflow` skill.
+This validates the per-change triage on a project that has no UI today but could
+gain one later.
+
 ## 3b. Language
 
 DSH `0.2.2-rc.5`'s `presetDisplayText` translates only shipped presets;
@@ -87,8 +104,8 @@ The 开发流程 session's log recorded:
 {"type":"agent-preset/selected","data":{"agentPreset":"dev-workflow"}}
 ```
 
-Its first system message was 13,466 characters and contained `prompt.md`
-verbatim (the contract is 7,998 characters):
+Its first system message was 13,405 characters and contained `prompt.md`
+verbatim (the contract is 7,937 characters):
 
 ```json
 {"type":"system/message","data":{"message":{"role":"system","content":[{"text":"You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Dev Workflow\n\nThis preset runs a fixed delivery pipeline. ..."}]}}}

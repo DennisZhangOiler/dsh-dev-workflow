@@ -10,9 +10,11 @@ wins on conflict.
    Pure questions get a direct answer. Change work runs the pipeline.
 2. Read project conventions before touching code (see
    `dev-workflow-project-docs`).
-3. Scale ceremony to risk, not to the user's impatience. A copy change can skip
+3. Classify UI impact in Phase 1 using the triage table. Do not skip or force
+   UI phases from the project type alone.
+4. Scale ceremony to risk, not to the user's impatience. A copy change can skip
    Phase 2; a code change cannot skip Phase 6 and Phase 7.
-4. Keep the user oriented: one short update per phase, and a clear question
+5. Keep the user oriented: one short update per phase, and a clear question
    only when the answer changes the work.
 
 ## Phase 0 - Project brief
@@ -31,16 +33,28 @@ Relevant code: <key directories/files>
 
 Read in order: `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`,
 `README.md`, then other docs (`docs/`, `CONTRIBUTING`, `Makefile`, CI config,
-package manifests, migration directories). Do not stop after `README.md` when a
-more specific document exists.
+package manifests, migration directories).
 
-If the project has no UI, write `UI: no` and skip Phases 2-3. Keep Phase 6 and
-Phase 7.
+Record existing UI surfaces here, but do not decide the pipeline yet: a CLI
+project can add a GUI, and a UI project can have a backend-only change. The
+Phase 1 triage decides which UI phases apply.
 
-## Phase 1 - Contract
+## Phase 1 - Triage and contract
+
+Classify the requested change by the surfaces it touches:
+
+| Triage | Criteria | UI phases |
+|---|---|---|
+| `UI design` | New or materially changed hierarchy, layout, interaction pattern, or UI surface | Phases 2 and 3; UI score |
+| `UI behavior` | User-visible behavior, copy, or state change without a new design direction | Skip 2 and 3; UI functional checks, no design score |
+| `No UI` | Library, CLI, backend, infrastructure, data, build, or docs | Skip all UI phases; functional/CLI/API tests only |
+
+State the class and rationale in the contract. A CLI project adding a GUI is
+`UI design`; a UI project with a backend-only change is `No UI` (or `UI behavior`
+if the change is visible through the UI). Re-triage if a new surface appears.
 
 Resolve facts yourself. Ask only user-owned product decisions, and batch them.
-Use this template:
+Use this template, omitting fields the triage makes irrelevant:
 
 ```markdown
 ## Goal
@@ -50,7 +64,7 @@ Use this template:
 - In: <pages/components/behaviors>
 - Out: <explicit non-goals>
 
-## UI contract
+## UI contract (UI design/UI behavior only)
 - Pages/components:
 - Primary task and primary action:
 - States: normal / empty / loading / error / long text / large data
@@ -71,27 +85,27 @@ Use this template:
 <what can break, how to detect, how to revert>
 ```
 
-For a tiny change, compress the template to the fields that actually vary. Do
-not omit explicit non-goals, rollback, or test scope.
+For a tiny change, compress to the fields that vary; keep non-goals, rollback,
+and test scope. For `No UI`, state "no UI involved" and keep tests functional.
 
-## Phase 2 - UI directions
+## Phase 2 - UI directions (UI design only)
 
-Use `dev-workflow-roles` for the explorer prompt. Rules:
+Use `dev-workflow-roles` for the explorer prompt. Skip this phase for
+`UI behavior` and `No UI`. Rules:
 
 - Three directions must differ structurally (hierarchy, layout, density,
   primary action, character), not cosmetically.
-- Each direction gets real desktop and mobile screenshots. No hand-drawn
-  "screenshots" and no fake browser chrome.
+- Each direction gets real desktop and mobile screenshots; no hand-drawn shots
+  or fake browser chrome.
 - Prefer an installed design skill and its screenshot tool. Without one, build
   plain static mockups and screenshot them with a real browser.
-- A small change may use one direction, but then say why exploration is
-  unnecessary.
-- Keep direction files out of production paths; use a scratch directory named
-  by the task.
+- A small change may use one direction; say why exploration is unnecessary.
+- Keep direction files in a scratch task directory.
 
-## Phase 3 - Independent UI score
+## Phase 3 - Independent UI score (UI design only)
 
 Use `dev-workflow-ui-rubric` and the scorer prompt in `dev-workflow-roles`.
+Do not produce a UI score for `UI behavior` or `No UI`.
 Never score your own implementation. A direction below the gate is not a
 candidate: rework it before user review. If all three fail, redesign; do not
 send the user a menu of failures.
@@ -121,29 +135,36 @@ Present:
 <desktop and mobile for each direction>
 ```
 
-Wait for an explicit yes. "Sounds good" about one detail is not confirmation of
-the whole list; restate what changed and ask for the go-ahead.
+For `UI behavior`, omit the direction comparison and screenshots; present the
+changed states and behavior. For `No UI`, omit UI sections and present the
+functional change, commands, and tests. Wait for an explicit yes; agreement to
+one detail does not confirm the whole list. Restate changes and ask for the
+go-ahead.
 
 ## Phase 5 - Implementation
 
-- One feature agent owns UI and behavior for the confirmed scope.
+- One feature agent owns the change; for UI work it owns both UI and behavior.
 - Match existing patterns, naming, component library, and styling tokens.
-- Do not refactor unrelated code; if a prerequisite is required, propose it.
-- Keep a running change list and report deviations from the contract.
+- Do not refactor unrelated code; propose prerequisites.
 - Test author writes tests only in a disjoint scope.
 
 ## Phase 6 - Test plan
 
-Use the test-author prompt in `dev-workflow-roles`. Cover:
+Use the test-author prompt in `dev-workflow-roles`. Always cover:
 
 - happy path and primary action;
 - negative, disabled, and unauthorized actions;
 - invalid input and boundary values;
 - state transitions and persistence;
-- empty, loading, error, long-text, and large-data states;
-- mobile viewport and touch targets;
 - real API/mutation paths, not only mocked frontend;
 - repeatable setup/teardown, unique fixture markers, cleanup on failure.
+
+Add only when the triage applies them:
+
+- `No UI`: functional/CLI/API tests; do not add viewport or visual checks.
+- `UI behavior`: changed UI states and actions.
+- `UI design`: empty/loading/error/long-text/large-data states, mobile viewport,
+  touch targets, and visual/accessibility checks.
 
 Report the exact commands, exit codes, and evidence. A skipped check is listed
 as skipped with the reason, never as passed.
@@ -155,17 +176,21 @@ Use the verifier prompt in `dev-workflow-roles`. The verifier is read-only:
 - `git diff` / `git status` scope check against the confirmed list;
 - official project test command, untouched;
 - real data/permissions/edge checks;
-- independent UI score with its own screenshots;
+- for `UI design`, an independent UI score with its own screenshots;
+- for `UI behavior`, the changed UI states/actions without a design score;
+- for `No UI`, functional/CLI/API behavior and no UI score;
 - fixture residue and cleanup check;
 - PASS or REJECT with evidence and residual risks.
 
-PASS requires: tests green, UI >= 85, no P0/P1, no blocking accessibility
-issue, and no out-of-scope production change.
+PASS requires: tests green, no blocking defect, and no out-of-scope production
+change. For `UI design` it also requires UI >= 85, no P0/P1, and no blocking
+accessibility issue.
 
 ## Phase 8 - User preview
 
 Provide: how to open the preview, test account/data, exact steps, and a
-checklist of what to look for. Do not call the work accepted until the user
+checklist of what to look for. For `No UI`, a command, sample request, or output
+sample can be the preview. Do not call the work accepted until the user
 says so. After a failed preview: fix, retest, re-verify, and return to preview.
 
 ## Phase 9 - Delivery
@@ -185,6 +210,8 @@ that was not observed.
 ## Shortcuts that are not allowed
 
 - Skipping project docs because the task "looks small".
+- Skipping UI phases only because the project is CLI today.
+- Forcing UI exploration, screenshots, or a score on `No UI` work.
 - Letting the implementer score its own UI.
 - Showing a below-gate UI as a candidate.
 - Treating internal PASS as user acceptance.

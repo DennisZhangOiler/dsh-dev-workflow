@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-11-20
+
+### Changed
+
+- Phase 1 now classifies each change as `UI design`, `UI behavior`, or `No UI`
+  instead of deciding from the project type in Phase 0.
+- `UI design` keeps design exploration and the independent UI score; `UI
+  behavior` skips design directions and scoring but keeps UI functional checks;
+  `No UI` skips all UI phases and UI scoring, with functional/CLI/API tests only.
+- A CLI-only project can be `UI design` when the change adds a GUI; a UI project
+  can be `No UI` for a backend-only change.
+- Playbook, rubric, role prompts, README, and tests updated for the triage.
+
 ## [0.1.0] - 2026-11-19
 
 ### Added

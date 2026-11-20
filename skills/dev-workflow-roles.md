@@ -11,6 +11,7 @@ Include these lines in every delegated prompt:
 ```text
 You are a <role> in a Dev Workflow session. Read the project conventions
 (<AGENTS.md>, <docs/DEV_WORKFLOW.md>, <docs/DELIVERY.md>, README) before work.
+Triage for this change: <UI design | UI behavior | No UI>.
 Your write scope is: <paths or "read-only">. Do not edit outside it.
 Do not commit, push, merge, deploy, or change production data.
 Never write credentials, tokens, or private keys into any file.
@@ -22,11 +23,15 @@ Do not ask the user questions; if blocked, return the blocker to the parent.
 
 | Phase | Role | Write scope | Tools |
 |---|---|---|---|
-| 2 | UI explorer | scratch `explore/` only | write, screenshot/browser |
-| 3 | UI scorer | read-only | read, screenshot, image |
+| 2 | UI explorer (`UI design` only) | scratch `explore/` only | write, screenshot/browser |
+| 3 | UI scorer (`UI design` only) | read-only | read, screenshot, image |
 | 5 | Feature implementer | confirmed production + UI paths | write, shell, tests |
 | 6 | Test author | test files/fixtures only | write tests, shell, real API |
 | 7 | Verifier | read-only | read, shell (non-mutating), screenshot |
+
+For `UI behavior`, skip phases 2-3 but keep UI functional checks in phases 6-7.
+For `No UI`, skip all UI roles and UI score; test and verify functional/CLI/API
+behavior only.
 
 Independent scorers and the verifier must not see each other's scores before
 they finish. Run them as separate children with fresh context.
@@ -84,8 +89,11 @@ and anything the verifier must know.
 <global child rules>
 Write tests only. Do not edit production code, UI code, or configuration.
 Start from the contract and cover: happy path, negative/disabled actions,
-permissions/invalid input, state transitions, empty/loading/error states,
-mobile viewport, large data/long text, and real API/mutation paths.
+permissions/invalid input, state transitions, and real API/mutation paths.
+Add only what the triage applies:
+- `No UI`: functional/CLI/API only; no viewport or visual checks.
+- `UI behavior`: the changed UI states and actions.
+- `UI design`: empty/loading/error states, mobile viewport, large data/long text.
 Every fixture carries marker `<unique-marker>` and cleans up even on failure.
 Use the project's existing test framework and commands.
 Return: test files, exact commands, pass/fail with evidence, skipped checks and
@@ -101,10 +109,12 @@ Check:
 1. diff scope against the confirmed change list;
 2. official test command from project docs;
 3. real data, permissions, invalid input, and edge cases;
-4. final UI score with your own rubric and new screenshots - do not reuse the
-   UI scorer's score;
-5. fixture residue and cleanup;
-6. migration/rollback notes when applicable.
+4. for `UI design`, final UI score with your own rubric and new screenshots -
+   do not reuse the UI scorer's score;
+5. for `UI behavior`, the changed UI states/actions without a design score;
+6. for `No UI`, functional/CLI/API behavior and no UI score;
+7. fixture residue and cleanup;
+8. migration/rollback notes when applicable.
 Return exactly:
 VERDICT: PASS or REJECT
 EVIDENCE: <commands, exit codes, file paths, screenshots>
