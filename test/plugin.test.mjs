@@ -8,6 +8,7 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8')
 const PROMPT = read('prompt.md')
 const SKILL_FILES = [
   'dev-workflow.md',
+  'dev-workflow-program.md',
   'dev-workflow-project-docs.md',
   'dev-workflow-ui-rubric.md',
   'dev-workflow-roles.md',
@@ -59,26 +60,27 @@ test('prompt contains every phase and gate', () => {
   for (const marker of [
     'Phase 0', 'Phase 1', 'Phase 2', 'Phase 3', 'Phase 4',
     'Phase 5', 'Phase 6', 'Phase 7', 'Phase 8', 'Phase 9',
-    '>=85', 'P0/P1', 'P0/P1/P2/P3', 'PASS or REJECT',
+    '>=85', 'P0/P1', 'P0/P1/P2/P3', 'PASS/REJECT',
     'AGENTS.md', 'docs/DEV_WORKFLOW.md', 'docs/DELIVERY.md',
-    'protected branch', 'CI is red', 'credentials',
-    'explicit confirmation', 'user must explicitly confirm',
+    'protected branch', 'required CI red', 'credentials',
+    'explicit confirmation', 'User must confirm',
     'no mobile horizontal overflow', 'accessibility',
-    'project rubric', 'fresh `subagent`', 'write scopes disjoint',
+    'project or bundled rubric', 'fresh `subagent`', 'write scopes disjoint',
     'UI design', 'UI behavior', 'No UI', 'UI design only',
-    'A CLI project can get UI design',
-    'no UI or viewport checks',
-    'Do not score UI behavior or No UI',
-    'dev-workflow` skill',
+    'CLI project can get UI design',
+    'no UI checks',
+    'No UI score for UI behavior/No UI',
+    'dev-workflow-program',
   ]) {
     assert.ok(PROMPT.includes(marker), `prompt is missing: ${marker}`)
   }
 })
 
-test('registers the four playbook skills', () => {
+test('registers the five playbook skills', () => {
   const { skills } = mount()
   assert.deepEqual(skills.map(skill => skill.name), [
     'dev-workflow',
+    'dev-workflow-program',
     'dev-workflow-project-docs',
     'dev-workflow-ui-rubric',
     'dev-workflow-roles',
@@ -90,7 +92,7 @@ test('registers the four playbook skills', () => {
     assert.equal(skill.source, 'bundled')
     assert.equal(skill.resourceBase.kind, 'directory')
     assert.ok(skill.content.length > 1000)
-    const limit = skill.name === 'dev-workflow' ? 7800 : 8192
+    const limit = skill.name === 'dev-workflow' || skill.name === 'dev-workflow-program' ? 7800 : 8192
     assert.ok(skill.content.length <= limit, `${skill.name} is ${skill.content.length} chars`)
   }
 })
@@ -109,6 +111,9 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['dev-workflow'], /UI behavior/u)
   assert.match(bodies['dev-workflow'], /No UI/u)
   assert.match(bodies['dev-workflow'], /Skip this phase for/u)
+  assert.match(bodies['dev-workflow-program'], /Program mode/u)
+  assert.match(bodies['dev-workflow-program'], /Frozen UI/u)
+  assert.match(bodies['dev-workflow-program'], /module lead/u)
   assert.match(bodies['dev-workflow-ui-rubric'], />= 85/u)
   assert.match(bodies['dev-workflow-ui-rubric'], /P0/u)
   assert.match(bodies['dev-workflow-ui-rubric'], /horizontal overflow/u)

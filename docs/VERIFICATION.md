@@ -16,8 +16,9 @@ npm run check
 ```
 
 Result: 6 tests pass, `npm run test:smoke` passes, packaging checks pass, `cordis.patch.yml` parses as YAML
-(with `!!js` handled by the validator). `prompt.md` is 7,937 characters. The main playbook is 7,588 characters and the
-other skill bodies are below 8,192, leaving room for the tool-result wrapper. `npm pack --dry-run` lists 28 files and
+(with `!!js` handled by the validator). `prompt.md` is 8,000 characters. The main playbook is 7,588 characters and the
+program playbook is 7,517; the other skill bodies are below 8,192, leaving room
+for the tool-result wrapper. `npm pack --dry-run` lists 31 files and
 includes every runtime file, locale, icon, detail document, and skill.
 
 ## 2. Install into the disposable profile
@@ -96,6 +97,38 @@ retranslate the roster metadata; an English deployment must replace the two
 strings in `cordis.patch.yml` before installing. This is a platform limitation,
 not a missing locale file.
 
+## 3c. Program mode
+
+A real program-mode planning session used a CLI-only test project with no UI
+policy in its docs. The model:
+
+- asked for architecture decisions first (users, flows, modules, interfaces,
+  data ownership, auth/permissions, migrations, shared-file ownership) and did
+  not write module code;
+- said it would ask once for the number of UI directions (recommend 3) and wait
+  for the user's choice, because the docs were silent and the UI was structural;
+  it explicitly said it would not self-confirm or treat silence as agreement;
+- described the sequence architecture -> directions + independent score -> user
+  choice -> static frontend demo -> UI freeze -> vertical modules -> user plan
+  approval -> module leads;
+- said a module lead implements behavior only against frozen UI, self-reviews
+  small gaps, and spawns a UI detail lead for material missing UI;
+- described the hierarchy root program lead -> module lead -> feature/UI
+  detail/test/verifier, with the root as the only user interface and up to three
+  levels of delegation.
+
+![Program mode plan: architecture, UI choice, static demo, frozen UI, module agents and recursive subagents](screenshot-program.png)
+
+Session evidence: system prompt 13,468 characters, containing the 8,000-character
+contract; the model loaded `dev-workflow`, `dev-workflow-program`, and
+`dev-workflow-project-docs`.
+
+A follow-up asked the root to start `module-a` and have it start `worker-a`. The
+nested delegation succeeded: root -> module-a -> worker-a, worker-a replied
+`OK`, and no project files changed. This confirms the `maxDepth: 3` setting.
+
+![Nested subagent chain: root -> module-a -> worker-a](screenshot-recursion.png)
+
 ## 4. Prompt injection
 
 The 开发流程 session's log recorded:
@@ -104,8 +137,8 @@ The 开发流程 session's log recorded:
 {"type":"agent-preset/selected","data":{"agentPreset":"dev-workflow"}}
 ```
 
-Its first system message was 13,405 characters and contained `prompt.md`
-verbatim (the contract is 7,937 characters):
+Its first system message was 13,468 characters and contained `prompt.md`
+verbatim (the contract is 8,000 characters):
 
 ```json
 {"type":"system/message","data":{"message":{"role":"system","content":[{"text":"You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Dev Workflow\n\nThis preset runs a fixed delivery pipeline. ..."}]}}}
@@ -187,7 +220,7 @@ They were unchanged after the test, and all mtimes predate it. No
 ## 9. Display metadata
 
 The Plugins page showed the bundle under **已安装插件** as **开发流程（Dev Workflow）** with
-the local icon, Chinese description, version `v0.2.1`, and the
+the local icon, Chinese description, version `v0.3.0`, and the
 `preset-dev-workflow` component running. The detail page rendered the Chinese
 `meta.description`, the `preview.svg` image, and the source link. See
 The Plugins page and detail page were checked in the disposable GUI; a detail-page screenshot is not shipped because its source link shows a local test path.
@@ -199,7 +232,7 @@ explicit permission and a full profile backup was taken first:
 
 - `@xiaoxie-ide/dsh-devflow` 1.5.1 removed with
   `plugin_manager remove_bundle`; result `application: applied`.
-- `dsh-dev-workflow` 0.2.1 installed from the packed tarball with
+- `dsh-dev-workflow` 0.3.0 installed from the packed tarball with
   `plugin_manager install_bundle`; result `application: applied`.
 - `package.json` and `pnpm-lock.yaml` contain no old DevFlow reference.
 - The composed tree contains `preset-dev-workflow` with the Chinese roster copy
@@ -210,8 +243,8 @@ explicit permission and a full profile backup was taken first:
 - The `plugin_manager` Git target failed its 5-second github.com connection
   probe on this network (`connection to github.com timed out after 5000ms`).
   A CLI Git install in a disposable profile succeeded (about 1m5s). The current
-  profile therefore uses the 0.2.1 tarball; the same runtime is in the GitHub
-  commit `5dd9dd1`.
+  profile therefore uses the 0.3.0 tarball; the same runtime is in the GitHub
+  commit `<0.3.0 commit>`.
 
 ## Not verified
 

@@ -4,6 +4,27 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-20
+
+### Added
+
+- Program mode for new systems and multi-module products: architecture and IA
+  first, UI direction selection, static frontend demo and UI freeze, vertical
+  module decomposition, and module agents that recursively run the pipeline.
+- `dev-workflow-program` playbook with program/module gates, shared-file
+  ownership, module delegation, and the frozen-UI gap rule.
+- `maxDepth: 3` on the delegation tools, so the program lead can dispatch
+  module leads that spawn their own UI/feature/test/verifier children.
+
+### Changed
+
+- UI direction count and selection now follow the project's UI policy. If the
+  docs are silent, large/structural UI changes ask the user once (recommend
+  three directions) and wait for the choice; small/local changes may use one
+  direction with self-review.
+- The lead must not treat its own recommendation, an internal PASS, or silence
+  as the user's UI choice.
+
 ## [0.2.1] - 2026-11-20
 
 ### Fixed

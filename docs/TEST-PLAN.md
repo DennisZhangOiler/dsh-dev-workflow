@@ -62,6 +62,32 @@ Run these as analysis-only prompts; no code change is needed.
 4. **UI copy/state change**: expected `UI behavior`; skip design directions and
    the design score, keep the changed UI states/actions in functional tests.
 
+## A4. UI selection policy
+
+1. Project docs specify a direction count (for example three options): the agent
+   must produce that count and wait for the user's choice, even for a small
+   change. It must not self-confirm.
+2. Docs are silent, large/structural UI change: the agent asks once how many
+   directions to explore (recommends three) and waits. Silence or an internal
+   PASS is not a selection.
+3. Docs are silent, small/local UI change: one direction with self-review is
+   allowed; no selection menu.
+4. If the user says "you decide", record that as the user's decision.
+
+## A5. Program mode
+
+1. A new multi-module request starts with architecture/IA and open decisions,
+   not module code.
+2. Architecture is approved before UI concepts; UI direction is selected before
+   the static demo; the demo is accepted and UI frozen before modules.
+3. The plan splits complete vertical modules with owned paths, interfaces,
+   shared-file ownership, dependencies, acceptance, and tests.
+4. Module leads run the change pipeline and can spawn UI/feature/test/verifier
+   children; delegation allows three levels below the root.
+5. Frozen UI is not redesigned; a material missing UI detail spawns a UI detail
+   lead and a user decision, not a silent invention.
+6. Integration uses a read-only verifier and the project's full test command.
+
 ## B. Disposable install
 
 ```sh

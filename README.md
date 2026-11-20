@@ -31,6 +31,36 @@ and do not depend on the conversation history.
 | 8. User preview | Preview steps/test data/checklist; for No UI a command, sample request, or output sample; internal PASS is not user acceptance |
 | 9. Delivery | Follows the project's documented delivery exactly; no assumed MR/PR/CI/deploy |
 
+### Large projects: Program mode
+
+For a new system, a multi-module product, or an architecture/IA redesign, the
+lead becomes a program orchestrator instead of implementing everything itself:
+
+1. **Architecture first.** Clarify users, core flows, modules, boundaries,
+   interfaces, data ownership, non-goals, and open decisions. Do not write
+   module code yet; get architecture approval.
+2. **UI direction selection.** Follow the project's UI policy. If it sets a
+   direction count, satisfy it; if not, ask for a large/structural UI change
+   (recommend three) and wait for the user's choice. Never self-confirm.
+3. **Static frontend demo.** Build a pure frontend demo with mock data, iterate
+   with user feedback, then freeze tokens, components, screens, states, and
+   responsive rules.
+4. **Module plan.** Split into complete vertical modules with interfaces,
+   owned paths, shared-file rules, dependencies, acceptance criteria, and tests.
+5. **Module agents.** Dispatch module leads through `subagent`; each runs this
+   pipeline in its module. Frozen UI is not redesigned; a material missing UI
+   detail spawns a child UI design/scoring flow. A module lead may spawn its own
+   UI, feature, test, and verifier children (depth up to 3 below the root).
+6. **Integration.** A read-only integration verifier checks cross-module
+   contracts, shared files, migrations, permissions, and fixture residue; then
+   user preview and project-documented delivery.
+
+The program lead is the only user interface; module leads report evidence back
+to it. Shared files have one owner and change sequentially; independent modules
+may run in parallel. See the `dev-workflow-program` skill for the full playbook.
+
+![Program mode plan: architecture, UI choice, static demo, frozen UI, module agents and recursive subagents](docs/screenshot-program.png)
+
 ### UI impact is decided per change
 
 Phase 1 classifies the change, not the project:
@@ -80,7 +110,7 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.2.1`; the CLI command was verified on this repo.
+current release is `v0.3.0`; the CLI command was verified on this repo.
 
 ### Before installing
 
@@ -104,7 +134,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.2.1.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.3.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and

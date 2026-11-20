@@ -38,6 +38,14 @@ const SKILLS = [
       'Load in Phase 0 whenever a Dev Workflow session starts a change, feature, UI task, test, review, or delivery.',
   },
   {
+    name: 'dev-workflow-program',
+    file: 'dev-workflow-program.md',
+    description:
+      'Program-mode playbook for large systems: architecture and IA first, UI direction selection, static frontend demo, UI freeze, module decomposition, recursive module delegation, and integration.',
+    whenToUse:
+      'Load for a new system, multi-module product, architecture/IA redesign, or a large feature that must be split across agents.',
+  },
+  {
     name: 'dev-workflow-project-docs',
     file: 'dev-workflow-project-docs.md',
     description:

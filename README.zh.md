@@ -29,6 +29,30 @@ Host 级的全局行，也不会影响使用 Standard 或其他预设的会话�
 | 8. 用户预览验收 | 给出预览方式/测试数据/验收清单；No UI 可用命令、样例请求或输出样例；内部 PASS 不等于用户验收 |
 | 9. 交付 | 严格按项目文档执行；不假设一定有 MR/PR/CI/自动部署 |
 
+### 大型项目：Program mode
+
+新建系统、多模块产品，或架构/信息架构重构时，主 Agent 变成全局编排者，而不是自己
+把所有事做完：
+
+1. **架构优先。** 梳理用户、核心流程、模块、边界、接口、数据归属、非目标和待定
+   决策；先不要写模块代码，架构确认后再继续。
+2. **UI 方向选择。** 按项目文档的 UI 规则；文档规定了几版就出几版；没有规定且是
+   大改动时，先问一次要几版（建议三版），等用户选择，不能自己确认。
+3. **静态前端 demo。** 用 mock 数据做纯前端 demo，按用户反馈迭代，然后冻结 token、
+   组件、页面、状态和响应式规则。
+4. **模块计划。** 拆成完整的垂直模块，写清接口、拥有的路径、共享文件规则、依赖、
+   验收标准和测试。
+5. **模块 Agent。** 用 `subagent` 派模块负责人；每个模块负责人按本插件的流程执行。
+   已冻结的 UI 不再重做；遗漏的重要 UI 细节由子智能体重新走 UI 设计/评分流程。
+   模块负责人还可以派自己的 UI、功能、测试和验收子智能体（根节点下最多 3 层）。
+6. **集成。** 只读集成 verifier 检查跨模块契约、共享文件、migration、权限和夹具残留；
+   然后用户预览，最后按项目文档交付。
+
+Program lead 是唯一对用户说话的入口；模块负责人把证据汇总回来。共享文件有唯一
+owner，串行修改；独立模块可以并行。完整规则见 `dev-workflow-program` skill。
+
+![Program mode 规划：架构、UI 选择、静态 demo、冻结 UI、模块 Agent 与递归子智能体](docs/screenshot-program.png)
+
 ### UI 影响按每次改动判断
 
 Phase 1 判断的是这次改动，而不是项目类型：
@@ -73,7 +97,7 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 其他会话。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。当前 release 是 `v0.2.1`；CLI 命令已在本仓库验证。
+探测），或安装 release tarball。当前 release 是 `v0.3.0`；CLI 命令已在本仓库验证。
 
 ### 安装前备份
 
@@ -97,7 +121,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow
 # 或已打包的 release tarball：
-plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.2.1.tgz
+plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.3.0.tgz
 ```
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的

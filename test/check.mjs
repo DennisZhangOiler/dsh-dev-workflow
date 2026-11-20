@@ -14,7 +14,7 @@ const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
 assert.equal(manifest.name, 'dsh-dev-workflow')
-assert.equal(manifest.version, '0.2.1')
+assert.equal(manifest.version, '0.3.0')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
@@ -40,12 +40,16 @@ for (const entry of required) assert.ok(shipped.has(entry), `files is missing ${
 for (const path of [
   'index.js', 'prompt.md', 'cordis.patch.yml', 'icon.svg',
   'skills/dev-workflow.md',
+  'skills/dev-workflow-program.md',
   'skills/dev-workflow-project-docs.md',
   'skills/dev-workflow-ui-rubric.md',
   'skills/dev-workflow-roles.md',
   'docs/DETAIL.md',
   'docs/DETAIL.zh.md',
   'docs/preview.svg',
+  'docs/screenshot-triage.png',
+  'docs/screenshot-program.png',
+  'docs/screenshot-recursion.png',
   'locale/en.json',
   'locale/zh.json',
 ]) {
@@ -85,6 +89,7 @@ for (const marker of [
 }
 assert.ok(!/default:\s*dev-workflow/u.test(patch), 'the bundle must not change the profile default')
 assert.ok(!/disabled:\s*true/u.test(patch), 'no row should be disabled in this preset')
+assert.ok((patch.match(/maxDepth: 3/gu) ?? []).length >= 2, 'both delegation tools need maxDepth: 3')
 
 if (process.env.SKIP_YAML === '1') {
   console.log('YAML parse skipped (SKIP_YAML=1)')
