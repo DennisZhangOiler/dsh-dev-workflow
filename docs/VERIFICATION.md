@@ -242,7 +242,7 @@ The Plugins page showed the bundle under **已安装插件** as **开发流程�
 the local icon and Chinese description; the detail page rendered the Chinese
 `meta.description`, the `preview.svg` image, and the source link. The check was
 performed during the 0.1.0 install; the icon, locale files, and detail document
-are unchanged in 0.3.0. A detail-page screenshot is not shipped because its
+are unchanged in 0.4.0. A detail-page screenshot is not shipped because its
 source link shows a local test path.
 
 ## 10. Current profile install
@@ -252,10 +252,10 @@ explicit permission and a full profile backup was taken first:
 
 - `@xiaoxie-ide/dsh-devflow` 1.5.1 removed with
   `plugin_manager remove_bundle`; result `application: applied`.
-- `dsh-dev-workflow` 0.3.0 installed from the packed tarball with
+- `dsh-dev-workflow` 0.4.0 installed from the packed tarball with
   `plugin_manager install_bundle`; result `application: restart-required`
   (`unmanaged-plugin`). The package, lockfile, and composed tree are on
-  0.3.0; restart DSH once to load the new preset revision into the running
+  0.4.0; restart DSH once to load the new preset revision into the running
   Host. The previous 0.2.1 revision stays in the current process until then.
 - `package.json` and `pnpm-lock.yaml` contain no old DevFlow reference.
 - The composed tree contains `preset-dev-workflow` with the Chinese roster copy
@@ -266,8 +266,8 @@ explicit permission and a full profile backup was taken first:
 - The `plugin_manager` Git target failed its 5-second github.com connection
   probe on this network (`connection to github.com timed out after 5000ms`).
   A CLI Git install in a disposable profile succeeded (about 1m5s). The current
-  profile therefore uses the 0.3.0 tarball; the same runtime is in the GitHub
-  commit `bf7a3456a87eadfa142b4622a05592635e602554`.
+  profile therefore uses the 0.4.0 tarball; the same runtime is in the GitHub
+  commit `34be78d300082585d3de729aea5d80b42236bfe2`.
 
 ## Not verified
 
