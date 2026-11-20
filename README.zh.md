@@ -141,7 +141,11 @@ dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 ```sh
 npm test          # 插件、prompt、skill 契约测试
 npm run check     # 包清单、locale、详情页、patch 检查
+npm run test:smoke # 临时 profile：装 tarball、检查预设、卸载
 ```
+
+`test:smoke` 需要 `dsh` 和 `pnpm` 在 `PATH` 中；CLI 不在 PATH 时设置 `DSH_BIN`。
+它会创建临时 `DSH_HOME`，不使用凭据，结束后自动清理。
 
 这些检查不需要安装依赖，Node 22 即可。`npm run check` 在环境有
 `python3` + PyYAML 时会校验 YAML，否则会说明跳过。
@@ -155,7 +159,7 @@ locale/en.json|zh.json   bundle 卡片元数据
 docs/DETAIL*.md          bundle 详情文档（一张预览图）
 docs/preview.svg         详情页配图
 icon.svg                 插件图标
-test/                    单元与打包检查
+test/                    单元、打包与临时 profile smoke 测试
 ```
 
 ## 卸载

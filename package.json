@@ -18,6 +18,7 @@
     "skills",
     "locale/*.json",
     "docs",
+    "test",
     "icon.svg",
     "README.md",
     "README.zh.md",
@@ -42,7 +43,8 @@
   },
   "scripts": {
     "test": "node --test test/plugin.test.mjs",
-    "check": "node test/check.mjs"
+    "check": "node test/check.mjs",
+    "test:smoke": "node test/smoke-temp-profile.mjs"
   },
   "dsh": {
     "bundle": {

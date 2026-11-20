@@ -36,6 +36,17 @@ Expected:
 - Patch contains the preset declaration and the required tool rows, sets no
   `default`, and disables no row.
 
+## A2. Automated disposable smoke
+
+```sh
+DSH_BIN=/path/to/dsh npm run test:smoke
+```
+
+This packs the package, creates a temporary `DSH_HOME`, installs the tarball,
+asserts `preset-dev-workflow` and `default: standard`, removes the bundle, and
+asserts there is no package, bundle, node_modules, or lockfile residue. It uses
+no credentials, model, or existing profile.
+
 ## B. Disposable install
 
 ```sh

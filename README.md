@@ -157,7 +157,12 @@ profile on DSH `0.2.2-rc.5`. Details, evidence, and unverified items are in
 ```sh
 npm test          # plugin, prompt, and skill contract tests
 npm run check     # packaging, manifest, locale, detail, and patch checks
+npm run test:smoke # disposable profile: install tarball, check preset, remove
 ```
+
+`test:smoke` needs `dsh` and `pnpm` on `PATH`; set `DSH_BIN` when the CLI is
+somewhere else. It creates a temporary `DSH_HOME`, uses no credentials, and
+cleans up after itself.
 
 No dependencies are installed for these checks. `node --test` and Node 22 are
 enough. YAML validation in `npm run check` uses `python3` + PyYAML when
@@ -174,7 +179,7 @@ locale/en.json|zh.json   Bundle card metadata
 docs/DETAIL*.md          Bundle detail document (one preview image)
 docs/preview.svg         Feature image
 icon.svg                 Plugin icon
-test/                    Unit and packaging checks
+test/                    Unit, packaging, and disposable-profile smoke tests
 ```
 
 ## Uninstall
