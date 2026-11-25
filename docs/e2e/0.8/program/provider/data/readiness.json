@@ -1,0 +1,11 @@
+{
+  "candidate": "0.8.0",
+  "activeProfile": "0.7.0",
+  "gates": [
+    { "id": "research", "status": "blocked", "score": 84 },
+    { "id": "ui-design", "status": "pass", "score": 91 },
+    { "id": "program", "status": "partial", "score": null }
+  ],
+  "tests": { "passed": 12, "total": 12 },
+  "release": { "published": false, "tag": null, "notes": "local candidate; no commit/push/tag/install" }
+}

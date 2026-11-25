@@ -1,0 +1,22 @@
+[
+  {
+    "file": "page.png",
+    "state": null,
+    "size": "1440x900",
+    "zoom": 1,
+    "animationWaitMs": 0,
+    "issues": [],
+    "lint": [
+      {
+        "rule": "smallText",
+        "label": "文字小于 11px",
+        "count": 26,
+        "examples": [
+          "span「RELEASE GATE」（10px）",
+          "span「BLOCKED」（10px）",
+          "div.l「DEVELOPMENT / PROGRAM」（10px）"
+        ]
+      }
+    ]
+  }
+]

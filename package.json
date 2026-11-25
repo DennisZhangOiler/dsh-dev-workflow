@@ -1,7 +1,7 @@
 {
   "name": "dsh-rd-workflow",
-  "version": "0.7.0",
-  "description": "Non-default R&D Workflow agent preset for DeepSeek Harness: development and technical research pipelines, convention bootstrap, independent review, UI scoring, and recursive module/program orchestration.",
+  "version": "0.8.0",
+  "description": "Mode-aware R&D Workflow agent preset for DeepSeek Harness: Light/Standard/Deep development, research, UI, and Program workflows.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -17,8 +17,8 @@
     "cordis.patch.yml",
     "skills",
     "locale/*.json",
-    "docs",
-    "test",
+    "docs/*.md",
+    "docs/screenshot-*.png",
     "icon.svg",
     "README.md",
     "README.zh.md",
@@ -43,7 +43,7 @@
     "access": "public"
   },
   "scripts": {
-    "test": "node --test test/plugin.test.mjs",
+    "test": "node --test test/*.test.mjs && node scripts/verify-e2e.mjs",
     "check": "node test/check.mjs",
     "test:smoke": "node test/smoke-temp-profile.mjs"
   },

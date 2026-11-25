@@ -1,0 +1,8 @@
+{
+  "pass.html": { "verdict": "PASS", "areas": { "accessibility": ">=12/15", "layout": ">=12/15" } },
+  "fail.html": {
+    "verdict": "FAIL",
+    "reason": "High visual polish is possible, but Accessibility/Touch/mobile floors fail; a total-only scorer may still score high.",
+    "expected_floors": ["Accessibility <12/15", "Layout <12/15 (390px overflow)", "Interaction <12/15 (tiny targets)"]
+  }
+}

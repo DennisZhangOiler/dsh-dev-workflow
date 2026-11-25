@@ -54,12 +54,9 @@ batched once. Get explicit architecture approval before UI work.
 
 ## P2 - UI direction selection
 
-Follow the project's UI policy exactly. If the docs state a minimum count or a
-selection gate, satisfy it even for a small change. If the docs are silent:
-
-- small/local visual change: one direction, self-review, no selection menu;
-- large/structural UI change: ask once how many directions (recommend three) and
-  wait for the user's choice.
+Follow project UI policy exactly; satisfy any count/selection gate. If silent:
+- small/local: one direction; independent score still required;
+- large/structural: ask once how many (recommend three), wait for choice.
 
 Produce structurally different directions, not color swaps. Use the UI rubric
 and an independent scorer, then present passing directions with screenshots,
@@ -74,8 +71,10 @@ Build a pure frontend demo of the chosen direction with mock/local data; no
 backend, migrations, production data, or deployment. Use the project's design
 system and stack. Cover key screens and states, desktop and mobile.
 
-Put the demo in front of the user and iterate on concrete feedback. Freeze when
-the user accepts:
+Put the demo in front of the user and iterate on concrete feedback. Before
+freeze, an independent scorer using `rd-workflow-ui-rubric` scores the built demo
+(per-area floors + total >=85 + no P0/P1, real interaction/mobile/a11y); the score and
+screenshots are part of the freeze record. Freeze when the user accepts:
 
 ```text
 ## Frozen UI contract
@@ -105,8 +104,9 @@ rollout. For each module record:
 - Interfaces consumed/provided:
 - Frozen UI references:
 - Data/API/migration:
-- Acceptance criteria:
-- Test plan:
+- Acceptance criteria (AC IDs):
+- Test/contract plan (provider/consumer):
+- Runtime resources (ports/DB/fixtures/env):
 - Dependencies and order:
 - Rollout/rollback:
 ```
@@ -119,69 +119,58 @@ before dispatch unless that exact list was already approved.
 
 ## P5 - Module execution
 
-Use `subagent` for each long-lived module lead; use `workflow` for fan-out that
-needs no long-lived conversation, such as independent UI scoring. Give each
-module lead a self-contained prompt with:
+Use `subagent` for long-lived module leads; `workflow` for independent fan-out
+(e.g. UI scoring). Give each lead the architecture, frozen UI, module contract,
+owned paths/shared-file rules/dependencies, `rd-workflow` + `rd-workflow-roles`,
+and "report to the parent, do not ask the user".
 
-- the program architecture and the frozen UI contract;
-- its module contract, owned paths, shared-file rules, and dependencies;
-- the change-mode pipeline from `rd-workflow` and the roles from
-  `rd-workflow-roles`;
-- the instruction to report back, not to ask the user directly.
+Module lead: checks docs/contract, triages, implements in disjoint paths, uses
+independent test author/read-only verifier, reports evidence. The program lead is the only user interface.
 
-A module lead: checks the project docs and module contract; triages the module
-change; implements in a disjoint write scope; uses an independent test author; a
-read-only verifier returns PASS/REJECT; and reports to the program lead.
+Each runtime interface has a provider/consumer contract test (schema check only
+for non-runtime contracts); module PASS does not imply integration PASS. Give each module isolated
+port/DB/schema/fixture namespace/temp dir; if runtime isolation is impossible,
+serialize and record why. Shared files/resources have one owner.
 
-The program lead is the only user interface; module leads report evidence to
-the program lead, which batches user questions and previews.
+### Frozen UI and gaps
 
-### Frozen UI and missing details
-
-- Frozen UI: implement behavior without redesigning it.
-- Trivial gap (copy, token, spacing, one state in the pattern): self-review and
-  report it under the small-change policy.
-- Material gap (new screen, interaction pattern, hierarchy, or flow): spawn a UI
-  detail lead, run direction/scoring for the delta, get the user decision
-  through the program lead, then resume. Never silently invent it.
+Implement frozen UI without redesign. Trivial gap (copy/token/spacing, no
+behavior): self-review, log, report. Material gap (new screen, interaction,
+hierarchy, flow, or error/empty/loading semantics): spawn a UI detail lead, score
+the delta, get the user decision via the program lead, resume. Log every gap:
+description, why, decision, approver, scored.
 
 ### Write scopes and concurrency
 
-- Module agents own only their module paths and explicitly assigned shared
-  files.
-- Shared files change sequentially, with the program lead as integrator.
-- If the project documents branches/worktrees, use them per module. Otherwise
-  keep module changes isolated by path and merge only after the module verifier
-  passes.
-- Run independent modules in parallel only when their paths and shared files do
-  not overlap.
+Module agents own module paths + assigned shared files. Shared files change
+sequentially, program lead integrates. Use project branches/worktrees when
+documented; otherwise isolate by path and merge after module verifier PASS.
+Parallel only when paths/shared files/runtime resources do not overlap.
 
 ### Recursion
 
-The preset allows three levels below the root. The normal shape is:
+Three levels below root is the normal maximum:
 
 ```text
-program lead (root)
+program lead
 └─ module lead
    ├─ UI detail / feature
    ├─ test author
    └─ verifier
 ```
 
-Use a deeper level only when a module genuinely needs a nested UI/test/verifier
-team. Do not create agents for ceremony; each child must have a concrete task,
-scope, and expected report.
+Deeper only for a nested UI/test/verifier team; no ceremony; every child has a
+task/scope/report.
 
 ## P6 - Integration, preview, delivery
 
-- Run the full official tests at the integration root; use a read-only
-  integration verifier for cross-module contracts, shared files, migrations,
-  permissions, and fixture residue.
-- Re-score only UI changed after the freeze; frozen UI gets functional checks.
-- Present an integrated preview with test data and a checklist; fix, retest,
-  re-verify, and return to preview after feedback.
-- Deliver by project docs only; report what ran, what did not, and migration
-  backup/rollback.
+Run full official test/lint/typecheck/build at the integration root; a read-only
+integration verifier runs cross-module contract tests and checks shared files,
+migrations, permissions, fixture residue, runtime-resource collisions. Re-score
+only UI changed after freeze; frozen UI gets functional checks. Present an
+integrated preview with test data/checklist; fix/retest/re-verify on feedback.
+Deliver by docs only; report what ran/not, migration `MIGRATION.md` rehearsal/
+rollback, and post-deploy smoke/monitoring via `rd-workflow-delivery`.
 
 ## Program gates
 
@@ -189,7 +178,7 @@ Do not cross these without the user:
 
 1. architecture approved;
 2. UI direction chosen (or the documented selection gate passed);
-3. static demo accepted and UI frozen;
+3. static demo independently scored and accepted; UI frozen;
 4. module plan approved when not already covered;
 5. integrated preview accepted;
 6. delivery method from project docs.
@@ -204,6 +193,7 @@ design changes go back through the relevant gate.
 - Building a backend before the static demo is accepted.
 - Letting module agents redesign frozen UI.
 - Parallel agents editing the same shared file.
-- A program lead that micro-manages module implementation instead of holding
-  contracts and integration.
 - Claiming integration or user acceptance from module PASS alone.
+- Freezing a demo without an independent score.
+- Treating file ownership as enough without runtime-resource isolation.
+- Skipping provider/consumer contract tests because modules pass alone.

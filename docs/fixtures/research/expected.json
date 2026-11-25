@@ -1,0 +1,81 @@
+{
+  "weak-plan.md": {
+    "verdict": "REVISE",
+    "areas": {
+      "baseline": "below floor",
+      "experiment_sufficiency": "below floor"
+    },
+    "blocking": [
+      "no baseline",
+      "one run",
+      "no thresholds"
+    ]
+  },
+  "narrow-directions.md": {
+    "verdict": "REVISE",
+    "areas": {
+      "selected_direction_execution": "below floor"
+    },
+    "blocking": [
+      "no baseline/metrics/plan"
+    ],
+    "p2": [
+      "coverage: omitted do-nothing/obvious alternative; recorded, not a veto"
+    ]
+  },
+  "single-run-strong.md": {
+    "verdict": "REVISE",
+    "blocking": [
+      "single run",
+      "adopt from partial",
+      "no CI/slice/raw data"
+    ]
+  },
+  "vague-review.md": {
+    "verdict": "REVISE",
+    "allowedVerdicts": [
+      "REVISE",
+      "REJECTED"
+    ],
+    "areas": {},
+    "blocking": [
+      "no findings",
+      "no gate table",
+      "no evidence"
+    ]
+  },
+  "strong-plan.md": {
+    "verdict": "PASS",
+    "allowedVerdicts": [
+      "PASS"
+    ],
+    "observed": {
+      "score": 96,
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "blocking": []
+  },
+  "partial-adopt.md": {
+    "verdict": "REVISE",
+    "areas": {
+      "decision": "partial cannot support adopt"
+    },
+    "blocking": [
+      "partial claim cited by adopt recommendation"
+    ]
+  },
+  "floor-boundary.md": {
+    "verdict": "PASS",
+    "allowedVerdicts": [
+      "PASS"
+    ],
+    "observed": {
+      "score": 80,
+      "areas": "all at floor",
+      "p3": 2
+    },
+    "blocking": []
+  }
+}

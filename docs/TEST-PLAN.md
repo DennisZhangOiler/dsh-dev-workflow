@@ -29,7 +29,7 @@ Expected:
 - `prompt.md` is 6000-8000 characters.
 - Each skill body is <= 8192 characters.
 - One prompt section named `rd-workflow:contract`, order 100, no interpolation.
-- Four skills registered with valid names, descriptions, `whenToUse`, and the
+- Nine skills registered with valid names, descriptions, `whenToUse`, and the
   `skills/` resource base.
 - Package files include every shipped runtime file.
 - Locale `meta.detail` exists and the detail document has exactly one image.
@@ -70,8 +70,8 @@ Run these as analysis-only prompts; no code change is needed.
 2. Docs are silent, large/structural UI change: the agent asks once how many
    directions to explore (recommends three) and waits. Silence or an internal
    PASS is not a selection.
-3. Docs are silent, small/local UI change: one direction with self-review is
-   allowed; no selection menu.
+3. Docs are silent, small/local UI change: one direction is allowed, but still
+   needs an independent score; no selection menu.
 4. If the user says "you decide", record that as the user's decision.
 
 ## A5. Program mode
@@ -106,7 +106,8 @@ Run these as analysis-only prompts; no code change is needed.
 2. Expected: an experiment plan with baseline, workload, metrics, runs,
    environment, thresholds, stop criteria, and artifacts.
 3. Expected: an independent **plan review** scores the plan against the
-   `rd-workflow-research-review` rubric; gate >=85, no P0/P1. No demo starts
+   `rd-workflow-research-review` rubric; gate: per-area floors + no P0/P1,
+   total >=80. No demo starts
    while the verdict is REVISE.
 4. Confirm the plan passes. Expected: small demos and baseline under
    `research/<topic>/spikes/`; production code untouched; semantic parity,
@@ -121,6 +122,57 @@ Run these as analysis-only prompts; no code change is needed.
    development pipeline.
 8. Ask a simple factual question; expected a direct answer, not the full
    research pipeline.
+
+## A8. Acceptance contract and traceability
+
+1. A normal change must produce AC IDs, DoD, applicable NFRs, risk tier, and an
+   AC→test→evidence matrix before implementation.
+2. Phase 4 must show the user AC/DoD/NFR and get explicit confirmation, not only
+   a direction/change list.
+3. A fixture with an AC that has no test/evidence must be REJECTED at Phase 7.
+4. A fixture with unit tests green but a failing typecheck/build/lint must be
+   REJECTED.
+5. A high-risk fixture without threat model/SCA/license/human approval must be
+   blocked, not PASSed.
+
+## A9. Reviewer independence and calibration
+
+1. Every verifier/UI scorer record includes role, identity, model/provider,
+   prompt hash, diff/input hash, timestamp, and all prior verdicts.
+2. A REJECT cannot be replaced by a new lenient reviewer without preserving the
+   original verdict and reason.
+3. Negative fixtures: missing AC evidence; green unit tests with failing
+   typecheck/build; missing migration rehearsal; UI behavior with 390px overflow;
+   vague review without findings. Each must fail.
+4. Positive fixture: complete AC/evidence/commands/UI score -> PASS.
+5. Same-agent fallback is labeled not independent and cannot be used as
+   independent verification for high-risk work.
+
+## A10. Migration and release
+
+1. A data/migration change requires `MIGRATION.md`: compatibility matrix,
+   backfill/dual-run, rehearsal on representative data, backup restore, rollback
+   rehearsal, cutover/verification, owner/trigger.
+2. A deploy requires observed post-deploy smoke, monitoring window, abort/
+   rollback trigger, and release/deploy ID.
+3. A green unit test is not delivery evidence; a written migration note without
+   rehearsal is not PASS.
+4. No CI/deploy success claim without an observed pipeline/deployment result.
+
+## A11. End-to-end evidence pack
+
+At least once per release, run and record:
+
+- one No UI change through contract → test/lint/typecheck/build → verifier →
+  preview → delivery;
+- one UI design change through independent direction score → user choice →
+  implementation → final independent score → preview;
+- one high-risk/migration fixture through NFR/threat/SCA → rehearsal/rollback →
+  human approval → post-deploy plan;
+- negative fixtures above, with the exact rejection evidence.
+
+Static string tests are labeled static; screenshots of plans are not execution
+evidence; an internal PASS is not user acceptance.
 
 ## B. Disposable install
 

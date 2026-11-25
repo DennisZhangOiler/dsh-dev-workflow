@@ -1,0 +1,5 @@
+# Calibration input
+
+Decision: choose a parser library.
+Plan: candidate X vs current baseline; one run each; no variance/CI; no representative slice; raw data not retained.
+Draft conclusion: “X is 2x faster; recommend adopt.”

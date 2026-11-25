@@ -1,0 +1,87 @@
+# Plan — choose a JSON parser for a log-ingestion service
+
+## Decision
+
+Choose the parser for 5–20 MB JSON log payloads on Node 22. Current baseline is
+`JSON.parse`. Candidates: a streaming parser (A) and an incremental tokenizer
+(B). Decision owner: maintainer. Deadline: one 20-minute measurement block.
+
+## Baseline and controls
+
+- Baseline: current `JSON.parse` from Node v22.23.2, same payload snapshots,
+  same machine, same warmup/timed protocol.
+- Control: a pre-parsed object passed directly to the consumer; it isolates
+  parser cost from downstream work.
+- Paired/alternating order: baseline and candidates alternate; each run is a fresh
+  child process; seeds and input SHA-256 are recorded. This is not claimed as blinded.
+
+## Metrics and decision rule
+
+| ID | Metric | Gate/threshold | How measured |
+|---|---|---|---|
+| M1 | parse correctness | 100% of 20 curated cases + 5 malformed cases | expected exception/result table |
+| M2 | p50 parse ms | 95% CI lower bound of improvement ≥ 20%, equivalently upper bound of candidate/baseline ratio ≤ 0.8× | 7 timed reps, median, 95% bootstrap CI; report bounds |
+| M3 | peak RSS delta | ≤ 32 MB over baseline | child process `process.memoryUsage().rss` sampled after parse |
+| M4 | error quality | malformed input gives line/column or stable error code | table + no silent success |
+| M5 | dependency/build cost | no native build; ≤ 1 runtime dependency, license allowlist | manifest + license check |
+
+**Decision rule:** adopt only if M1, M4, M5 pass; the 95% CI lower bound of the
+improvement is ≥20% (upper bound of candidate/baseline ratio ≤0.8×); and M3
+passes on all three representative payloads. A 20% point estimate with CI
+[1%, 39%] is rejected; adoption needs the conservative bound to clear 20%.
+Otherwise keep the baseline or run a follow-up. Research may recommend; the
+maintainer makes the adoption decision.
+
+## Selected directions
+
+| Direction | User rationale | Experiments | Falsifier | Slice | Kill criterion |
+|---|---|---|---|---|---|
+| A streaming | reduces buffering for large logs | EXP-1/2/3 | no ≥20% CI improvement on 20 MB | mixed 20 MB | native build required or correctness regression |
+| B tokenizer | better error line/column | EXP-1/2/4 | no line/column on malformed input | mixed 20 MB | cannot report line/column |
+
+Each direction has its own falsifier and kill criterion; baseline is kept if
+neither clears the gates.
+
+## Representative slice
+
+Three payload families from the real service shape (synthetic but structurally
+representative): 1 MB flat records, 5 MB nested records, 20 MB mixed records
+with 2% malformed lines. Each family has a fixed seed and SHA-256. Excluded:
+> 100 MB files, concurrent HTTP ingestion, and browser runtimes. These are
+recorded as unmeasured, not generalized.
+
+## Experiments
+
+1. EXP-1: correctness table (20 valid + 5 malformed) for baseline/A/B.
+2. EXP-2: latency matrix 3 families × 3 implementations × 7 reps, warmup 3,
+   alternating order, fresh child.
+3. EXP-3: memory matrix same cells; one parse per child; report post-parse RSS
+   and a lower-bound caveat (no in-call peak sampling).
+4. EXP-4: malformed-error comparison; record error class/line/column.
+5. EXP-5: dependency/license/build audit of A/B.
+
+Stop/abort: if > 20 minutes or the machine load average > 2× start, stop and
+report partial evidence; do not extrapolate.
+
+## Artifacts and reproducibility
+
+`harness/bench.mjs`, `data/raw.json`, `data/env.json`, input SHA-256, Node/npm and
+runtime/dependency versions, lockfile or image hash, load average, exact commands
+with exit codes, and before/after production file hashes. Raw data is immutable,
+retained 30 days; temp dirs are cleaned; analysis scripts read raw only. A second
+reviewer can rerun the commands without network or secrets.
+
+## Risks / exclusions
+
+- P2 synthetic field distribution: accepted; claims are descriptive, no
+extrapolation to production distributions.
+- P2 post-parse RSS is a lower bound; accepted; no peak-memory claim.
+- P2 single host/Node/no CI: accepted; no generalization beyond this host.
+- P3 no >100 MB/concurrent/network runs: excluded.
+Unresolved P2 count: 3 (accepted, bounded). No P0/P1.
+- License/SCA: no new dependency until allowlisted.
+
+## Gate
+
+Plan review PASS required before any demo. If two REVISE rounds occur, STOP and
+return to the user; do not silently proceed.

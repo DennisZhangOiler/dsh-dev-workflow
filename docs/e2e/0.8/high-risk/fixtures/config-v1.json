@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "preset": {
+    "id": "dev-workflow",
+    "displayName": "研发流程",
+    "skills": [
+      "rd-workflow",
+      "rd-workflow-contract",
+      "rd-workflow-delivery",
+      "rd-workflow-program",
+      "rd-workflow-project-docs",
+      "rd-workflow-research",
+      "rd-workflow-research-review",
+      "rd-workflow-roles",
+      "rd-workflow-ui-rubric"
+    ]
+  },
+  "docs": {
+    "conventions": "docs/DEV_WORKFLOW.md",
+    "delivery": "docs/DELIVERY.md"
+  },
+  "ui": {
+    "rubric": "per-area floors"
+  }
+}

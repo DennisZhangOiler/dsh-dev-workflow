@@ -1,0 +1,28 @@
+{
+  "title": "readiness 0.8.0",
+  "subtitle": "active 0.7.0",
+  "published": false,
+  "tests": "12/12",
+  "gates": [
+    {
+      "id": "research",
+      "label": "blocked",
+      "score": 84
+    },
+    {
+      "id": "ui-design",
+      "label": "ready",
+      "score": 91
+    },
+    {
+      "id": "program",
+      "label": "partial",
+      "score": null
+    }
+  ],
+  "blocked": [
+    "research",
+    "program"
+  ],
+  "decision": "not published"
+}

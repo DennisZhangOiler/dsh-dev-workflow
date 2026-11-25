@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "project": "dsh-rd-workflow · readiness dashboard",
+  "brief": "Local release-readiness dashboard for the 0.8 candidate. Must show dev 78 / research 84, missing UI/Program/high-risk E2E, true-blind calibration gaps, 12/12 tests, no publish. No fake green.",
+  "nativeViewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "candidates": [
+    {
+      "id": "ledger",
+      "name": "Ledger / 证据台账",
+      "concept": "A warm editorial control room: the decision is the headline, the evidence is a ledger, and unproven gates are stamped rather than smoothed into green.",
+      "typography": "Iowan Old Style / Georgia for display; ui-monospace for evidence codes and labels.",
+      "palette": [
+        "#f3efe6",
+        "#1d1a15",
+        "#a9472a",
+        "#3f5d4a",
+        "#9a6b1f"
+      ],
+      "traits": [
+        "editorial",
+        "sober",
+        "paper",
+        "status stamps",
+        "tabular evidence"
+      ],
+      "source": "direction-a.html",
+      "kind": "html",
+      "interactive": true
+    },
+    {
+      "id": "instrument",
+      "name": "Instrument / 仪表盘",
+      "concept": "A dark release instrument: the gate is a red NO, the scores are readouts, and the blocker log is the primary working surface.",
+      "typography": "IBM Plex Sans / Noto Sans SC for display; ui-monospace for metrics and state.",
+      "palette": [
+        "#0a1014",
+        "#e7f0ee",
+        "#79e2d0",
+        "#ffb454",
+        "#ff6b6b"
+      ],
+      "traits": [
+        "instrument",
+        "dark",
+        "grid",
+        "numeric",
+        "red gate"
+      ],
+      "source": "direction-b.html",
+      "kind": "html",
+      "interactive": true
+    }
+  ]
+}

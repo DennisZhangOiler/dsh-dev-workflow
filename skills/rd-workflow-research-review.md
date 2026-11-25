@@ -1,94 +1,99 @@
 # Research review rubric
 
-Use this skill for the two independent review gates in technical research. The
-reviewer is never the author, the experimenter, or the synthesizer. Both gates
-return an explicit verdict; vague feedback is a failed review.
+Use for the two independent research gates. The reviewer is never the author,
+experimenter, or synthesizer. Record reviewer identity, model/provider, prompt
+hash, and input hash in `REVIEW-LOG.md`. Plan and results reviewers must be
+different agents. A reviewer rejected once may not be silently replaced by a
+more lenient one; keep every verdict and state any replacement reason.
 
 ## Gate 1 - Plan review, before any demo
 
-Inputs: the decision, baseline, user-selected directions, experiment plan,
-project constraints, and proposed artifacts.
+Inputs: decision frame, user-selected directions with rationale/kill criteria,
+experiment plan, slice definition, constraints, proposed artifacts. Coverage of
+the **broad direction set** is an R1 pre-check; this gate checks execution of the
+user's selected directions. Do not veto the user's choice without new evidence
+and an explicit user decision.
 
-Score 100 points:
+Gate: **every area at/above its floor, total >=80, no P0/P1, and at most 3
+unresolved P2**. The total is a gate, not a diagnostic.
 
-| Area | Points | Check |
-|---|---:|---|
-| Direction coverage | 20 | Is the proposed set broad enough for the decision? Do the mechanisms genuinely differ? Are obvious alternatives or constraints missing? Is the user's selection recorded? |
-| Decision and metrics | 15 | Does each metric answer the decision? Are thresholds, success/failure, and stop rules explicit? |
-| Baseline and controls | 15 | Is the baseline the real current implementation? Same workload/environment/version? No strawman or unfair comparison? |
-| Experiment sufficiency | 20 | Does each selected direction have enough demos, runs, edge/semantic cases, and variance? Does the plan test fit against a representative project slice (no separate migration phase)? |
-| Reproducibility and artifacts | 10 | Commands, versions, seeds, raw data, environment, cleanup, and retention defined? |
-| Risk and timebox | 10 | Dependencies, license, security, failure modes, timebox, and stop/abort conditions addressed? |
-| Reviewability | 10 | Claims are testable; assumptions are exposed; the plan is concrete enough to execute without inventing steps? |
+| Area | Points | Floor | Check |
+|---|---:|---:|---|
+| Selected-direction execution | 20 | 16 | Each selected direction has 1-3 experiments, falsifier, slice, stop/decision rule; user rationale/kill criteria recorded |
+| Decision and metrics | 15 | 12 | Metrics answer the decision; MDE/thresholds/decision rule; success/failure meaning |
+| Baseline and controls | 15 | 12 | Real current baseline; same workload/environment/runtime; no strawman |
+| Experiment sufficiency | 20 | 16 | Edge/semantic cases; runs/variance/CI; representative slice + exclusions; harness validity |
+| Reproducibility/artifacts | 10 | 8 | Commands, versions, seeds, raw data, lockfile/image hash, retention, cleanup |
+| Risk/license/safety | 10 | 8 | Dependency/license/CVE, sandbox isolation, credentials, data/security, timebox, stop/abort |
+| Reviewability | 10 | 8 | Claims testable; assumptions exposed; executable without invented steps |
 
-Gate: **>=85 and no P0/P1**. P0 means the plan cannot support the decision.
-P1 means the baseline, metrics, or evidence design would invalidate a conclusion.
-P2 is material but fixable; P3 is minor.
+Anchors: 0 missing/unusable; 50 present with a material gap; 100 specific,
+testable, sufficient. P0 = cannot support the decision; P1 = baseline, metrics,
+experiment sufficiency, slice, risk, or evidence design would invalidate a
+conclusion; P2 material/fixable; P3 minor.
 
-Verdict: `PASS` or `REVISE`. On `REVISE`, list every blocking item and the exact
-change that would make it pass. Demos may not start until the plan passes and
-is re-reviewed. A direction change after review needs the user's confirmation.
+Verdict `PASS`/`REVISE`; on `REVISE` list blocking findings with exact change and
+pass condition. No demo before `PASS`. After two `REVISE` cycles the outcome is
+`STOP`/`WAIVER` — the user may change direction, narrow scope, or stop; a waiver
+is not PASS, allows no demo, and supports no adopt/migrate conclusion.
 
-## Gate 2 - Results review, before the user sees conclusions
+## Gate 2 - Results review, before any user-facing conclusion
 
-Inputs: the approved plan, execution logs, raw data, artifacts, analysis, and
-draft memo.
+Inputs, in this order: approved plan, execution logs, raw data, artifacts; the
+reviewer first produces an independent `CLAIMS.md` with a hash; only then may it
+read the draft memo. It then maps memo claims to extracted claims and raw
+evidence, lists memo claims absent from extraction, and lists unused results.
 
-Check process:
+Process audit: commands/environment, baseline fairness, variance/CI, harness
+validity, missing runs, cherry-picking, semantic parity, failed/invalid
+experiments, slice coverage/exclusions, dependency/manifest changes. Rerun the
+decisive experiment or recompute a headline metric for every **adopt/migrate/
+security** claim; if impossible, that claim is at most `partial`. Lowering
+confidence never turns a single run into `supported`.
 
-- commands and environment match the plan; missing runs are explained;
-- baseline and candidates ran under the same conditions;
-- sample count, warmup, variance, and outliers support the stated precision;
-- raw data matches the reported numbers; no cherry-picking or silent filtering;
-- semantic/behavioral parity and edge cases were tested, not only speed;
-- failed, invalid, or aborted experiments are retained and explained;
-- experiments used a representative project slice for fit; no separate
-  migration phase was invented.
+Claim table: supported / partial / unsupported, exact allowed wording, evidence,
+confidence, rerun command/result. `partial` cannot support adopt/migrate.
+Also review **REC-1..n** recommendations: each must cite claim IDs; adopt/migrate
+requires all cited claims supported + measured-here + representative slice +
+pilot or written risk acceptance + downstream `MIGRATION.md`; any partial cited
+means the recommendation is limited to candidate/pilot.
 
-Check evidence-to-conclusion:
+Stamp `memo.md` with a SHA-256 and claim IDs; any later wording change requires
+delta re-review, with changed claims/new hash/verdict recorded. Reviewer must
+form the verdict before reading prior verdicts. Only after `PASS` may the memo
+be user-facing; label mid-results provisional.
 
-For each claim, record:
+Gate: every claim supported or partial-with-limit; no partial supporting
+adopt/migrate; every recommendation mapped; no unreviewed memo change.
+`REVISE` names missing evidence, rerun/revise/downgrade, and pass condition.
+Max two results cycles; then STOP/WAIVER, not silent PASS.
 
-| Claim | Evidence | Status | Allowed wording |
-|---|---|---|---|
-| <claim> | <artifact / run / data> | supported / partial / unsupported | <exact wording the evidence permits> |
-
-Then check:
-
-- does the evidence actually support the claim, or only a weaker one?
-- are alternative explanations or confounders ruled out?
-- are contradictions and missing data disclosed?
-- is confidence tied to evidence, not intuition?
-- what can **not** be concluded, and what evidence is missing?
-- does the memo include only reviewed claims, with `measured-here`,
-  `measured-sandbox`, or `reported` labels?
-- if implementation or migration is recommended, is it clearly a Development /
-  Program decision rather than a research result?
-
-Gate: every claim in the user-facing memo is **supported** or explicitly
-**partial with a stated limit**. No unsupported claim may be presented as a
-conclusion. Verdict `PASS` or `REVISE`. On `REVISE`, state the exact missing
-evidence, whether to rerun/revise/downgrade, and what would make the claim
-pass. Only after PASS does the memo go to the user.
-
-## Explicit-feedback rules
+## Explicit feedback rules
 
 Every finding must contain:
 
-1. **Severity**: P0/P1/P2/P3 and blocking/non-blocking.
-2. **Location**: plan section, experiment, artifact, data file, or claim.
-3. **Evidence**: what the reviewer inspected; quote the exact number/command.
-4. **Why it matters**: the decision or conclusion it invalidates.
-5. **Required action**: the exact experiment, metric, comparison, or wording.
-6. **Pass condition**: what the reviewer will check on re-review.
+1. **Severity** P0/P1/P2/P3 and blocking/non-blocking.
+2. **Location** plan section, experiment, artifact, data file, or claim ID.
+3. **Evidence** exact file/line, command, number, or quote inspected.
+4. **Why it matters** the decision or claim it invalidates.
+5. **Required action** exact experiment, metric, comparison, or wording.
+6. **Pass condition** what re-review will check.
 
-Forbidden feedback: "improve the plan", "looks reasonable", "consider more
-data", "maybe add tests", or a score without findings. If the reviewer cannot
-verify something, mark `REVISE` and name the missing evidence. If a finding is
-non-blocking, say why it does not block the gate.
+Forbidden: “improve the plan”, “looks reasonable”, “consider more data”,
+“maybe add tests”, or a score without findings. If the reviewer cannot verify
+something, mark `REVISE` and name the missing evidence. A non-blocking finding
+must say why it does not block the gate. The reviewer does not rewrite the work;
+the author revises and requests re-review. Re-review checks changed items and
+regressions; the reviewer signs the verdict again.
 
-The reviewer does not rewrite the plan or memo; the author revises and requests
-re-review. Re-review checks the changed items and their regressions.
+## Calibration
+
+The author-side fixture manifest and expected outcomes live in
+`docs/fixtures/research/README.md` and `expected.json`; a reviewer must not read
+them, nor any prior review. Review only the supplied inputs under
+`docs/calibration-inputs/` and the frozen prompt/input hashes. Do not assume a
+fixture's expected verdict; derive it from the rubric. A review is assessed
+against the frozen calibration plan, not against a post-hoc answer key.
 
 ## Report templates
 
@@ -96,8 +101,10 @@ Plan review:
 
 ```markdown
 # Plan review
+Reviewer: <id/model/provider>  Input hash: <hash>
 Verdict: PASS | REVISE
-Score: <n>/100
+Score: <n>/100 (gate); unresolved P2: <n>/3
+Floors: <area: score/floor/status>
 P0/P1 blocking: <none | list>
 
 ## Findings
@@ -106,15 +113,13 @@ P0/P1 blocking: <none | list>
   Why: ...
   Required action: ...
   Pass condition: ...
-
-## Re-review
-<changed items and regression checks>
 ```
 
 Results review:
 
 ```markdown
 # Results review
+Reviewer: <id/model/provider>  Input hash: <hash>
 Verdict: PASS | REVISE
 
 ## Process findings
@@ -124,24 +129,24 @@ Verdict: PASS | REVISE
   Pass condition: ...
 
 ## Claim verdicts
-| Claim | Evidence | Status | Allowed wording |
-|---|---|---|---|
+| Claim ID | Claim | Evidence | Status | Allowed wording |
+|---|---|---|---|---|
 
 ## What cannot be concluded
 <limits, missing evidence, next experiment>
 
-## Re-review
-<changed items and regression checks>
+## Memo stamp
+<claim IDs, hash, delta-review trigger>
 ```
 
 ## Anti-patterns
 
-- Self-review or author/reviewer swapping.
-- Reviewing only the prose and not the raw data/commands.
+- Self-review, author/reviewer swapping, or hiding a prior REJECT.
+- Reviewing only prose; not raw data, commands, and artifacts.
 - Accepting upstream benchmarks as evidence for this project.
-- A score with no blocking findings or no exact pass condition.
+- A score with no gate table/residual risks, or a finding with no pass condition.
 - Starting demos while plan review is `REVISE`.
-- Sending the user an unsupported conclusion "with caveats".
+- Letting `partial` support adopt/migrate.
+- Sending unreviewed conclusions or mid-results to the user.
+- Adding a separate migration phase to research; migration belongs to Development.
 - Reviewer rewriting the work instead of stating the required correction.
-- Adding a separate migration phase to research; actual migration belongs to
-  Development/Program.

@@ -1,0 +1,41 @@
+{
+  "F1": {
+    "verdict": "REVISE",
+    "fixture": "weak plan",
+    "observed": {
+      "score": 5
+    }
+  },
+  "F2": {
+    "verdict": "REVISE",
+    "fixture": "narrow directions",
+    "observed": {
+      "score": 10
+    }
+  },
+  "F3": {
+    "verdict": "REVISE",
+    "fixture": "single-run strong",
+    "observed": {}
+  },
+  "F4": {
+    "verdict": "REVISE",
+    "fixture": "partial adopt",
+    "observed": {}
+  },
+  "F5": {
+    "verdict": "REJECTED",
+    "fixture": "vague review",
+    "observed": {}
+  },
+  "F6": {
+    "verdict": "PASS",
+    "fixture": "strong parser plan",
+    "observed": {}
+  },
+  "F7": {
+    "verdict": "PASS",
+    "fixture": "floor parser plan",
+    "observed": {}
+  }
+}

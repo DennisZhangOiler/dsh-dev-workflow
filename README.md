@@ -14,6 +14,21 @@ use Standard or another preset.
 
 ![研发流程 (R&D Workflow) in the new-session preset menu](docs/screenshot-preset.png)
 
+## Modes: Light, Standard, Deep
+
+Pick the process by risk, not by habit. The default is **Standard**; the agent
+asks once only if it cannot infer the mode, and you can switch at any time.
+
+| Mode | Use it for | What you get |
+|---|---|---|
+| **Light** | copy/docs, one-file fix, diagnostic, small reversible change | short plan/check, tests or self-check, report; no contract file, reviewer, or full E2E |
+| **Standard** (default) | normal feature/bugfix/refactor, UI change, research question | contract for non-trivial work, implement/test, one independent review when risk/UI/decision warrants |
+| **Deep** | high-risk/security/migration/production/scale, large Program | full contract, independent plan/results/verifier reviews, scored UI/research, E2E/calibration, human gates |
+
+The long pipeline below is the **Deep** playbook. Standard uses the same steps
+proportionally; Light keeps only the brief, change, and check. See
+[`docs/MODES.md`](docs/MODES.md).
+
 ## What it does
 
 The first rule is a **request router**. On every message the agent classifies
@@ -23,23 +38,42 @@ research brief instead of continuing the previous bugfix loop.
 
 ![A new feature request re-enters Phase 0/1 instead of continuing the bugfix loop](docs/screenshot-reentry.png)
 
-## What it does
+## Development workflow (Deep playbook)
 
-The rules live in a system-prompt section, so they survive context compaction
+Deep uses the full table below. Standard uses the same steps proportionally; Light skips the contract/score/E2E ceremony. The rules live in a system-prompt section, so they survive context compaction
 and do not depend on the conversation history.
 
 | Phase | Result |
 |---|---|
 | 0. Project understanding | Reads `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, `README.md`, and other docs; finds commands, delivery, layout, and where UI surfaces live |
-| 1. Requirement, contract, triage | Confirms goal, scope, non-goals; classifies the change as **UI design**, **UI behavior**, or **No UI**; writes only the contract fields the triage needs |
-| 2. UI exploration | **UI design only:** three structurally different directions with real desktop and mobile screenshots (small changes may use fewer) |
-| 3. Independent UI score | **UI design only:** a separate child agent scores each direction out of 100 against the project rubric or the bundled generic rubric; gate is >= 85 with no P0/P1 and no mobile overflow |
-| 4. User confirmation | Direction, screenshots, strengths/costs for UI design; changed states for UI behavior; functional change list for No UI |
+| 1. Contract and triage | Writes an acceptance contract: AC/DoD/NFR, risk tier, data/UI, traceability; classifies **UI design**, **UI behavior**, or **No UI**; asks material questions once |
+| 2. UI exploration | **UI design only:** directions per project policy (small/local may use one; large asks once) with real desktop and mobile screenshots |
+| 3. Independent UI score | **UI design only:** a separate scorer scores every direction (even one) against the rubric; gate is **per-area floors + total >= 85 + no P0/P1**, plus real mobile/keyboard/a11y checks |
+| 4. User confirmation | AC/DoD/NFR plus direction/screenshots/change list; changed states for UI behavior; functional list for No UI; explicit yes |
 | 5. Development | One feature agent owns the change and, for UI work, both UI and behavior; a separate test author writes tests only |
-| 6. Independent testing | Functional/CLI/API for No UI; changed UI states for UI behavior; viewport/visual/accessibility for UI design; real API/mutations and marker-based cleanup in all cases |
-| 7. Independent verification | Read-only verifier checks diff scope, runs the official tests, checks real data/permissions/edge cases and fixture residue; UI score only for UI design; PASS/REJECT |
+| 6. Independent testing | Tests each AC; functional/CLI/API, UI behavior, or UI design checks; real APIs/mutations, markers/cleanup; test/lint/typecheck/build |
+| 7. Independent verification | Read-only verifier checks every AC + evidence, scope, commands, data/edges/residue, and final UI score; records reviewer identity/hash/verdicts |
 | 8. User preview | Preview steps/test data/checklist; for No UI a command, sample request, or output sample; internal PASS is not user acceptance |
-| 9. Delivery | Follows the project's documented delivery exactly; no assumed MR/PR/CI/deploy |
+| 9. Delivery | Follows documented delivery; migration `MIGRATION.md` rehearsal/rollback; post-deploy smoke/monitoring; no assumed MR/PR/CI/deploy |
+
+### Contract, risk, and evidence
+
+Before implementation, the agent writes an acceptance contract (`AC-1..n`,
+Definition of Done, applicable NFRs, risk tier, data/UI/migration, and an
+AC→test→evidence matrix). The user confirms AC/DoD/NFR, not only a direction.
+Risk tiers add gates: high-risk work needs a threat model, SCA/license, SAST,
+migration rehearsal, rollback/post-deploy plan, and human code/release approval.
+See `rd-workflow-contract` and `rd-workflow-delivery`.
+
+![Acceptance contract with AC, DoD, NFR, risk tier, and rollback](docs/screenshot-contract.png)
+
+![Delivery record: 18/18 tests, independent verifier PASS, hashes, and honestly skipped commands](docs/screenshot-e2e.png)
+
+A claim is labeled **implemented**, **statically tested**, **exercised
+end-to-end**, or **observed in production**. The workflow does not turn a unit
+test into production proof, a plan screenshot into execution evidence, or an
+internal PASS into user acceptance. It does not replace human code review,
+security review, or release ownership for high-risk changes.
 
 ### Technical research mode
 
@@ -53,20 +87,22 @@ representative sandbox.
 |---|---|
 | R0 Context | Read docs/code; define the decision, current baseline, metrics, constraints, timebox, and output |
 | R1 Directions | Propose a **broad set** of genuinely different directions (no fixed 2-3); user selects which to pursue; no build before this gate |
-| R2 Plan + plan review | Baseline/candidate, workload, metrics, runs/variance, thresholds, stop criteria, artifacts; an **independent plan review** scores it and gates it at >=85 with no P0/P1 before any demo |
+| R2 Plan + plan review | Baseline/candidate, MDE/CI/noise, runs/variance, slice/exclusions, thresholds, stop, artifacts; **independent plan review uses per-area floors + total >=80 + no P0/P1 + <=3 unresolved P2** before any demo |
 | R3 Small demos | Small falsifiable demos and baseline under the same conditions, in a sandbox; semantic parity, commands/versions/data; failures kept; production code untouched |
 | R4 Measurement | Correctness, performance with variance, cost, failure modes; observation separated from interpretation; no cherry-picking |
-| R5 Results review | A fresh reviewer audits the process (commands, data, baseline fairness, variance) and every claim; explicit supported/partial/unsupported verdicts; unsupported claims must be revised, downgraded, or backed by more experiments |
+| R5 Results review | A fresh reviewer extracts claims from raw data, audits process/data/baseline, marks supported/partial/unsupported with exact allowed wording; `partial` cannot support adopt/migrate; freeze the memo hash |
 | R6 Decision | Memo containing only reviewed claims, with `measured-here` / `measured-sandbox` / `reported` labels; rejected directions, confidence, open questions, what cannot be concluded |
-| R7 Handoff | Development contract or Program input; optional time-boxed pilot; actual migration/implementation is Development work, not research |
+| R7 Handoff | Development/Program input; sandbox-only = candidate; adopt/migrate/security needs a pilot or written user risk acceptance + `MIGRATION.md`; research never migrates production |
 
 There is **no separate migration-validation phase**. Experiments use a
 representative project slice or copy so fit is exercised during measurement; if
 real migration is needed, it goes through the normal development pipeline.
 
-Standard depth = user-selected directions, an approved experiment plan, at least
-one measured demo per selected viable direction, and a results review. Deep
-research adds more demos/runs, larger matrices, and sensitivity analysis.
+Standard depth = user-selected directions, an approved plan, one measured demo
+per selected viable direction, and a results review. Deep adds more demos/runs,
+independent rerun, second reviewer, mandatory pilot/risk acceptance and
+`MIGRATION.md`. Quick is a valid low-risk path but cannot support adopt/migrate
+claims.
 
 Review feedback is explicit: severity, location, evidence, why it matters, the
 required action, and the pass condition. A score without findings, or feedback
@@ -90,17 +126,18 @@ lead becomes a program orchestrator instead of implementing everything itself:
    direction count, satisfy it; if not, ask for a large/structural UI change
    (recommend three) and wait for the user's choice. Never self-confirm.
 3. **Static frontend demo.** Build a pure frontend demo with mock data, iterate
-   with user feedback, then freeze tokens, components, screens, states, and
-   responsive rules.
+   with user feedback; get an **independent score before freeze**, then freeze
+   tokens, components, screens, states, and responsive rules.
 4. **Module plan.** Split into complete vertical modules with interfaces,
-   owned paths, shared-file rules, dependencies, acceptance criteria, and tests.
+   owned paths, shared-file rules, dependencies, acceptance criteria, and
+   provider/consumer contract tests; isolate ports/DB/fixtures/env.
 5. **Module agents.** Dispatch module leads through `subagent`; each runs this
    pipeline in its module. Frozen UI is not redesigned; a material missing UI
    detail spawns a child UI design/scoring flow. A module lead may spawn its own
    UI, feature, test, and verifier children (depth up to 3 below the root).
-6. **Integration.** A read-only integration verifier checks cross-module
-   contracts, shared files, migrations, permissions, and fixture residue; then
-   user preview and project-documented delivery.
+6. **Integration.** A read-only integration verifier runs cross-module contract
+   tests and checks shared files, migrations, permissions, fixture residue, and
+   runtime-resource collisions; then preview and documented delivery.
 
 The program lead is the only user interface; module leads report evidence back
 to it. Shared files have one owner and change sequentially; independent modules
@@ -167,8 +204,9 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.7.0`; the CLI command was verified on this repo. A
-preset update may also report `restart-required`.
+candidate is `0.8.0`; it is **not tagged/published yet** (current published
+release: `v0.7.0`). Install only after maintainer confirmation; the CLI command
+was verified on this repo. A preset update may report `restart-required`.
 
 ### Before installing
 
@@ -192,7 +230,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.7.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.8.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and
@@ -218,7 +256,7 @@ dsh plugin --profile <profile> remove dsh-rd-workflow
 ### Verify the preset
 
 ```sh
-dsh --profile <profile> --dump-config | grep -A3 preset-rd-workflow
+dsh --profile <profile> --dump-config | grep -A3 preset-dev-workflow
 dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 ```
 
@@ -234,9 +272,10 @@ The settings page still uses an old table. Make it a filterable card list,
 keep the existing design system, and make it work on mobile.
 ```
 
-The preset's contract section then runs the pipeline. You can also trigger the
-playbook skills by name: `rd-workflow`, `rd-workflow-project-docs`,
-`rd-workflow-ui-rubric`, and `rd-workflow-roles`.
+The preset's contract section then runs the pipeline. Playbooks: `rd-workflow`,
+`rd-workflow-contract`, `rd-workflow-delivery`, `rd-workflow-research`,
+`rd-workflow-research-review`, `rd-workflow-program`,
+`rd-workflow-project-docs`, `rd-workflow-ui-rubric`, `rd-workflow-roles`.
 
 ### Recommended project documents
 
@@ -252,12 +291,22 @@ Examples are in the `rd-workflow-project-docs` skill and in
 [`docs/project-conventions.md`](docs/project-conventions.md). They are examples,
 not a required schema.
 
-## Verified
+## Reference evidence (Deep mode)
 
-Boot, preset visibility, system-prompt injection, subagent/workflow calls, an
-unaffected Standard session, and uninstall residue were checked in a disposable
-profile on DSH `0.2.2-rc.5`. Details, evidence, and unverified items are in
-[`docs/VERIFICATION.md`](docs/VERIFICATION.md).
+The `docs/e2e/0.8/` packs are **Deep-mode reference evidence**, not a requirement
+for every task. They show what a serious gate looks like:
+
+- No-UI fixture: contract hash, AC1–AC7, 8/8 tests, independent verifier 89 PASS.
+- UI design: A · Ledger readiness dashboard, independent score 91 PASS.
+- Program: two-module contract/isolation E2E; independent review 86 narrow PASS.
+- High-risk: 0.7→0.8 config-migration rehearsal, 7/7 tests, byte-identical
+  rollback; human approval for rehearsal only; real apply remains blocked.
+- Research: plan review REVISE→PASS, results review PASS, memo review PASS,
+  reduced-scope calibration.
+
+These scores are **not** a universal release gate. Light/Standard tasks use the
+proportional checks in [`docs/MODES.md`](docs/MODES.md). No plugin release,
+commit, tag, or install is claimed here; the candidate is local.
 
 ## Requirements and compatibility
 

@@ -2,166 +2,157 @@
 
 Use for a non-trivial **technical/codebase** investigation: code behavior,
 architecture/dependency choices, feasibility, root cause, or an evidence-based
-decision. Answer simple factual questions directly. Technical/codebase only;
+decision. Simple factual questions get a direct answer. Technical/codebase only;
 external market/user/survey research is out of scope.
 
-Research is experiment-first. Documents and upstream benchmarks generate
-hypotheses; final evidence is measured here or in a representative sandbox.
-Production code is read-only; demos live in a sandbox.
+Documents and upstream benchmarks generate hypotheses; final evidence is measured
+in this project or a representative sandbox. Production code is read-only; demos
+live in a sandbox.
 
-## Depth and gates
+## Depth, gates, and valid short paths
 
-- **Quick scan**: broad directions and one small spike for the leading direction.
-  Not enough for a final recommendation.
-- **Standard** (default): user-selected directions, an approved plan, one
-  measured demo per selected viable direction, results review.
-- **Deep**: more demos/runs, larger matrices, sensitivity analysis, repeated
-  review.
+| Depth | Use when | Required |
+|---|---|---|
+| **Quick** | Low-cost, reversible | decision frame, 1 spike, internal note labeled **unreviewed**; no user-facing conclusion/adopt/migrate |
+| **Standard** | Medium risk | R0-R6, plan + results reviews, one approved demo per viable direction |
+| **Deep** | Migration/security/scale | Standard + more runs, independent rerun, second reviewer, mandatory pilot or risk acceptance, `MIGRATION.md` |
 
-Gates, in order:
+Order: user selects directions → plan review → demos → analysis/draft memo →
+results review → final memo/user acceptance → handoff. Quick skips both reviews
+and is invalid for adopt/migrate/security decisions.
 
-1. user selects the research directions (R1);
-2. independent plan review passes before any demo (R2);
-3. independent results review passes before conclusions reach the user (R5);
-4. user accepts the reviewed decision memo (R6);
-5. implementation/pilot gets a development contract (R7).
+## R0 - Decision frame (DECISION.md)
 
-Reviews use `rd-workflow-research-review`; every finding is explicit.
+Read project docs and relevant code. Write `DECISION.md`: decision, current baseline, metrics,
+thresholds/MDE, constraints (runtime/deps/data/security/license/team/budget),
+depth, timebox, artifacts, and what would change the decision. Ask once for
+user-owned gaps. At R1, show the frame with directions and ask the user to
+confirm both in one question.
 
-## R0 - Context, baseline, and decision
+## R1 - Directions, pre-check, and user choice
 
-Read `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/RESEARCH.md`, `README.md`, and
-relevant code. Define the decision, current baseline, success metrics/thresholds,
-constraints (runtime/deps/data/security/license/team/budget), timebox, and output
-location. Ask once only for user-owned gaps; write/update `docs/RESEARCH.md`.
-No secrets.
+Propose a **broad set**; no fixed 2-3 cap. Include **do-nothing/keep current**
+and obvious alternatives. Group by mechanism; show top 3-5 in detail, rest in an
+appendix with exclusion reasons (license, runtime, team, data, security). Do not
+hide options.
 
-## R1 - Directions and user choice
+Before the user chooses, run a lightweight **coverage/feasibility pre-check**
+(checklist/advisory, not a score): missing obvious direction, no do-nothing,
+unclear falsifier, demo infeasible, constraint violation. Show gaps beside the
+options. The user selects, records rationale and kill criteria, and may add or
+merge directions. Plan review checks execution, not the user's choice; only new
+evidence can reopen it, with an explicit user decision.
 
-Propose a **broad set of genuinely different directions**; do not cap at two or
-three. For each: mechanism, expected metric, assumptions, risks/failure modes,
-falsifier, smallest demo, and how it exercises a representative project slice.
-
-Present a comparison, your recommendation, and cost/risk. The user selects the
-directions; record the choice. Do not build before this gate. Group/rank a large
-set, but do not hide options.
-
-## R2 - Experiment plan and independent plan review
+## R2 - Experiment plan and plan review
 
 For each selected direction, plan 1-3 timeboxed experiments: baseline vs
-candidate on the same workload/environment; demo scope (standalone or a
-representative integration slice); metrics (correctness, latency/throughput/
-memory, dependency/build cost, failure modes, operational/security/license risk);
-runs/warmup/variance/seeds/versions/data; pass/fail and stop rules; artifacts;
-and how the experiment tests fit in this project.
+candidate under the same workload/environment/runtime; demo scope and a
+**representative slice**; metrics with MDE/decision rule and CI/noise floor;
+runs/warmup/pairing/seeds/versions/lockfile hash; pass/fail/stop/expiry/artifacts;
+harness validity (work counter, scaling, overhead, DCE/JIT/GC); dependency/
+license/CVE; migration/rollback/ops costs when relevant.
 
-Write the plan, then request **independent plan review** with
-`rd-workflow-research-review`. Gate: >=85, no P0/P1. Demos may not start until it
-passes. On `REVISE`, fix every blocking finding and re-review. A direction change
-returns to the user.
+Write `PLAN.md`, then request independent **plan review** with
+`rd-workflow-research-review`. Gate: every area at/above its floor, no P0/P1;
+total >=80 is also a gate. No demo on `REVISE`; fix findings and re-review. A
+direction change returns to the user.
 
-## R3 - Build and run small demos
+## R3 - Run small demos
 
-Use a sandbox: `research/<topic>/` (or the documented location), never
-production paths. Recommended layout:
+Use `research/<topic>/`; never production paths:
 
 ```text
-research/<topic>/
-  README.md            question, directions, user selection
-  PLAN.md              approved experiment plan
-  PLAN-REVIEW.md       independent plan review
-  baseline/            baseline script or measured result
-  spikes/<direction>/  minimal demos, README, run command
-  data/                raw results, logs, environment
-  RESULTS-REVIEW.md    independent results review
-  decision.md          memo and handoff
+DECISION.md PLAN.md PLAN-REVIEW.md baseline/ spikes/<direction>/ data/
+EVIDENCE-MATRIX.md CLAIMS.md RESULTS-REVIEW.md REVIEW-LOG.md memo.md
 ```
 
-Rules: one experimenter per direction, isolated scopes; small falsifiable demos,
-not production polish; multiple demos for variables/edge cases; use a
-representative project slice/copy so fit is exercised here (no separate
-migration phase); record commands/versions/seeds/data/environment; run the
-baseline under the same conditions; keep failures; clean up; no production
-code. Actual migration/implementation is Development/Program work.
+One experimenter per direction, isolated scopes. Falsifiable demos, not polish.
+Baseline under the same conditions. Record commands/versions/seeds/environment/
+lockfile hash/raw output/failures. Isolated dependencies; no root manifest or
+credential changes; no network for untrusted code; resource/time limits. Keep
+raw/failure evidence; clean only temporary services/build caches.
 
-## R4 - Measure and analyze
+No separate migration phase: use a representative slice; actual migration is
+Development/Program work.
 
-Report measured results, not impressions:
+## R4 - Measure, analyze, and draft memo
 
-- correctness and behavior;
-- performance with variance and outliers, not just best runs;
-- integration/build/dependency cost;
-- operational risk and failure modes;
-- what was not measured and why.
-
-Separate observation, interpretation, and recommendation. Record confounders and
-fairness problems. A failed experiment is a valid result.
+Report correctness/behavior, performance with variance/CI, cost, failure modes,
+and what was not measured. Separate observation, interpretation, and
+recommendation. Keep failures. Build `EVIDENCE-MATRIX.md`: claim ID, experiment
+ID, data/artifact, status, allowed wording. Draft a memo but do not present its
+conclusions as reviewed.
 
 ## R5 - Independent results review
 
-A fresh read-only reviewer checks the approved plan against what actually ran:
-commands, environment, raw data, baseline fairness, variance, semantic parity,
-missing runs, cherry-picking. Then review every claim: supported/partial/
-unsupported, its evidence, alternative explanations, contradictions, what can and
-cannot be concluded, and whether the memo uses only reviewed claims.
+A fresh reviewer audits plan vs execution: commands, environment, raw data,
+baseline fairness, variance, harness validity, missing runs, cherry-picking,
+semantic parity, slice coverage/exclusions. It extracts claims from data, then
+marks each supported/partial/unsupported and records exact **allowed wording**.
+`partial` cannot support adopt/migrate. It may rerun the decisive experiment or
+recompute a metric; if not, it says so and lowers confidence.
 
-Return `PASS` or `REVISE` with explicit findings. On `REVISE`, state missing
-evidence, whether to rerun/revise/downgrade, and the pass condition. Author and
-reviewer differ; only after `PASS` does the conclusion go to the user. See
+Return `PASS`/`REVISE` with explicit findings; on `REVISE`, name missing evidence,
+whether to rerun/revise/downgrade, and the pass condition. Only after `PASS` may
+the memo be user-facing; freeze its hash and delta-review later changes. See
 `rd-workflow-research-review`.
 
-## R6 - Decision memo
+## R6 - Final memo and user acceptance
 
-Produce the agreed deliverable (memo by default). Include:
+Include only reviewed claims with IDs and allowed wording; label
+`measured-here`, `measured-sandbox`, or `reported`; list rejected directions,
+confidence, open questions, **what cannot be concluded**, and the strongest
+counter-case. Get user acceptance; a written memo is not approval.
 
-- question, baseline, and directions tested;
-- measured results with evidence labels: **measured here**, **measured in
-  sandbox**, or **reported upstream**;
-- why each rejected direction was rejected;
-- fit/integration cost observed in the experiments;
-- recommendation/options, confidence, and what would change the decision;
-- what cannot be concluded and what evidence is missing;
-- open questions and reproduction commands.
+## R7 - Handoff, pilot, and migration
 
-Get user acceptance. A written report is not approval.
+If implementation follows: create a Development contract or Program input; link
+the reviewed memo. Modality: **adopt** = production use of a dependency/
+technology; **migrate** = data/schema/API change; **security** = auth/PII/secret.
+Sandbox-only → candidate/pilot; measured-here with production-shaped slice →
+adoptable with migration plan; reported-only → hypothesis.
 
-## R7 - Handoff or pilot
+For adopt/migrate/security: pilot mandatory (scope, success/abort, rollback,
+cleanup, owner) **or** written user risk acceptance (residual risks, why pilot is
+impossible, signer/time). Development/Program must use `MIGRATION.md`; write
+`HANDOFF.md` with memo hash, claim IDs, modality, slice exclusions, pilot/risk
+acceptance, MIGRATION requirements, high-risk tier. Development Phase 1 copies
+these into its contract; missing = no implementation. Research never migrates
+production.
 
-If implementation follows:
+Timebox: partial evidence + “cannot conclude”; user decides.
 
-1. create a Development contract or Program architecture input;
-2. link the reviewed decision and artifacts;
-3. define a time-boxed pilot if risk remains: one slice, success criteria,
-   rollback, cleanup, and owner;
-4. no production code during research; the pilot starts only after the
-   Development contract is confirmed.
+## Representative slice
 
-Actual migration or full implementation is not a research step.
+Cover at least two representative entry points, real dependencies, the target
+runtime/OS, production-shaped data, and a real build plus existing tests. Record
+inclusions and **exclusions**, and state what the slice cannot prove (data
+migration, production scale, cutover, rollback, ops, client versions).
+“Representative” without this list is a failed plan.
 
 ## Roles and write scopes
 
 | Role | Writes | Reads |
 |---|---|---|
-| Research lead | plan, notes, decision | code, docs, results |
+| Research lead | decision, plan, draft memo | code, docs, results |
 | Direction scout | hypothesis notes only | docs, code, sources |
 | Experimenter | one `spikes/<direction>/` subtree | baseline, code |
-| Plan reviewer | `PLAN-REVIEW.md` only | plan, directions, constraints |
-| Results reviewer | `RESULTS-REVIEW.md` only | plan, artifacts, raw data |
+| Plan reviewer | `PLAN-REVIEW.md` only | frame, directions, plan |
+| Results reviewer | `CLAIMS.md` + `RESULTS-REVIEW.md` | plan, artifacts, raw data |
 
-Use `subagent` for parallel directions and independent reviews; use `workflow`
-for bounded fan-out. Reviewers never edit experiments or production code.
+Use `subagent` for directions/reviews; `workflow` for fan-out. Record reviewer
+identity/model/input hash in `REVIEW-LOG.md`; no edits to experiments/production.
 
 ## Anti-patterns
 
-- Recommending from blog posts, upstream benchmarks, or docs without measuring.
-- Building a polished prototype instead of a falsifiable demo.
-- One run, no baseline, no variance, cherry-picked results.
-- Testing only the happy path.
-- Assuming a technique transfers without exercising a representative slice.
-- Starting demos before plan review passes.
-- Self-reviewing, vague review comments, or a score without findings.
-- Sending the user unsupported conclusions "with caveats".
-- Adding a separate migration phase to research.
-- Writing production code during research.
-- Treating a decision memo as user approval.
-- Fabricating sources, results, commands, or screenshots.
+- Recommending from sources without measuring.
+- Polished prototype instead of a falsifiable demo.
+- One run/no baseline/no variance/cherry-picking.
+- Ignoring semantic parity, slice exclusions, license/CVE, or sandbox isolation.
+- Starting demos before plan review PASS.
+- `partial` supporting adopt/migrate.
+- Self-review, vague reviews, or score without gate table.
+- Unreviewed conclusions/mid-results as decisions.
+- Treating a memo/internal PASS as user approval.
+- A separate migration phase in research.
+- Fabricating sources/results/commands/screenshots.

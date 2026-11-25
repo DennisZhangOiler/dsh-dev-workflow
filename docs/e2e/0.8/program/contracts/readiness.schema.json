@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Readiness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidate", "activeProfile", "gates", "tests", "release"],
+  "properties": {
+    "candidate": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "activeProfile": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gates": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "status", "score"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["pass", "blocked", "missing", "partial"] },
+          "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+        }
+      }
+    },
+    "tests": {
+      "type": "object", "additionalProperties": false,
+      "required": ["passed", "total"],
+      "properties": { "passed": { "type": "integer", "minimum": 0 }, "total": { "type": "integer", "minimum": 0 } }
+    },
+    "release": {
+      "type": "object", "additionalProperties": false,
+      "required": ["published", "tag", "notes"],
+      "properties": { "published": { "type": "boolean" }, "tag": { "type": ["string", "null"] }, "notes": { "type": "string" } }
+    }
+  }
+}

@@ -8,6 +8,8 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8')
 const PROMPT = read('prompt.md')
 const SKILL_FILES = [
   'rd-workflow.md',
+  'rd-workflow-contract.md',
+  'rd-workflow-delivery.md',
   'rd-workflow-research.md',
   'rd-workflow-research-review.md',
   'rd-workflow-program.md',
@@ -59,27 +61,20 @@ test('registers exactly one stable system-prompt section', () => {
   assert.ok(PROMPT.length >= 6000 && PROMPT.length <= 8000, `prompt is ${PROMPT.length} chars`)
 })
 
-test('prompt contains the router, modes, phases, and gates', () => {
+test('prompt contains modes, router, phases, and gates', () => {
+  assert.match(PROMPT, /Light[\s\S]*Standard[\s\S]*Deep/u)
   for (const marker of [
-    'Request router', 'New objective', 'Phase 0', 'Phase 1', 'Phase 2', 'Phase 3',
-    'Phase 4', 'Phase 5', 'Phase 6', 'Phase 7', 'Phase 8', 'Phase 9',
-    'R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7',
-    'Experiment-first', 'broad direction set', 'plan review', 'Results review',
-    'explicit', 'measured-here', 'rd-workflow-research-review',
-    '>=85', 'P0/P1', 'PASS/REJECT', 'UI design', 'UI behavior', 'No UI',
-    'UI design only', 'Bootstrap missing rules', 'ask once with defaults',
-    'AGENTS.md', 'docs/DEV_WORKFLOW.md', 'docs/DELIVERY.md', 'docs/UI.md',
-    'docs/RESEARCH.md', 'Research', 'Program', 'protected branch', 'red CI',
-    'credentials', 'explicit confirmation', 'user confirm',
-    'no mobile overflow', 'a11y', 'project/bundled rubric', 'project/bundled rubric',
-    'subagent` for UI direction', 'scopes disjoint',
-    'rd-workflow-program', 'rd-workflow-research', 'fabricate',
-  ]) {
-    assert.ok(PROMPT.includes(marker), `prompt is missing: ${marker}`)
-  }
+    'Router, docs, safety', 'objective changed', 'AC-1..n', 'DoD', 'risk tier',
+    'high-risk', 'human code/release approval', 'R0', 'R1', 'R2', 'R3', 'R4',
+    'R5', 'R6', 'R7', 'plan review', 'CLAIMS.md', 'measured-here',
+    'rd-workflow-research-review', 'UI design', 'UI behavior', 'No UI',
+    'mobile', 'a11y', 'per-area floors', 'total >=85', 'total >=80',
+    'provider/consumer contract tests', 'isolate ports', 'protected branches',
+    'red checks', 'No fabricated evidence', 'Use `subagent`', 'disjoint scopes',
+  ]) assert.ok(PROMPT.includes(marker), `prompt is missing: ${marker}`)
 })
 
-test('registers the six playbooks', () => {
+test('registers the nine playbooks', () => {
   const { skills } = mount()
   assert.deepEqual(skills.map(skill => skill.name), SKILL_NAMES)
   for (const skill of skills) {
@@ -89,7 +84,7 @@ test('registers the six playbooks', () => {
     assert.equal(skill.source, 'bundled')
     assert.equal(skill.resourceBase.kind, 'directory')
     assert.ok(skill.content.length > 1000)
-    const limit = ['rd-workflow', 'rd-workflow-research', 'rd-workflow-research-review', 'rd-workflow-program', 'rd-workflow-roles'].includes(skill.name) ? 7800 : 8192
+    const limit = ['rd-workflow', 'rd-workflow-contract', 'rd-workflow-delivery', 'rd-workflow-research', 'rd-workflow-research-review', 'rd-workflow-program', 'rd-workflow-roles'].includes(skill.name) ? 7800 : 8192
     assert.ok(skill.content.length <= limit, `${skill.name} is ${skill.content.length} chars`)
   }
 })
@@ -110,16 +105,24 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['rd-workflow-research'], /experiment/iu)
   assert.match(bodies['rd-workflow-research'], /plan review/iu)
   assert.match(bodies['rd-workflow-research'], /results review/iu)
-  assert.match(bodies['rd-workflow-research'], /representative project slice/iu)
+  assert.match(bodies['rd-workflow-research'], /representative slice/iu)
   assert.match(bodies['rd-workflow-research'], /PASS.*REVISE/u)
   assert.match(bodies['rd-workflow-research'], /PASS.*REVISE/u)
   assert.match(bodies['rd-workflow-research'], /read-only/iu)
   assert.match(bodies['rd-workflow-research-review'], /Plan review/u)
   assert.match(bodies['rd-workflow-research-review'], /Results review/u)
-  assert.match(bodies['rd-workflow-research-review'], />=85/u)
+  assert.match(bodies['rd-workflow-research-review'], /floor/iu)
   assert.match(bodies['rd-workflow-research-review'], /P0\/P1/u)
   assert.match(bodies['rd-workflow-research-review'], /supported \/ partial \/ unsupported/u)
-  assert.match(bodies['rd-workflow-research-review'], /Forbidden feedback/u)
+  assert.match(bodies['rd-workflow-research-review'], /Forbidden:/u)
+  assert.match(bodies['rd-workflow-contract'], /docs\/contracts/u)
+  assert.match(bodies['rd-workflow-contract'], /SHA-256/u)
+  assert.match(bodies['rd-workflow-contract'], /AC quality|one observable result/iu)
+  assert.match(bodies['rd-workflow-delivery'], /REVIEWER RECORD/u)
+  assert.match(bodies['rd-workflow-delivery'], /MIGRATION\.md/u)
+  assert.match(bodies['rd-workflow-delivery'], /docs\/program/u)
+  assert.match(bodies['rd-workflow-ui-rubric'], /floor/iu)
+  assert.match(bodies['rd-workflow-research-review'], /CLAIMS\.md/u)
   assert.match(bodies['rd-workflow-program'], /Program mode/u)
   assert.match(bodies['rd-workflow-program'], /Frozen UI/u)
   assert.match(bodies['rd-workflow-program'], /module lead/u)
@@ -128,7 +131,7 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['rd-workflow-project-docs'], /Research policy template/u)
   assert.match(bodies['rd-workflow-ui-rubric'], />= 85/u)
   assert.match(bodies['rd-workflow-ui-rubric'], /No UI/u)
-  assert.match(bodies['rd-workflow-roles'], /Triage for this change/u)
+  assert.match(bodies['rd-workflow-roles'], /UI behavior/u)
   assert.match(bodies['rd-workflow-roles'], /Research roles/u)
 })
 

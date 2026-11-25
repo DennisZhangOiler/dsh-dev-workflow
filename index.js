@@ -37,10 +37,26 @@ const SKILLS = [
       'Load for a change, fix, feature, refactor, UI task, test, review, or delivery.',
   },
   {
+    name: 'rd-workflow-contract',
+    file: 'rd-workflow-contract.md',
+    description:
+      'Acceptance contract, AC/DoD/NFR, risk tiers, traceability, and Phase 1/4/7 verification gates for development work.',
+    whenToUse:
+      'Load in Phase 1 to write the contract, Phase 4 to confirm it with the user, and Phase 7 to verify each AC.',
+  },
+  {
+    name: 'rd-workflow-delivery',
+    file: 'rd-workflow-delivery.md',
+    description:
+      'Verification commands, evidence bundles, reviewer independence, UI evidence, migration/rollback, and release/post-deploy gates.',
+    whenToUse:
+      'Load in Phase 6-9 for tests, verification evidence, migration, deployment, and release.',
+  },
+  {
     name: 'rd-workflow-research',
     file: 'rd-workflow-research.md',
     description:
-      'Technical/codebase research playbook: brief, source plan, evidence log, synthesis, independent review, deliverable, and development handoff.',
+      'Experiment-first technical research: broad directions and user choice, plan/results reviews, sandbox demos, measurements, representative slice, and development handoff.',
     whenToUse:
       'Load for a non-trivial technical investigation, architecture/dependency comparison, feasibility study, or root-cause analysis.',
   },
@@ -56,7 +72,7 @@ const SKILLS = [
     name: 'rd-workflow-program',
     file: 'rd-workflow-program.md',
     description:
-      'Program-mode playbook: architecture and IA first, UI direction selection, static demo and UI freeze, vertical modules, recursive module delegation, and integration.',
+      'Program-mode playbook: architecture/IA, independent demo score before freeze, vertical modules, contract tests, runtime isolation, recursive leads, and integration.',
     whenToUse:
       'Load for a new system, multi-module product, architecture/IA redesign, or a large feature split across agents.',
   },
@@ -72,7 +88,7 @@ const SKILLS = [
     name: 'rd-workflow-ui-rubric',
     file: 'rd-workflow-ui-rubric.md',
     description:
-      'Generic 100-point UI scoring rubric with P0-P3 severity, evidence rules, mobile checks, accessibility checks, and the >=85 gate.',
+      'UI scoring rubric with per-area floors, anchors, calibration, real interaction/mobile/keyboard/a11y evidence, P0-P3 findings, and independent final scoring.',
     whenToUse:
       'Load for independent UI scoring in UI design work, and when a verifier re-scores final UI.',
   },
@@ -80,7 +96,7 @@ const SKILLS = [
     name: 'rd-workflow-roles',
     file: 'rd-workflow-roles.md',
     description:
-      'Ready-to-send subagent role prompts, write-scope rules, delegation matrix, research roles, and verifier report format.',
+      'Subagent role prompts, write scopes, code reviewer/verifier evidence records, research roles, and independence/fallback rules.',
     whenToUse:
       'Load when delegating UI, feature, test, research, verifier, program, or module work.',
   },

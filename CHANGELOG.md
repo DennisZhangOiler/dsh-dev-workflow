@@ -4,6 +4,39 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-25
+
+### Added
+
+- **Light / Standard / Deep modes**: choose ceremony by risk. Light skips
+  contract files/reviewers/E2E for small reversible work; Standard is the
+  default with one review where risk warrants; Deep keeps the full contract,
+  independent review/score, E2E, and human gates. The prompt is now mode-aware
+  and `docs/MODES.md` explains selection and examples.
+- Acceptance contract: AC-1..n, Definition of Done, NFRs, risk tiers, and
+  AC→test→evidence traceability (`rd-workflow-contract`).
+- Verification/delivery evidence: test/lint/typecheck/build/CI, code review,
+  reviewer identity/hash history, migration rehearsal/rollback, feature
+  flag/canary, post-deploy smoke/monitoring (`rd-workflow-delivery`).
+- Independent research plan review with per-area floors and no P0/P1; results
+  review with independent claim extraction, exact allowed wording, memo freeze,
+  and partial-claim limits.
+- UI per-area floors, anchors, calibration fixtures, real interaction/mobile/
+  keyboard/a11y checks, and independent scoring even for one-direction changes.
+- Program demo independent score before freeze, provider/consumer contract tests,
+  runtime-resource isolation, and gap logging.
+- Risk tiers, trivial fast path, review calibration fixtures, and evidence-level
+  labels.
+
+### Changed
+
+- Research direction count is explicitly open; users select from a broad set.
+- Removed independent reproduction/migration validation as separate research
+  stages: demos use a representative slice; migration is Development work with
+  a `MIGRATION.md` gate.
+- README/verification now distinguish implemented, statically tested,
+  exercised end-to-end, and observed-in-production evidence.
+
 ## [0.7.0] - 2026-11-25
 
 ### Changed

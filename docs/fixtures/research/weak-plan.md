@@ -1,0 +1,5 @@
+# Weak plan fixture
+
+Decision: choose a parser library.
+Plan: run one demo of candidate A; no baseline; one run; no thresholds; no
+comparison; no representative slice; no raw-data retention.

@@ -1,0 +1,27 @@
+# Plan — choose a JSON parser (floor-boundary fixture)
+
+**Decision:** choose a parser for 5 MB JSON log payloads; baseline is
+`JSON.parse`. Candidates A and B. Owner: maintainer.
+
+**Baseline/control:** same payload snapshots, same Node/host, alternating order,
+fresh child per rep; control is a pre-parsed object.
+
+**Metrics/decision:** correctness (20 valid + 5 malformed), p50 parse time (5
+reps, median, MDE 20%, 95% CI bootstrap), post-parse RSS delta ≤ 32 MB,
+dependency/license allowlist. Adopt only if all gates pass; otherwise keep
+baseline.
+
+**Slice:** 3 synthetic payload families (1/5/20 MB) with fixed seed/hash;
+exclusions: >100 MB, concurrent HTTP, browsers. Partial evidence is labelled.
+
+**Experiments:** correctness table; latency matrix; memory matrix; malformed
+error table; dependency audit. Stop after 20 minutes or high load; no
+extrapolation.
+
+**Artifacts:** harness, raw/env JSON, input hashes, command/exit log, production
+before/after hashes. Raw immutable.
+
+**Risks:** synthetic distribution, lower-bound RSS, single host/Node, no CI.
+No adoption decision; research may hand off a candidate.
+
+**Gate:** plan review PASS before demo; two REVISE → STOP.

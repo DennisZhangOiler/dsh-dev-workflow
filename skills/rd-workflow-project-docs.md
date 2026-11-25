@@ -62,6 +62,14 @@ Quote the source path when reporting what you followed.
 5. Review requires one approval from a code owner.
 ```
 
+## Acceptance/DoD in project docs
+
+A project may document a change contract, but the agent still writes one per
+change using `rd-workflow-contract`. If the project defines standard AC/DoD/NFR
+or risk tiers, quote and follow them. At minimum record: AC IDs, DoD (tests/
+lint/typecheck/build/docs/migration/rollback), applicable NFRs, risk tier,
+AC→test→evidence matrix, and rollback/delivery.
+
 ## Example: docs/DELIVERY.md
 
 ```markdown
@@ -72,6 +80,9 @@ Quote the source path when reporting what you followed.
 - Staging deploys automatically from the main branch.
 - Production deploys are manual and require the release owner.
 - Migrations must be reversible; run the backup step before applying.
+- CI: <pipeline>; require green before merge.
+- Migration: rehearsal on representative data, backup restore, rollback owner.
+- Deploy: flag/canary if available; post-deploy smoke and monitoring window.
 ```
 
 These are examples of natural-language conventions, not required fields. A
@@ -109,10 +120,10 @@ Use this when the project needs durable research conventions.
 - Demo policy: small timeboxed spikes under research/<topic>/spikes/;
   production code is not changed
 - Baseline and metrics: <current approach, workload, thresholds>
-- Required depth: standard (selected directions + approved plan + measured demos
-  + results review) / deep
-- Review gates: independent plan review (>=85, no P0/P1) before demos; independent
-  results review before showing conclusions; explicit findings only
+- Required depth: quick / standard (selected directions + approved plan + measured
+  demos + results review) / deep
+- Review gates: independent plan review (per-area floors, no P0/P1) before demos;
+  independent results review before showing conclusions; explicit findings only
 - No separate migration phase: experiments use a representative project slice;
   actual migration goes through Development/Program
 - Deliverable: decision memo / matrix / root-cause / report
@@ -128,6 +139,8 @@ Keep only the fields the project uses.
 # UI policy
 
 - Direction count: <1 for small/local; 3 for structural, or the user's choice>
+- Every UI design set needs an independent score, even 1 direction; UI behavior
+  still needs before/after 1440+390 screenshots and mobile/keyboard checks
 - Required screenshots: <desktop 1440x900; mobile 390x844>
 - Static frontend demo before backend: <yes/no>
 - UI freeze after demo approval: <yes/no>

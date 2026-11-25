@@ -14,7 +14,7 @@ const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
 assert.equal(manifest.name, 'dsh-rd-workflow')
-assert.equal(manifest.version, '0.7.0')
+assert.equal(manifest.version, '0.8.0')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
@@ -28,7 +28,8 @@ const required = [
   'cordis.patch.yml',
   'skills',
   'locale/*.json',
-  'docs',
+  'docs/*.md',
+  'docs/screenshot-*.png',
   'icon.svg',
   'README.md',
   'README.zh.md',
@@ -40,6 +41,8 @@ for (const entry of required) assert.ok(shipped.has(entry), `files is missing ${
 for (const path of [
   'index.js', 'prompt.md', 'cordis.patch.yml', 'icon.svg',
   'skills/rd-workflow.md',
+  'skills/rd-workflow-contract.md',
+  'skills/rd-workflow-delivery.md',
   'skills/rd-workflow-research.md',
   'skills/rd-workflow-research-review.md',
   'skills/rd-workflow-program.md',
@@ -54,6 +57,40 @@ for (const path of [
   'docs/screenshot-recursion.png',
   'docs/screenshot-bootstrap.png',
   'docs/screenshot-reentry.png',
+  'docs/screenshot-contract.png',
+  'docs/screenshot-e2e.png',
+  'docs/e2e/0.8/research/PLAN-REVIEW-R2.md',
+  'docs/e2e/0.8/research/RESULTS-REVIEW.md',
+  'docs/e2e/0.8/research/memo.md',
+  'docs/e2e/0.8/research/MEMO-REVIEW.md',
+  'docs/e2e/0.8/research/MEMO-ADDENDUM.md',
+  'docs/e2e/0.8/research/CALIBRATION-RESULTS.md',
+  'docs/e2e/0.8/research/CALIBRATION-INDEPENDENT-R4.md',
+  'docs/e2e/0.8/research/CALIBRATION-PLAN-R4.md',
+  'docs/fixtures/research/expected-blind.json',
+  'docs/e2e/0.8/research/PLAN-REVISION.md',
+  'docs/e2e/0.8/research/RESEARCH.md',
+  'docs/e2e/0.8/research/prompts/plan1.txt',
+  'docs/fixtures/research/strong-plan.md',
+  'docs/fixtures/research/floor-boundary.md',
+  'docs/e2e/0.8/research/REVIEW-LOG.md',
+  'docs/e2e/0.8/research/HANDOFF.md',
+  'docs/e2e/0.8/research/data/raw.json',
+  'docs/e2e/0.8/research/REPLAY.md',
+  'docs/e2e/0.8/ui/UI-SCORE-R2.md',
+  'docs/e2e/0.8/program/PROGRAM-SCORE-R2.md',
+  'docs/e2e/0.8/program/RUNLOG.md',
+  'docs/e2e/0.8/program/PROGRAM-RUBRIC.md',
+  'docs/e2e/0.8/program/INTEGRATED-PREVIEW.md',
+  'docs/e2e/0.8/program/integration/integrated-preview.png',
+  'docs/e2e/0.8/high-risk/HIGH-RISK-SCORE-R4.md',
+  'docs/e2e/0.8/high-risk/HUMAN-APPROVAL.md',
+  'docs/e2e/0.8/high-risk/MIGRATION.md',
+  'docs/e2e/0.8/no-ui/VERIFIER-R2.md',
+  'docs/e2e/0.8/no-ui/ACCEPTANCE.md',
+  'docs/e2e/0.8/no-ui/CONTRACT.md',
+  'docs/e2e/0.8/ui/USER-CHOICE.md',
+  'docs/e2e/0.8/research/harness/replay.mjs',
   'docs/screenshot-research.png',
   'locale/en.json',
   'locale/zh.json',

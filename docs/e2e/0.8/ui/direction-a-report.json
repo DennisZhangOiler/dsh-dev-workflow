@@ -1,0 +1,22 @@
+[
+  {
+    "file": "page.png",
+    "state": null,
+    "size": "1440x900",
+    "zoom": 1,
+    "animationWaitMs": 0,
+    "issues": [],
+    "lint": [
+      {
+        "rule": "smallText",
+        "label": "文字小于 11px",
+        "count": 12,
+        "examples": [
+          "th「项目」（10px）",
+          "th「证据」（10px）",
+          "th「状态」（10px）"
+        ]
+      }
+    ]
+  }
+]

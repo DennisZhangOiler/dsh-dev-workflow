@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UI fail fixture: polished but inaccessible</title>
+<style>
+:root{--ink:#777;--muted:#999;--line:#eee;--accent:#4f46e5}
+*{box-sizing:border-box}body{font:16px/1.55 system-ui;margin:0;color:var(--ink);background:#fff}
+.hero{background:linear-gradient(135deg,#eef2ff,#faf5ff);padding:56px 20px;text-align:center}
+h1{font-size:40px;letter-spacing:-1.4px;margin:0 0 10px;color:#8a8a8a}
+.lead{color:var(--muted);max-width:560px;margin:0 auto}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;width:1000px;margin:28px auto;padding:0 20px}
+.card{border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 8px 20px rgba(0,0,0,.05)}
+button{font-size:10px;line-height:1;padding:5px 6px;min-width:0;min-height:0;border:0;border-radius:8px;background:var(--accent);color:#b9b5ff}
+input{width:100%;border:1px solid #ddd;border-radius:8px;padding:8px;color:#aaa}
+</style>
+<main>
+<section class="hero"><h1>Beautiful workspace settings</h1><p class="lead">A polished-looking page that fails accessibility, touch targets, and mobile layout.</p><p><button>Save</button></p></section>
+<section class="grid">
+<div class="card"><h2>Profile</h2><p>Card copy is intentionally low contrast.</p><label>Display name <input value="Demo"></label></div>
+<div class="card"><h2>Team</h2><p>Three columns at a fixed 1000px width overflow a 390px viewport.</p></div>
+<div class="card"><h2>Billing</h2><p>Buttons are 10px and below the 44px target.</p></div>
+</section>
+</main></html>

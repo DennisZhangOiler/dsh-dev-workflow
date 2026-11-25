@@ -1,0 +1,7 @@
+{
+  "before": "fef82d830f68b6c0b06870d2aa3c040e9211ac8fadf0259d85fb249784c33052",
+  "after": "fee20a17e25d6dfa9b6c35ff4552618145899aea20a5ec2f21043329d0fbbe82",
+  "restored": "fef82d830f68b6c0b06870d2aa3c040e9211ac8fadf0259d85fb249784c33052",
+  "backup": "rehearsal/config.json.backup-1795589081114.json",
+  "byteIdentical": true
+}

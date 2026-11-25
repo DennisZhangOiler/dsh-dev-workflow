@@ -1,182 +1,154 @@
-# R&D Workflow playbook
+# R&D development playbook
 
-Load this skill after the fixed `rd-workflow:contract` section. It expands the
-pipeline with templates and decision rules. The contract in the system prompt
-wins on conflict.
+Load after `rd-workflow:contract`. Use `rd-workflow-contract` for the acceptance
+contract, `rd-workflow-delivery` for verification/release, and
+`rd-workflow-roles` for delegation.
 
 ## Operating rule
 
-1. Classify every request: question, bugfix/polish, new feature/refactor,
-   research, or program. If the objective changes, announce it and restart
-   Phase 1/R1; do not continue a bugfix loop or reuse its contract/test plan.
-2. Read project conventions before touching code (see
-   `rd-workflow-project-docs`).
-3. Classify UI impact in Phase 1 using the triage table. Do not skip or force
-   UI phases from the project type alone.
-4. Scale ceremony to risk, not to the user's impatience. A copy change can skip
-   Phase 2; a code change cannot skip Phase 6 and Phase 7.
-5. Keep the user oriented: one short update per phase; ask only when the
-   answer changes the work.
+1. Classify every request: question, bugfix, new feature/refactor, research, or
+   program. If the objective changes, announce it and restart Phase 1/R1; don't
+   continue a bugfix loop or reuse its contract/tests.
+2. Read project conventions before code (`rd-workflow-project-docs`).
+3. Classify UI impact in Phase 1; don't skip/force UI phases from project type.
+4. Scale ceremony to **risk**: trivial docs/comments may use the fast path;
+   production code cannot skip Phase 6/7; high-risk gets extra gates, never fewer.
+5. One short update per phase; trivial changes may combine updates.
 
 ## Phase 0 - Project brief
 
-Record the project purpose, stack, UI surfaces, install/dev/test/lint/typecheck/
-build commands, delivery, constraints, and key files before proposing anything.
-
-Read the project docs in the order described by `rd-workflow-project-docs`.
-
-Record existing UI surfaces here, but do not decide the pipeline yet: a CLI
-project can add a GUI, and a UI project can have a backend-only change. The
-Phase 1 triage decides which UI phases apply.
+Record purpose, stack, UI surfaces, install/dev/test/lint/typecheck/build/
+security commands, delivery, constraints, and key files. Read project docs in
+the order in `rd-workflow-project-docs`. Record UI surfaces but let Phase 1
+choose the pipeline: a CLI project can add a GUI; a UI project can have a
+backend-only change.
 
 ## Conventions bootstrap
 
-If a needed rule is missing or unclear (UI direction count, screenshots, static
-demo, delivery, test commands), infer from the request and code, ask one batched
-question with defaults, then update an existing convention file or create
-`docs/DEV_WORKFLOW.md` / `docs/UI.md` / `docs/DELIVERY.md`. Follow it later; do
-not ask again. No secrets in these docs.
+If a needed rule is missing/unclear (UI direction count, screenshots, demo,
+delivery, test commands, AC/DoD/NFR), infer from request/code, ask one batched
+question with defaults, update an existing doc or create
+`docs/DEV_WORKFLOW.md` / `docs/UI.md` / `docs/DELIVERY.md` / `docs/RESEARCH.md`.
+Follow it later; don't ask again. No secrets.
 
-## Phase 1 - Triage and contract
+## Phase 1 - Triage, contract, risk
 
-Classify the requested change by the surfaces it touches:
+Triage by the surfaces this change touches:
 
 | Triage | Criteria | UI phases |
 |---|---|---|
-| `UI design` | New or materially changed hierarchy, layout, interaction pattern, or UI surface | Phases 2 and 3; UI score |
-| `UI behavior` | User-visible behavior, copy, or state change without a new design direction | Skip 2 and 3; UI functional checks, no design score |
-| `No UI` | Library, CLI, backend, infrastructure, data, build, or docs | Skip all UI phases; functional/CLI/API tests only |
+| `UI design` | New/changed hierarchy, layout, interaction, primary action, density, UI surface, or touch/keyboard path | 2-3; independent score |
+| `UI behavior` | Visible behavior/copy/state, no new direction | Skip 2-3; before/after desktop+mobile screenshots, overflow/keyboard/key-action checks |
+| `No UI` | Library, CLI, backend, infra, data, build, docs | Skip UI; functional/CLI/API tests |
 
-State the class and rationale in the contract. A CLI project adding a GUI is
-`UI design`; a UI project with a backend-only change is `No UI` (or `UI behavior`
-if the change is visible through the UI). Re-triage if a new surface appears.
+Tie-break: new/changed state, primary-action position, density, interaction
+feedback, or touch/keyboard path -> `UI design`; unsure = stricter. A behavior
+change that breaks mobile/keyboard still fails. Re-triage if a surface appears.
 
-Resolve facts yourself. Ask only user-owned product decisions, and batch them.
-Use this template, omitting fields the triage makes irrelevant:
+Write the acceptance contract (`rd-workflow-contract`): goal/scope/non-goals,
+AC-1..n (Given/When/Then; main/negative/permission/boundary/state; UI mobile/
+a11y), DoD, NFR (metric/target/measure/evidence), data/API/migration, UI contract,
+AC→test→evidence, risks/rollback, delivery. Risk tier: **trivial** docs/comments/
+no runtime -> local diff+command+self-check; **low** -> feature+independent test
+author/verifier+tests/lint/typecheck/build; **medium** -> low+AC traceability+UI
+evidence+regression+CI; **high** auth/PII/payments/secrets/migration/prod/scale
+-> medium+threat model, SCA/license, SAST/secrets, load/failure, migration
+rehearsal, rollback/post-deploy, human review. Never silently lower.
 
-```markdown
-## Goal
-<problem and desired outcome>
-## Scope
-In: <...>; Out: <non-goals>
-## UI contract (UI design/UI behavior only)
-Pages/components; primary task/action; states; desktop/mobile viewports
-## Data and interfaces
-API/schema; migration; compatibility
-## Test scope
-Unit/integration/e2e; real services; edge cases
-## Risks and rollback
-<what can break, how to detect, how to revert>
-```
-
-For a tiny change, compress to the fields that vary; keep non-goals, rollback,
-and test scope. For `No UI`, state "no UI involved" and keep tests functional.
+Ask user-owned product decisions once, batched. Tiny changes
+compress fields but keep scope/AC/DoD/risk/rollback. No UI: state it; keep
+functional tests.
 
 ## Phase 2 - UI directions (UI design only)
 
-Use `rd-workflow-roles` for the explorer prompt. Skip this phase for
-`UI behavior` and `No UI`. Rules:
-
-- Three directions must differ structurally (hierarchy, layout, density,
-  primary action, character), not cosmetically.
-- Each direction gets real desktop and mobile screenshots; no hand-drawn shots
-  or fake browser chrome.
-- Prefer an installed design skill and its screenshot tool. Without one, build
-  plain static mockups and screenshot them with a real browser.
+Skip for UI behavior/No UI. Follow the project's direction count; if silent,
+small/local may use one direction, large/structural asks once (recommend 3) and
+waits for the user's choice. Directions must differ structurally (hierarchy,
+layout, density, primary action, character), not cosmetically. Each gets real
+desktop and mobile screenshots; no hand-drawn shots or fake browser chrome. Use
+an installed design/screenshot skill; otherwise plain static mockups and a real
+browser. If no browser exists, stop and ask for evidence; never fabricate.
 
 ## Phase 3 - Independent UI score (UI design only)
 
-Use `rd-workflow-ui-rubric` and the scorer prompt in `rd-workflow-roles`.
-Do not produce a UI score for `UI behavior` or `No UI`.
-Never score your own implementation. A direction below the gate is not a
-candidate: rework it before user review. If all three fail, redesign; do not
-send the user a menu of failures.
+Use `rd-workflow-ui-rubric` and the scorer prompt in `rd-workflow-roles`. The
+scorer is not the implementer. Score every direction, including a one-direction
+small change; self-review may choose a direction but never satisfies the gate.
+Gate: **per-area floors + no P0/P1** (not just total >=85); real interaction,
+mobile, zoom/reflow, keyboard, and a11y checks. Hide/rework below-gate
+directions; if all fail, redesign. No score for UI behavior/No UI, but they
+still need functional UI evidence.
 
 ## Phase 4 - User confirmation
 
-For `UI design`, present the recommended direction and why, the direction
-comparison table, one merged change list (pages/components, behavior, data/API,
-migration, tests, risks/rollback, non-goals), and desktop/mobile screenshots.
-
-For `UI behavior`, omit the direction comparison and screenshots; present the
-changed states and behavior. For `No UI`, omit UI sections and present the
-functional change, commands, and tests. Wait for an explicit yes; agreement to
-one detail does not confirm the whole list. Restate changes and ask for the
-go-ahead.
+For UI design: AC/DoD/NFR, recommended direction, comparison, merged change list
+(pages/components, behavior, data/API, migration, tests, risks/rollback,
+non-goals), and screenshots. For UI behavior: AC/DoD/NFR, before/after states and
+screenshots, no direction comparison. For No UI: functional change, commands,
+tests. Wait for explicit yes; agreement to one detail is not approval. Any AC
+change is re-confirmed.
 
 ## Phase 5 - Implementation
 
-- One feature agent owns the change; for UI work it owns both UI and behavior.
-- Match existing patterns, naming, component library, and styling tokens.
-- Do not refactor unrelated code; propose prerequisites.
-- Test author writes tests only in a disjoint scope.
+- One feature agent owns the change; for UI it owns UI and behavior.
+- Match existing patterns, naming, component library, tokens.
+- Don't refactor unrelated code; propose prerequisites.
+- Test author writes tests only, in a disjoint scope; never production code.
+- High-risk work gets human code/security review; an agent verdict is not a
+  substitute.
 
 ## Phase 6 - Test plan
 
-Use the test-author prompt in `rd-workflow-roles`. Always cover:
-
-- happy path and primary action;
-- negative, disabled, and unauthorized actions;
-- invalid input and boundary values;
-- state transitions and persistence;
-- real API/mutation paths, not only mocked frontend;
-- repeatable setup/teardown, unique fixture markers, cleanup on failure.
-
-Add only when the triage applies them:
-
-- `No UI`: functional/CLI/API tests; do not add viewport or visual checks.
-- `UI behavior`: changed UI states and actions.
-- `UI design`: empty/loading/error/long-text/large-data states, mobile viewport,
-  touch targets, and visual/accessibility checks.
-
-Report the exact commands, exit codes, and evidence. A skipped check is listed
-as skipped with the reason, never as passed.
+Use the test-author prompt in `rd-workflow-roles`. Test every AC: main path,
+negative/disabled/unauthorized, invalid/boundary, state/persistence, real API/
+mutation (not only mocked UI), repeatable setup/teardown, unique markers,
+cleanup. Levels: No UI functional/CLI/API; UI behavior changed states/actions;
+UI design empty/loading/error/long-text/large-data, mobile, touch, visual/a11y.
+Run test/lint/typecheck/build (and integration/e2e where defined). Report exact
+commands/exit codes/evidence; skipped checks are skipped with a reason, never
+passed. Record AC→test→evidence.
 
 ## Phase 7 - Verification
 
-Use the verifier prompt in `rd-workflow-roles`. The verifier is read-only:
+Use the verifier prompt in `rd-workflow-roles`; read-only. Check:
 
-- `git diff` / `git status` scope check against the confirmed list;
-- official project test command, untouched;
-- real data/permissions/edge checks;
-- for `UI design`, an independent UI score with its own screenshots;
-- for `UI behavior`, the changed UI states/actions without a design score;
-- for `No UI`, functional/CLI/API behavior and no UI score;
-- fixture residue and cleanup check;
-- PASS or REJECT with evidence and residual risks.
+- every AC and its evidence, not just tests green;
+- `git diff`/`status` against the confirmed list;
+- official test, lint, typecheck, build; integration/e2e where defined;
+- CI (pipeline ID/green) if the project documents it;
+- real data/permissions/edges; fixture residue/cleanup;
+- UI design final independent score (not the Phase 3 direction score); UI
+  behavior screenshots/states; No UI functional/CLI/API;
+- high-risk code review/human approval.
 
-PASS requires: tests green, no blocking defect, and no out-of-scope production
-change. For `UI design` it also requires UI >= 85, no P0/P1, and no blocking
-accessibility issue.
+PASS = all AC evidenced, commands green, no blocking defect/out-of-scope change; missing evidence = REJECT. Use `rd-workflow-delivery` for evidence/independence.
 
 ## Phase 8 - User preview
 
-Provide: how to open the preview, test account/data, exact steps, and a
-checklist of what to look for. For `No UI`, a command, sample request, or output
-sample can be the preview. Do not call the work accepted until the user
-says so. After a failed preview: fix, retest, re-verify, and return to preview.
+Provide how to open, test account/data, exact steps, acceptance checklist. No UI
+may use a command/sample/output. Don't call accepted until the user says so.
+After failure: fix, retest, re-verify, return to preview. Internal PASS != user
+acceptance.
 
 ## Phase 9 - Delivery
 
-Re-read `docs/DELIVERY.md` (or the project's equivalent). Execute exactly the
-documented path. If delivery is undocumented: keep changes local, prepare a
-patch/diff, ask once, then stop. Report:
-
-- commands actually run and their result;
-- steps not run and why;
-- commit/branch/PR/MR/deployment identifiers when they exist;
-- migration backup and rollback when data is involved.
-
-Never write secrets into the report. Never claim CI, deployment, or approval
-that was not observed.
+Re-read `docs/DELIVERY.md` or equivalent; execute the documented path. If
+undocumented: keep local, prepare patch/diff, ask once, stop. With
+`rd-workflow-delivery`: record commands run/not run and why; test/lint/typecheck/
+build/CI evidence; commit/branch/PR/MR/deployment IDs; migration `MIGRATION.md`
+(rehearsal, backup restore, rollback, owner/trigger); deploy flag/canary,
+post-deploy smoke, monitoring, abort/rollback owner; never claim CI/deploy/
+approval not observed; never write secrets.
 
 ## Shortcuts that are not allowed
 
-- Skipping project docs because the task "looks small".
-- Skipping UI phases only because the project is CLI today.
-- Forcing UI exploration, screenshots, or a score on `No UI` work.
+- Skipping docs because the task "looks small".
+- Skipping UI phases because the project is CLI today.
+- Forcing UI exploration/score on No UI work.
 - Letting the implementer score its own UI.
-- Showing a below-gate UI as a candidate.
+- Showing below-gate UI as a candidate.
 - Treating internal PASS as user acceptance.
-- Assuming a PR/MR/CI/deploy pipeline.
-- Silently skipping a test and calling it green.
+- Calling a trivial change high-risk to skip thinking, or a high-risk change
+  trivial to skip gates.
+- Verifier/test-author/implementer self-review.
+- Claiming review/build/CI/migration/deploy without evidence.
