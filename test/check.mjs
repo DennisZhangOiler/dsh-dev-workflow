@@ -123,6 +123,7 @@ for (const marker of [
   'id: dev-workflow',
   'id: rd-workflow-contract',
   "name: 'dsh-rd-workflow'",
+  'clientOnly: true',
   'order: 5',
   "name: '@deepseek-ai/dsh-tool-fs'",
   "name: '@deepseek-ai/dsh-tool-fs-search'",

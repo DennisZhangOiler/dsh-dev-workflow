@@ -139,3 +139,5 @@
 - insert:
     - id: rd-mode-client
       name: 'dsh-rd-workflow'
+      config:
+        clientOnly: true

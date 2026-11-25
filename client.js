@@ -15,7 +15,7 @@ window.__ModuleLoader__.load({
     // One frame-wide menu instance. The trigger lives in the composer; the
     // menu lives in shell.overlay so it is never clipped by the docked composer.
     const store = {
-      state: { open: false, top: 0, left: 0, mode: 'standard', labels: null, onSelect: null },
+      state: { open: false, top: 0, left: 0, mode: 'standard', labels: null, onSelect: null, triggerEl: null },
       listeners: new Set(),
       update(patch) { this.state = { ...this.state, ...patch }; for (const fn of this.listeners) fn() },
       subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn) },
@@ -33,7 +33,7 @@ window.__ModuleLoader__.load({
       .rd-mode-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       .rd-mode-chevron{display:inline-flex;flex:0 0 auto;color:var(--dsw-alias-label-caption);transition:transform 120ms ease}
       .rd-mode-chevron.open{transform:rotate(180deg)}
-      .rd-mode-menu{position:fixed;z-index:1001;width:184px;padding:4px;border:1px solid var(--dsw-alias-border-l1);border-radius:10px;background:var(--dsw-alias-bg-layer-1);box-shadow:0 6px 20px rgba(0,0,0,.12);font-family:inherit;pointer-events:auto}
+      .rd-mode-menu{position:fixed;z-index:1001;box-sizing:border-box;width:184px;padding:4px;border:1px solid var(--dsw-alias-border-l1);border-radius:10px;background:var(--dsw-alias-bg-layer-1);box-shadow:0 6px 20px rgba(0,0,0,.12);font-family:inherit;pointer-events:auto}
       .rd-mode-option{display:flex;align-items:center;gap:8px;width:100%;height:32px;padding:0 8px;border:0;border-radius:6px;background:transparent;color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;line-height:20px;font-weight:500;text-align:left;cursor:pointer}
       .rd-mode-option:hover{background:var(--dsw-alias-interactive-bg-hover)}
       .rd-mode-option-icon{display:inline-flex;flex:0 0 auto;color:var(--dsw-alias-label-caption)}
@@ -62,7 +62,15 @@ window.__ModuleLoader__.load({
           if (event.target?.closest?.('.rd-mode-chip')) return
           close()
         }
-        const onKey = (event) => { if (event.key === 'Escape') close() }
+        const onKey = (event) => {
+          if (event.key === 'Escape') { close(); state.triggerEl?.focus?.(); return }
+          if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
+          const items = [...(ref.current?.querySelectorAll('.rd-mode-option') ?? [])]
+          if (items.length === 0) return
+          const current = items.indexOf(document.activeElement)
+          const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : event.key === 'ArrowDown' ? (current + 1) % items.length : (current - 1 + items.length) % items.length
+          event.preventDefault(); items[next].focus()
+        }
         const onViewport = () => close()
         document.addEventListener('mousedown', onPointer)
         document.addEventListener('keydown', onKey)
@@ -75,11 +83,16 @@ window.__ModuleLoader__.load({
           window.removeEventListener('scroll', onViewport, true)
         }
       }, [state.open])
+      useEffect(() => {
+        if (!state.open) return
+        const selected = ref.current?.querySelector('[aria-selected="true"]')
+        selected?.focus?.()
+      }, [state.open])
       if (!state.open) return null
       const label = state.labels ?? { aria: t('aria'), light: t('light'), standard: t('standard'), deep: t('deep') }
       return h(React.Fragment, null,
         h('style', { key: 'rd-mode-css' }, css),
-        h('div', { ref, className: 'rd-mode-menu', role: 'listbox', 'aria-label': label.aria, style: { top: state.top, left: state.left } },
+        h('div', { ref, id: 'rd-mode-menu', className: 'rd-mode-menu', role: 'listbox', 'aria-label': label.aria, style: { top: state.top, left: state.left }, onKeyDown: (event) => { if (event.key === 'Escape') { store.update({ open: false }); state.triggerEl?.focus?.() } } },
           MODES.map(id => h('button', {
             key: id, type: 'button', role: 'option', className: 'rd-mode-option',
             'aria-selected': id === state.mode,
@@ -98,6 +111,15 @@ window.__ModuleLoader__.load({
         const open = menuState.open && menuState.sessionId === sessionId
 
         useEffect(() => () => { if (store.state.open && store.state.sessionId === sessionId) store.update({ open: false }) }, [sessionId])
+
+        useEffect(() => {
+          if (!sessionId || preset !== 'dev-workflow') return
+          const live = ctx.sessions.binding(sessionId)?.session
+          if (!live) return
+          void live.command(`/mode ${mode}`)
+        // Sync the server's mode section to the chip once per session mount.
+        }, [sessionId, preset])
+
         if (preset !== 'dev-workflow') return null
 
         const label = { aria: t('aria'), light: t('light'), standard: t('standard'), deep: t('deep'), error: t('error') }
@@ -123,14 +145,14 @@ window.__ModuleLoader__.load({
           const height = MODES.length * 32 + 8
           const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))
           const top = rect.top >= height + 8 ? rect.top - height - 6 : rect.bottom + 6
-          store.update({ open: true, top, left, mode, labels: label, onSelect: choose, sessionId })
+          store.update({ open: true, top, left, mode, labels: label, onSelect: choose, sessionId, triggerEl: trigger.current })
         }
 
         return h(React.Fragment, null,
           h('style', { key: 'rd-mode-css' }, css),
           h('button', {
             ref: trigger, type: 'button', className: 'rd-mode-chip', title: failed ? label.error : label.aria,
-            'aria-label': label.aria, 'aria-haspopup': 'listbox', 'aria-expanded': open,
+            'aria-label': label.aria, 'aria-haspopup': 'listbox', 'aria-expanded': open, 'aria-controls': 'rd-mode-menu',
             disabled: !sessionId, onClick: openMenu,
           },
           glyph(mode),
