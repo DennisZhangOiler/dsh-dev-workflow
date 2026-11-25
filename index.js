@@ -139,7 +139,6 @@ export function applyWithMode(ctx, mode = 'standard') {
   }
 }
 
-
 /** Standard mode: the default preset entry point. */
 export function apply(ctx) {
   return applyWithMode(ctx, 'standard')

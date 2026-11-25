@@ -1,0 +1,22 @@
+[
+  {
+    "file": "page.png",
+    "state": null,
+    "size": "1440x900",
+    "zoom": 1,
+    "animationWaitMs": 0,
+    "issues": [],
+    "lint": [
+      {
+        "rule": "contrastLow",
+        "label": "文字对比度不达标（正文低于 3:1，大字低于 2.5:1）",
+        "count": 8,
+        "examples": [
+          "span._7KE1Ra_triggerEffort「High」（2.13:1）",
+          "span.cubgiG_itemDesc「处理代码、文件和资料，适合大多数任务。Agent」（2.13:1）",
+          "span.cubgiG_itemDesc「包含标准模式的所有能力，更适合批量调用工具，并对」（2.13:1）"
+        ]
+      }
+    ]
+  }
+]
