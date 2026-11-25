@@ -20,8 +20,7 @@ assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
 assert.ok(manifest.exports?.['./icon'])
 assert.ok(manifest.exports?.['./locale/*.json'])
-assert.equal(manifest.exports?.['./light'], './light.js')
-assert.equal(manifest.exports?.['./deep'], './deep.js')
+assert.equal(manifest.exports?.['./client'], './client.js')
 
 const shipped = new Set(manifest.files)
 const required = [
@@ -80,6 +79,9 @@ for (const path of [
   'docs/e2e/0.8/research/data/raw.json',
   'docs/e2e/0.8/research/REPLAY.md',
   'docs/e2e/0.8/ui/UI-SCORE-R2.md',
+  'docs/e2e/0.8/ui/MODE-SELECTOR.md',
+  'docs/e2e/0.8/ui/composer-mode-before-first-turn.png',
+  'docs/e2e/0.8/ui/composer-mode-deep-works.png',
   'docs/e2e/0.8/program/PROGRAM-SCORE-R2.md',
   'docs/e2e/0.8/program/RUNLOG.md',
   'docs/e2e/0.8/program/PROGRAM-RUBRIC.md',
@@ -115,12 +117,6 @@ for (const locale of ['en', 'zh']) {
 const patch = read('cordis.patch.yml')
 for (const marker of [
   'id: preset-dev-workflow',
-  'id: preset-dev-workflow-light',
-  'id: preset-dev-workflow-deep',
-  'id: dev-workflow-light',
-  'id: dev-workflow-deep',
-  "name: 'dsh-rd-workflow/light'",
-  "name: 'dsh-rd-workflow/deep'",
   "name: '@deepseek-ai/dsh-agent-preset'",
   'id: dev-workflow',
   'id: rd-workflow-contract',

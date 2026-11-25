@@ -11,7 +11,8 @@
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg",
     "./light": "./light.js",
-    "./deep": "./deep.js"
+    "./deep": "./deep.js",
+    "./client": "./client.js"
   },
   "files": [
     "index.js",
@@ -27,7 +28,8 @@
     "CHANGELOG.md",
     "LICENSE",
     "light.js",
-    "deep.js"
+    "deep.js",
+    "client.js"
   ],
   "keywords": [
     "dsh",
@@ -54,6 +56,10 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
     }
   },
   "author": "DennisZhangOiler",

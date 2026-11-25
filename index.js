@@ -10,6 +10,7 @@
  */
 
 import { readFileSync } from 'node:fs'
+import { randomUUID } from 'node:crypto'
 import { dirname, join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -137,9 +138,36 @@ export function applyWithMode(ctx, mode = 'standard') {
       `rd-workflow.skill(${skill.name})`,
     )
   }
+
+  if (typeof ctx.inject === 'function') {
+    ctx.inject(['commands'], (commandCtx) => {
+      commandCtx.effect(
+        () =>
+          commandCtx.commands.register({
+            name: 'mode',
+            description: 'Set workflow intensity: light, standard, or deep',
+            handler: ({ agent, rawInput }) => {
+              const mode = rawInput.trim().toLowerCase()
+              if (!['light', 'standard', 'deep'].includes(mode)) return { kind: 'error', text: '用法：/mode light|standard|deep' }
+              agent.inject({
+                id: randomUUID(), role: 'user', source: { kind: 'user' },
+                content: [{ type: 'text', text: `Workflow mode: ${mode}. Apply the ${mode} rules from the R&D Workflow section from the next turn; this is a session-level instruction, not a preset/tool swap.` }],
+              })
+              return { kind: 'success', text: `流程强度：${mode}` }
+            },
+          }),
+        'rd-workflow.mode-command',
+      )
+    })
+  }
 }
 
-/** Standard mode: the default preset entry point. */
+/**
+ * Preset entry point. The same package is also mounted as a global client-only
+ * row; that mount has no composed preset and must not add prompt text/skills.
+ */
 export function apply(ctx) {
+  const presets = typeof ctx.get === 'function' ? ctx.get('agentPresets') : undefined
+  if (presets && typeof presets.composedPreset === 'function' && presets.composedPreset(ctx) === undefined) return
   return applyWithMode(ctx, 'standard')
 }

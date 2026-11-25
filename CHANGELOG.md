@@ -8,7 +8,7 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- **Three native presets: 研发流程 · Light / Standard / Deep.** Pick the mode in the new-session preset roster; the Standard preset keeps the existing `dev-workflow` id. The plugin config appends a one-line `Mode:` marker.
+- **One 研发流程 preset + always-visible composer 流程强度 selector.** Standard is the default; the selector injects a session-level mode instruction (light/standard/deep) and works before and during a conversation. It does not swap the preset/tool set; the `dev-workflow` id is retained.
 - **Light / Standard / Deep modes**: choose ceremony by risk. Light skips
   contract files/reviewers/E2E for small reversible work; Standard is the
   default with one review where risk warrants; Deep keeps the full contract,

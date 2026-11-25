@@ -146,12 +146,3 @@ test('contributed text has no machine-specific paths or secrets', () => {
 })
 
 
-test('mode entry points expose Light/Standard/Deep wrappers', async () => {
-  const light = await import('../light.js')
-  const deep = await import('../deep.js')
-  for (const mod of [light, deep]) {
-    assert.equal(mod.name, 'rd-workflow')
-    assert.deepEqual(mod.inject, ['systemPrompt', 'skills'])
-    assert.equal(typeof mod.apply, 'function')
-  }
-})
