@@ -8,35 +8,31 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- **One 研发流程 preset + always-visible composer 流程强度 selector.** Standard is the default; the selector injects a session-level mode instruction (light/standard/deep) and works before and during a conversation. It does not swap the preset/tool set; the `dev-workflow` id is retained.
-- **Light / Standard / Deep modes**: choose ceremony by risk. Light skips
-  contract files/reviewers/E2E for small reversible work; Standard is the
-  default with one review where risk warrants; Deep keeps the full contract,
-  independent review/score, E2E, and human gates. The prompt is now mode-aware
-  and `docs/MODES.md` explains selection and examples.
-- Acceptance contract: AC-1..n, Definition of Done, NFRs, risk tiers, and
-  AC→test→evidence traceability (`rd-workflow-contract`).
-- Verification/delivery evidence: test/lint/typecheck/build/CI, code review,
-  reviewer identity/hash history, migration rehearsal/rollback, feature
-  flag/canary, post-deploy smoke/monitoring (`rd-workflow-delivery`).
-- Independent research plan review with per-area floors and no P0/P1; results
-  review with independent claim extraction, exact allowed wording, memo freeze,
-  and partial-claim limits.
-- UI per-area floors, anchors, calibration fixtures, real interaction/mobile/
-  keyboard/a11y checks, and independent scoring even for one-direction changes.
-- Program demo independent score before freeze, provider/consumer contract tests,
-  runtime-resource isolation, and gap logging.
-- Risk tiers, trivial fast path, review calibration fixtures, and evidence-level
-  labels.
+- **One 研发流程 preset, starting in Standard**, plus an always-visible
+  composer **流程强度** selector (轻量 / 标准 / 深度) before and during a
+  conversation.
+- **DSH-consistent selector UI**: 28px trigger, 13px/500 label, theme tokens,
+  borderless menu with 32px rows, icon, check, and keyboard navigation.
+- **Prompt-level mode switching** via `/mode`: updates an agent-scoped prompt
+  section; no preset/tool swap and no injected chat bubble.
+- **Separate client-only package** (`dsh-rd-workflow-client`) and frame-wide
+  `shell.overlay` menu, so the control loads without polluting other presets.
+- Independent review of functionality/UI: PASS, 81/100, no P0/P1.
 
 ### Changed
 
-- Research direction count is explicitly open; users select from a broad set.
-- Removed independent reproduction/migration validation as separate research
-  stages: demos use a representative slice; migration is Development work with
-  a `MIGRATION.md` gate.
-- README/verification now distinguish implemented, statically tested,
-  exercised end-to-end, and observed-in-production evidence.
+- Replaced the three-preset Light/Standard/Deep direction with one preset plus a
+  per-session mode instruction; `dev-workflow` id retained for compatibility.
+- The mode selector now matches the permission selector and remains available
+  in existing conversations.
+
+### Fixed
+
+- Existing-chat mode menu was clipped by the docked composer.
+- The global client row could add `R&D Workflow`, skills, or `/mode` to other
+  presets.
+- Preset Host mount was missing after early-return/config isolation.
+- Menu width, focus, and keyboard behavior.
 
 ## [0.7.0] - 2026-11-25
 

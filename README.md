@@ -11,9 +11,10 @@ tool set; after the first turn DSH would refuse a preset swap anyway. The agent
 routes the request to a technical-research, development, or program pipeline
 instead of asking you to paste a long prompt each time.
 
-Installing the bundle only adds the preset. It does **not** change the profile's
-default preset, does not add a Host-wide row, and does not affect sessions that
-use Standard or another preset.
+Installing the bundle adds the preset plus a client-only UI package for the
+composer control. It does **not** change the profile's default preset, add a
+Host-wide prompt/skill/command, or affect sessions that use Standard or another
+preset.
 
 ![研发流程 (R&D Workflow) in the new-session preset menu](docs/screenshot-preset.png)
 
@@ -187,30 +188,29 @@ explicit confirmation immediately before they run.
 
 ### From GitHub
 
-The npm name `dsh-rd-workflow` is free but this release is not published to npm
+Release notes: [`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md).
 
-**Do not try to install a non-existent npm release**; install this repository
-instead.
-
-```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
-```
-
-For a reproducible release, pin the full commit SHA:
+0.8.0 is released on GitHub; the npm package is **not** published. Install the
+release tarball:
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#<full-40-hex-commit>
+plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.8.0/dsh-rd-workflow-0.8.0.tgz
 ```
 
-Then open a new session, open the preset menu, and choose **研发流程** (Dev
-Workflow). Installing the bundle changes no default preset and affects no other
-session.
+Or install the Git tag:
+
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.8.0
+```
+
+For a reproducible install, pin the full 40-character commit SHA. Then open a
+new session, open the preset menu, and choose **研发流程**. Installing adds the
+preset plus the client-only UI package; it changes no default preset and does
+not affect other presets. A preset update may report `restart-required`.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
-install below (it has no 5-second probe), or install a release tarball. The
-candidate is `0.8.0`; it is **not tagged/published yet** (current published
-release: `v0.7.0`). Install only after maintainer confirmation; the CLI command
-was verified on this repo. A preset update may report `restart-required`.
+install below (it has no 5-second probe), or install the release tarball
+directly.
 
 ### Before installing
 
@@ -309,8 +309,8 @@ for every task. They show what a serious gate looks like:
   reduced-scope calibration.
 
 These scores are **not** a universal release gate. Light/Standard tasks use the
-proportional checks in [`docs/MODES.md`](docs/MODES.md). No plugin release,
-commit, tag, or install is claimed here; the candidate is local.
+proportional checks in [`docs/MODES.md`](docs/MODES.md). The 0.8.0 preset and
+client UI are released on GitHub; the npm package is not published.
 
 ## Requirements and compatibility
 

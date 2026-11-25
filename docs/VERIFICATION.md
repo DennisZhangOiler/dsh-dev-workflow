@@ -1,8 +1,7 @@
-# Verification: R&D Workflow 0.8.0 (candidate)
+# Verification: R&D Workflow 0.8.0 (released)
 
-This is a **working-tree candidate**, not a published release. Per the user's
-instruction, it has not been tagged, pushed, or installed into the active
-profile. Score the candidate; publish only after explicit confirmation.
+This is the verification record for release `v0.8.0`. The tag, GitHub Release,
+and tarball asset are published; npm remains unpublished.
 
 ## 1. Static checks
 
@@ -21,7 +20,7 @@ Results:
   installed it, asserted the `preset-dev-workflow` row with `id: dev-workflow`
   and `default: standard`, removed it, and asserted no dependency, lockfile, or
   `node_modules` residue: PASS.
-- `npm pack`: 39 files.
+- `npm pack`: 42 files (release docs included).
 
 Sizes:
 
@@ -178,23 +177,22 @@ executed and remain blocked. Evidence: `docs/e2e/0.8/high-risk/`.
 - The research E2E now exercises the plan→results review chain at reduced
   scope; the full-plan cells remain unmeasured. UI-design, Program, and
   high-risk/migration rehearsal E2E are verified; real migration is not.
-- No release/tag/install was performed for 0.8.0; the active profile still has
-  the last installed 0.7.0 until the user confirms publication/installation.
+- `v0.8.0` tag and GitHub Release are published; npm is not published.
+  The author's Web profile has 0.8.0 installed; a restart may be required for
+  the running Host to load it.
 
 ## 8. Current profile and release status
 
-- Candidate version: **0.8.0**.
-- Active profile: still **0.7.0** (0.8.0 not installed).
-- No `v0.8.0` tag, push, or installation yet; awaiting user confirmation.
+- Released version: **0.8.0**.
+- Active profile: 0.8.0 installed; restart may be required.
+- `v0.8.0` tag and GitHub Release are pushed; the release tarball is attached.
 - Repository remains `DennisZhangOiler/dsh-rd-workflow`.
 - npm: not published; `dsh-rd-workflow` is available.
 
-## 9. What must happen before 0.8.0 is called release-ready
+## 9. Release checklist
 
-1. User confirms the candidate scope.
-2. Re-score after final edits (UI/Program/high-risk) or explicitly accept the
-   documented residual risk; Program gate walk-through/waiver still required.
-3. Complete the No-UI pack (done, fixture) and research final review.
-4. Re-run static + smoke on the exact commit; resolve untracked files.
-5. Tag/push/install only after that confirmation; update this file's status from
-   "candidate" to "released".
+1. User confirmed the scope and release.
+2. Final functionality/UI review: PASS, 81/100, no P0/P1.
+3. Static checks and disposable-profile smoke re-run on the release commit.
+4. Tag `v0.8.0`, push `main`, create the GitHub Release, attach the tarball.
+5. Update this status to "released".

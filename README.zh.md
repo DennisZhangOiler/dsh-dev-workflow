@@ -8,8 +8,9 @@
 会话级模式指令，**不换 preset、不换工具集**；第一轮后 DSH 本来也不允许换 preset。
 Agent 会路由到技术调研、开发或大型项目编排流程，不需要每次粘贴长 Prompt。
 
-安装这个 bundle 只新增预设：**不会**修改 profile 的默认预设，不会注册
-Host 级的全局行，也不会影响使用 Standard 或其他预设的会话。
+安装这个 bundle 会新增预设和一个仅客户端的 UI 包（composer 控件）：**不会**修改
+profile 的默认预设，不会注册 Host 级的 prompt/skill/command，也不会影响使用
+Standard 或其他预设的会话。
 
 ![新会话预设菜单中的研发流程](docs/screenshot-preset.png)
 
@@ -144,24 +145,26 @@ Phase 1 判断的是这次改动，而不是项目类型：
 
 ### 从 GitHub 安装
 
-npm 名 `dsh-rd-workflow` 目前可用，但这个版本还没有发布到 npm；**不要尝试安装不存在的 npm 版本**，
-请从本仓库安装：
+版本说明：[`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md)。
+
+0.8.0 已发布到 GitHub；npm 包**未发布**。优先安装 release tarball：
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
+plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.8.0/dsh-rd-workflow-0.8.0.tgz
 ```
 
-需要可复现的发布版本时，固定完整 commit SHA：
+或安装 Git tag：
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#<完整 40 位 commit>
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.8.0
 ```
 
-安装后新建会话，打开预设菜单，选择 **研发流程**。安装不会修改默认预设，也不影响
-其他会话。
+需要可复现安装时固定完整 40 位 commit SHA。安装后新建会话，打开预设菜单，选择
+**研发流程**。安装会新增预设和仅客户端 UI 包；不会修改默认预设，也不影响其他
+preset。preset 更新可能返回 `restart-required`。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。candidate 是 `0.8.0`，**还没有打 tag/发布**（当前已发布版本：`v0.7.0`）。只在维护者确认后安装；CLI 命令已在本仓库验证。preset 更新也可能返回 `restart-required`。
+探测），或直接安装 release tarball。
 
 ### 安装前备份
 
@@ -255,8 +258,8 @@ dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
   reduced-scope 校准。
 
 这些分数**不是**统一的发布门禁。Light/Standard 使用
-[`docs/MODES.md`](docs/MODES.md) 里的按比例检查。这里不声称已发布、commit、tag 或安装；
-候选仍在本地。
+[`docs/MODES.md`](docs/MODES.md) 里的按比例检查。0.8.0 预设和客户端 UI 已发布到
+GitHub；npm 包未发布。
 
 ## 要求与兼容性
 

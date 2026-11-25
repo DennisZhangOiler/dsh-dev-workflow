@@ -16,10 +16,10 @@ Sources read in the installed DSH package:
 ## Current status
 
 - GitHub: <https://github.com/DennisZhangOiler/dsh-rd-workflow> (public).
-- Install from Git: see the README. Do not install from npm.
+- Release `v0.8.0`: tag, GitHub Release, and `dsh-rd-workflow-0.8.0.tgz` asset.
+  Install from the release tarball or the Git tag; see the README.
 - npm: **not published for this release**. The name `dsh-rd-workflow` is
-  available; a scoped name is not required. GitHub installation is the current
-  supported path.
+  available; a scoped name is not required. GitHub is the supported path.
 - Marketplace index: not served publicly yet.
 
 ## What DSH currently supports
@@ -203,8 +203,7 @@ python3 -m http.server 8088 --directory market-site
 ## Not done in this repository
 
 - No npm publication has been performed; the name is available.
-- A public GitHub repository exists; no GitHub Release asset is required for
-  Git installation.
+- A public GitHub repository and the `v0.8.0` GitHub Release/tarball exist.
 - No marketplace index has been served publicly.
 - No "listed" or "approved" status is claimed.
 
