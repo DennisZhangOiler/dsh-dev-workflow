@@ -62,7 +62,8 @@ test('prompt contains the router, modes, phases, and gates', () => {
   for (const marker of [
     'Request router', 'New objective', 'Phase 0', 'Phase 1', 'Phase 2', 'Phase 3',
     'Phase 4', 'Phase 5', 'Phase 6', 'Phase 7', 'Phase 8', 'Phase 9',
-    'R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7',
+    'R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8',
+    'Experiment-first', 'transfer', 'Reproduce', 'measured-here',
     '>=85', 'P0/P1', 'PASS/REJECT', 'UI design', 'UI behavior', 'No UI',
     'UI design only', 'Bootstrap missing rules', 'ask once with defaults',
     'AGENTS.md', 'docs/DEV_WORKFLOW.md', 'docs/DELIVERY.md', 'docs/UI.md',
@@ -103,6 +104,10 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['rd-workflow'], /Conventions bootstrap/u)
   assert.match(bodies['rd-workflow-research'], /R0/u)
   assert.match(bodies['rd-workflow-research'], /R7/u)
+  assert.match(bodies['rd-workflow-research'], /R8/u)
+  assert.match(bodies['rd-workflow-research'], /experiment/iu)
+  assert.match(bodies['rd-workflow-research'], /transfer/iu)
+  assert.match(bodies['rd-workflow-research'], /reproduc/iu)
   assert.match(bodies['rd-workflow-research'], /PASS.*REVISE/u)
   assert.match(bodies['rd-workflow-research'], /read-only/iu)
   assert.match(bodies['rd-workflow-program'], /Program mode/u)

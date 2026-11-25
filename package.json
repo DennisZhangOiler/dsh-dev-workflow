@@ -1,6 +1,6 @@
 {
   "name": "dsh-rd-workflow",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Non-default R&D Workflow agent preset for DeepSeek Harness: development and technical research pipelines, convention bootstrap, independent review, UI scoring, and recursive module/program orchestration.",
   "license": "MIT",
   "type": "module",

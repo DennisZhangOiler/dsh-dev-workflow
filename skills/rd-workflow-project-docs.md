@@ -104,13 +104,17 @@ Use this when the project needs durable research conventions.
 # Research policy
 
 - Default research question/decision: <...>
-- Covered types: technical/codebase; external sources: <allowed/not>
-- Source rules: primary first, cite file:line or URL + access date
-- Required depth: quick scan / standard (brief + source plan + independent review) / deep
-- Deliverable: memo / matrix / root-cause / report
-- Output directory: docs/research/
-- Review gate: fresh read-only reviewer; PASS/REVISE
-- Handoff: accepted research feeds a development contract
+- Covered types: technical/codebase; external market/user research: <out>
+- Direction count: 2-3; user confirms directions before experiments
+- Demo policy: small timeboxed spikes under research/<topic>/spikes/;
+  production code is not changed
+- Baseline and metrics: <current approach, workload, thresholds>
+- Required depth: standard (directions + measured demos + transfer check +
+  independent reproduction) / deep
+- Transfer check: integrate a leading candidate into a copy; run existing tests
+- Deliverable: decision memo / matrix / root-cause / report
+- Review gate: fresh read-only reviewer reruns or audits; PASS/REVISE
+- Handoff: accepted research feeds a development contract or pilot
 ```
 
 ## UI policy template

@@ -98,17 +98,24 @@ Run these as analysis-only prompts; no code change is needed.
 4. Ask for a bugfix inside the existing contract: expected to stay in the
    existing contract.
 
-## A7. Technical research mode
+## A7. Experiment-driven technical research
 
 1. Ask a non-trivial codebase/architecture question without requesting code
-   changes. Expected: a research brief, source plan, evidence with
-   `file:line`, and no production edits.
-2. Confirm standard depth: brief + source plan + independent review.
-3. Ask the reviewer to check a sample of claims; expected PASS/REVISE, never
-   self-approval.
-4. Ask to implement a finding; expected a development contract/handoff, not
-   code changes inside the research phase.
-5. Ask a simple factual question; expected a direct answer, not the full
+   changes. Expected: R0/R1 directions with hypotheses, a transfer risk, and an
+   experiment plan; the agent waits for the user's direction choice before any
+   build.
+2. Confirm two directions. Expected: small demos and a baseline under a sandbox
+   such as `research/<topic>/spikes/`; production code is not edited.
+3. Expected: repeatable commands, fixed workload/seed/environment, median/p95
+   or equivalent measurement, raw data, and failed/invalid experiments kept.
+4. Expected: semantic/behavioral parity checks, not only performance numbers.
+5. Expected: a transfer/migration check against the real project or a copy,
+   not a conclusion based only on upstream claims.
+6. Expected: a fresh read-only reproduction/reviewer before the decision memo;
+   PASS/REVISE, never self-approval.
+7. Ask to implement a finding; expected a development contract or time-boxed
+   pilot, not production code during research.
+8. Ask a simple factual question; expected a direct answer, not the full
    research pipeline.
 
 ## B. Disposable install

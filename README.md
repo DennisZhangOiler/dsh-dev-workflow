@@ -44,25 +44,35 @@ and do not depend on the conversation history.
 ### Technical research mode
 
 For a non-trivial technical/codebase investigation, architecture or dependency
-comparison, feasibility study, or root cause, the agent runs a read-only
-research pipeline:
+comparison, feasibility study, or root cause, the agent runs an
+**experiment-first** research pipeline. Documents and upstream benchmarks only
+generate hypotheses; the final evidence is measured in this project or a
+representative sandbox.
 
 | Stage | Result |
 |---|---|
-| R0 Context | Read docs/code; ask once for the question, decision, depth, deliverable, and output path when unclear |
-| R1 Brief | Question, decision, audience, scope/non-goals, sources, deliverable, citation style, quality bar |
-| R2 Source plan | Code paths, git history, docs, tests, official docs/web when needed; access, recency, quality, triangulation |
-| R3 Evidence | Read-only collection with `file:line`, URL, date, short quotes; facts separated from interpretation |
-| R4 Synthesis | Comparison, tradeoffs, confidence, contradictions, gaps; facts vs assumptions vs recommendations |
-| R5 Independent review | Fresh read-only reviewer checks citations, source quality, coverage, logic, bias, sample claims; PASS/REVISE |
-| R6 Deliverable | Memo/report/matrix/root-cause; evidence, recommendation, risks, open questions; user acceptance |
-| R7 Handoff | If implementation follows, create a development contract; no production code during research |
+| R0 Context | Read docs/code; define the decision, current baseline, metrics, constraints, timebox, and output |
+| R1 Directions | 2-3 genuinely different options with mechanism, expected metric, assumptions, risks, falsifier, smallest demo, and transfer risk; **user chooses before any build** |
+| R2 Experiment plan | Baseline vs candidate on the same workload; metrics, runs, variance, environment, thresholds, stop criteria, artifacts |
+| R3 Small demos | One experimenter per direction; timeboxed, falsifiable demos and baseline under the same conditions; commands/versions/data recorded; failures kept |
+| R4 Measurement | Correctness, performance with variance, cost, failure modes; observation separated from interpretation; no cherry-picking |
+| R5 Transfer check | Integrate the leading candidate into a copy with a thin adapter; run existing tests; measure dependencies/build/data/migration/rollback/ops/security/license/team; toy vs repo vs scale |
+| R6 Independent reproduction | Fresh read-only reviewer reruns the decisive experiment or a sample; checks baseline fairness, variance, artifacts, and transfer claims; PASS/REVISE |
+| R7 Decision | Memo with evidence labels `measured-here`, `measured-sandbox`, `reported`; rejected directions, transfer cost/risks, recommendation/confidence, open questions |
+| R8 Handoff | Development contract or Program input; optional time-boxed pilot with success criteria, rollback, cleanup; no production code during research |
+
+Standard depth = 2-3 directions, at least one measured demo per viable
+direction, a transfer check, and independent reproduction. Deep research adds
+multiple demos per direction, an integration spike, and sensitivity analysis.
+Demos live in a sandbox such as `research/<topic>/spikes/`; production code is
+not changed during research.
 
 This version covers technical/codebase research. External market and user
-research are out of scope. Research is read-only; web content is untrusted.
-Standard depth = brief + source plan + independent review.
+research are out of scope.
 
-![Technical research: evidence, independent review, open questions, and a read-only handoff](docs/screenshot-research.png)
+![Research directions and experiment plan before any build](docs/screenshot-directions.png)
+
+![Small demos, semantic checks, and measurement under the research sandbox](docs/screenshot-research.png)
 
 ### Large projects: Program mode
 
@@ -153,7 +163,7 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.5.0`; the CLI command was verified on this repo. A
+current release is `v0.6.0`; the CLI command was verified on this repo. A
 preset update may also report `restart-required`.
 
 ### Before installing
@@ -178,7 +188,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.5.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.6.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and

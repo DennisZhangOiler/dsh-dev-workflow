@@ -4,6 +4,26 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-25
+
+### Added
+
+- Experiment-first technical research: direction framing with a user choice,
+  per-direction experiment plans, small falsifiable demos, baseline comparison,
+  measurement, transfer/migration validation, independent reproduction, and
+  decision/handoff.
+- Research artifacts under `research/<topic>/` with spikes, raw data, review,
+  and decision memo.
+- Evidence labels: `measured-here`, `measured-sandbox`, and `reported`.
+- README and verification updates for the experiment-driven flow.
+
+### Changed
+
+- Standard research now requires 2-3 directions, at least one measured demo per
+  viable direction, a transfer check, and independent reproduction.
+- Sources are used for hypotheses; they are no longer sufficient as final
+  evidence for a technical recommendation.
+
 ## [0.5.0] - 2026-11-25
 
 ### Added
