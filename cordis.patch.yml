@@ -1,24 +1,25 @@
-# The Dev Workflow preset: one @deepseek-ai/dsh-agent-preset declaration.
+# The R&D Workflow preset: one @deepseek-ai/dsh-agent-preset declaration.
 #
 # Installing this bundle inserts the preset; it does not select it, change the
 # profile's default preset, or add any Host-wide row. A session uses the
-# pipeline only after the user explicitly picks "开发流程" (Dev Workflow).
+# pipeline only after the user explicitly picks "研发流程" (R&D Workflow).
 #
-# The workflow contract and playbook skills come from dsh-dev-workflow, which
+# The contract and playbooks come from dsh-rd-workflow, which
 # is mounted inside this preset composition only.
 - insert:
     - id: preset-dev-workflow
       name: '@deepseek-ai/dsh-agent-preset'
       config:
         id: dev-workflow
+        # The id stays dev-workflow for existing session compatibility.
         # DSH 0.2.2-rc.5 does not localize user-authored preset metadata per
         # client locale (`presetDisplayText` translates only shipped presets).
         # The roster copy is therefore Chinese to match a zh-CN system; the
         # bundle card and detail page localize independently through
         # locale/*.json. To publish an English roster instead, replace these
         # two strings with the English copy in README.md.
-        name: 开发流程
-        description: 非默认的十阶段交付预设：项目约定优先、独立 UI 评分、隔离测试、只读验收、用户预览，最后按项目文档交付。
+        name: 研发流程
+        description: 非默认的研发流程预设：开发与代码库调研双流程、约定 bootstrap、独立评审、隔离测试、只读验收，大型项目支持架构/UI demo/模块编排。
         order: 5
         plugins:
           - id: persona
@@ -31,8 +32,8 @@
               maxBytes: 65536
           - id: time-context
             name: '@deepseek-ai/dsh-time-context'
-          - id: dev-workflow-contract
-            name: 'dsh-dev-workflow'
+          - id: rd-workflow-contract
+            name: 'dsh-rd-workflow'
           - id: tool-bash
             name: '@deepseek-ai/dsh-tool-bash'
             disabled: !!js process.platform === 'win32'

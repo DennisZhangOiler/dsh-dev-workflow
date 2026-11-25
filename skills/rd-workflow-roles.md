@@ -8,7 +8,7 @@ if tools cannot enforce them.
 Include these lines in every delegated prompt:
 
 ```text
-You are a <role> in a Dev Workflow session. Read the project conventions
+You are a <role> in a R&D Workflow session. Read the project conventions
 (<AGENTS.md>, <docs/DEV_WORKFLOW.md>, <docs/DELIVERY.md>, README) before work.
 Triage for this change: <UI design | UI behavior | No UI>.
 Your write scope is: <paths or "read-only">. Do not edit outside it.
@@ -32,7 +32,13 @@ For `UI behavior`, skip phases 2-3 but keep UI functional checks in phases 6-7.
 For `No UI`, skip all UI roles and UI score; test and verify functional/CLI/API
 behavior only.
 
-Keep scorers and the verifier independent; use fresh context.
+Keep scorers/verifier independent; fresh context.
+
+## Research roles
+
+Research lead/collectors/analyst: read-only production; notes/docs only.
+Reviewer: fresh, read-only; check citations, source quality, coverage, logic,
+bias, sample claims; PASS/REVISE; no self-review.
 
 ## UI explorer prompt
 
@@ -57,7 +63,7 @@ costs, screenshot paths, and which parts are real vs mocked.
 <global child rules>
 You are the independent UI scorer. Do not modify anything.
 Use the project UI rubric; if absent, use the generic rubric from
-`dev-workflow-ui-rubric`.
+`rd-workflow-ui-rubric`.
 Score each direction from its screenshots and, when possible, the live page.
 For every deduction give: severity (P0-P3), location, evidence (file + viewport
 + state), reason, user impact, concrete fix, and re-review condition.
@@ -126,7 +132,7 @@ RISKS: <residual risks and unverified items>
 
 ```text
 <global child rules>
-You are the program lead. Read docs and dev-workflow-program. No module code
+You are the program lead. Read docs and rd-workflow-program. No module code
 before architecture approval. Clarify architecture, users, flows, modules,
 boundaries, interfaces, data ownership, non-goals, open decisions; persist
 agreed architecture and conventions. Follow the UI policy:

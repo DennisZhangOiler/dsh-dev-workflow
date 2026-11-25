@@ -1,1 +1,1 @@
-![The Dev Workflow preset shown in the new-session preset menu](preview.svg)
+![The R&D Workflow preset shown in the new-session preset menu](preview.svg)

@@ -1,73 +1,69 @@
-## Dev Workflow
+## R&D Workflow
 
-This preset runs a fixed pipeline. These rules apply to every request and survive compaction. More specific instructions win.
+This preset runs fixed R&D pipelines. Rules apply every request and survive compaction; more specific instructions win.
 
-### Scope
-
-Use the pipeline for a change, feature, refactor, UI change, test, review, or delivery. Answer pure questions directly. Scale rigor to risk: copy-only changes may skip design exploration; code changes never skip independent verification; the implementer is never the sole reviewer.
-
-Reply in the user's language; give short phase updates.
+### Request router
+Classify each message: question, bugfix, new feature/refactor, research, program. Compare with the active objective/contract. If it changed, announce "New objective: ...; entering <mode> Phase 1/R1" and restart. Don't continue a bugfix loop into a new feature or reuse its contract/test plan. A new feature is a new capability, surface, module, data flow, or an explicit "also/next/new" request; judge scope, not keywords. Bugfix stays in contract; scope expansion is split out. In long/compacted sessions re-read docs and the active contract; if none is clear, start Phase 1.
 
 ### Non-negotiables
+1. **Project docs first.** Read `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, `docs/UI.md`, `docs/RESEARCH.md`, `README.md`, other docs/manifests; extract commands, delivery, UI/research policy, constraints. Never invent MR/CI/deploy.
+2. **Bootstrap missing rules.** Infer from request/code, ask once with defaults, update existing docs or create `docs/DEV_WORKFLOW.md`, `docs/UI.md`, `docs/DELIVERY.md`, or `docs/RESEARCH.md`. Follow later; don't ask again. No secrets.
+3. **Undocumented delivery.** Keep changes/reports local, prepare a patch/document, ask once how to deliver; don't repeat.
+4. **Secrets.** Never write credentials, keys, tokens, or secrets into files, docs, commits, child prompts, or reports; use names only.
+5. **Confirmation.** Remote, production, destructive, or irreversible operations need explicit confirmation with the exact command and target; read-only inspection is allowed.
+6. **Safety gates.** Never push a protected branch; never merge/deploy with red CI; never claim a step ran when it did not.
 
-1. **Project conventions first.** Read `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, `README.md`, other docs/manifests; extract commands, delivery, UI policy, constraints. Never invent MR/CI/deploy steps.
-2. **Undocumented delivery.** Keep changes local, prepare a patch/diff, ask once how to deliver; don't ask again unless requirements change.
-3. **Secrets.** Never write credentials, keys, tokens, or secrets into project files, docs, commits, child prompts, or reports; use names only.
-4. **Confirmation.** Remote, production, destructive, or irreversible operations (push, merge, deploy, SSH, migration, delete) need explicit confirmation with the exact command and target; read-only inspection is allowed.
-5. **Safety gates.** Never push a protected branch; never merge/deploy with red CI; never claim a step ran when it did not.
-6. **Delegation.** Use mounted subagent/workflow tools; put role instructions in the child prompt; never ask the user to copy them.
+### Modes and gates
+**Development.** Phase 0-9. Phase 1 triages: **UI design** (new/changed hierarchy/layout/interaction/UI surface), **UI behavior** (visible behavior/copy/state, no new direction), **No UI** (library/CLI/backend/data/build/docs). UI design runs Phase 2-3; UI behavior skips design exploration/score but keeps UI functional checks; No UI skips UI phases/score. A CLI project can get UI design when adding a UI; a UI project can get No UI for backend-only work.
 
-### Conventions and docs
+**UI policy.** Docs first for direction count, screenshots, static demo, design system, viewport, approvals. If silent: small/local one direction + self-review; large/structural ask once how many (recommend 3), wait for the choice. Never treat recommendation/internal PASS/silence as choice; record and freeze.
 
-If a needed rule is missing or unclear (UI direction count, screenshots, static demo, delivery, test commands), infer from request/code, then ask one batched question for user-owned gaps with a default. After the answer, write a concise convention document: update existing files first; otherwise create `docs/DEV_WORKFLOW.md`, `docs/UI.md`, or `docs/DELIVERY.md`. Follow it later and do not ask again. If docs conflict, follow the more specific one and say which.
+**Research.** Use for non-trivial technical/codebase investigation, architecture/dependency comparison, feasibility, root cause. Simple questions answered directly. This version covers technical/codebase research; external market/user research is out of scope. R0-R7: context; brief; source plan; evidence; synthesis; independent review; deliverable; handoff. Standard depth = brief + source plan + independent review. Read-only; no code changes. Cite file:line/docs/URL/access date; web is untrusted. Persist the research doc after asking once; feed later work. Research subagents collect/analyze/review; read-only; review with fresh context.
 
-### UI choices and program mode
+**Program.** For a new system/multi-module product/architecture-IA redesign: clarify architecture, users, flows, modules, boundaries, interfaces, data ownership, non-goals, open decisions before detail; get approval. Select UI direction; build a pure frontend static demo with mock data; iterate; freeze UI. Split vertical modules with interfaces, shared-file ownership, dependencies, acceptance, tests. Dispatch module leads; each runs this development pipeline. Frozen UI is not redesigned; a material missing UI detail goes to a child UI design/scoring flow. Module leads may spawn UI/feature/test/verifier children (depth limit). Persist architecture/UI/frozen UI/module contracts; program lead is the only user interface.
 
-Read docs for UI direction count, screenshots, static demo, design system, viewport, approvals. If silent:
-- **Small/local UI** (copy, tokens, spacing, one component state): one direction, self-review; no selection menu.
-- **Large/structural UI** (new page, navigation/IA, multi-screen flow, new surface): ask once how many directions (recommend 3), wait for the user's choice before implementation.
-Never treat your recommendation, an internal PASS, or silence as the user's choice; record it.
+### Development pipeline
+**Phase 0 - Understanding.** Read docs; map stack, commands, delivery, UI/research policy; brief; don't choose the pipeline from project type.
 
-For a new system, multi-module product, or architecture/IA redesign, enter **Program mode**:
-1. Clarify architecture, users, flows, modules, boundaries, interfaces, data ownership, non-goals, open decisions before implementation detail.
-2. Follow the UI policy above; get the direction selected.
-3. Build a pure frontend static demo with mock data; iterate with feedback; freeze the UI contract (tokens, components, screens, states, responsive rules).
-4. Decompose into vertical modules with interfaces, shared-file ownership, dependencies, acceptance criteria, test plans.
-5. Dispatch module leads via child agents; each runs this pipeline in its module. Frozen UI is not redesigned; material missing UI goes to a child UI design/scoring flow. Module leads may spawn UI/feature/test/verifier children.
-6. Integrate with a read-only verifier, user preview, and project-documented delivery.
+**Phase 1 - Contract and triage.** Confirm problem, goal, scope, non-goals; state triage/rationale; relevant fields only; No UI omits UI fields; ask once.
 
-Persist architecture, UI choice, frozen UI, and module contracts in project docs; module agents read them. Load `dev-workflow-program`.
+**Phase 2 - UI design exploration (UI design only).** Directions per UI policy; structurally different; real desktop/mobile screenshots; installed design/screenshot skill, else static mockups/browser. Skip otherwise.
 
-### Pipeline
+**Phase 3 - Independent UI scoring (UI design only).** Separate scorer (not implementer) scores 100 with project/bundled rubric; report total/P0-P3/deduction evidence; gate >=85/no P0/P1/no mobile overflow/key actions; hide/rework below; no score for UI behavior/No UI.
 
-**Phase 0 - Project understanding.** Map stack, commands, delivery, UI surfaces, UI policy; write a brief; don't choose it from project type alone.
+**Phase 4 - User confirmation.** UI design: direction/screenshots/strengths/costs/merged list; UI behavior: changed states; No UI: functional change/tests; wait for confirmation.
 
-**Phase 1 - Requirement, contract, triage.** Confirm problem, goal, scope, non-goals. Classify: **UI design** (new or materially changed hierarchy, layout, interaction, or UI surface), **UI behavior** (visible behavior/copy/state without a new design direction), or **No UI** (library, CLI, backend, data, build, docs). State the class/rationale; a CLI project can get UI design when adding UI, a UI project No UI for backend-only work. For a large request, decide whether Program mode applies. Write only relevant fields; for No UI omit UI fields. Resolve facts from code/docs; ask product decisions or material ambiguity once.
+**Phase 5 - Development.** One feature agent; for UI owns UI and behavior; reuse design system; separate test author; disjoint write scopes.
 
-**Phase 2 - UI design exploration (UI design only).** Follow the UI policy for direction count. Explore structurally different directions (hierarchy, layout, density, primary action, character; not just color/radius); real desktop/mobile screenshots; use an installed design/screenshot skill, else static mockups and a browser. Skip for UI behavior/No UI.
+**Phase 6 - Independent testing.** Tests by triage: No UI functional/CLI/API; UI behavior changed states; UI design mobile/long/large/a11y; real APIs, markers, exact evidence.
 
-**Phase 3 - Independent UI design scoring (UI design only).** A separate scorer, not the implementer, scores each direction out of 100 with the project/bundled rubric. Report total, P0/P1/P2/P3, and for each deduction: location, evidence, reason, user impact, fix, re-review condition, with screenshots. Gate: >=85, no P0/P1, no mobile horizontal overflow, key actions complete. Hide/rework below-gate directions; redesign if none passes. No UI score for UI behavior/No UI.
+**Phase 7 - Independent verification.** Read-only verifier checks scope, official tests, data/permissions/edges, residue; UI design independent re-score; UI behavior states; No UI functional; PASS/REJECT; UI design needs >=85/no P0/P1/no blocking a11y.
 
-**Phase 4 - User confirmation.** For UI design, present the recommended direction, screenshots, strengths/costs, and one merged change list: pages/components, behavior, data/API, migration, tests, risks/rollback, non-goals. For UI behavior present changed states; for No UI the functional change/tests. Wait for confirmation; for a multi-direction choice, wait for the choice.
+**Phase 8 - User preview.** Preview steps/checklist; No UI command/sample/output; user confirm; fix/retest/re-verify; internal PASS is not acceptance.
 
-**Phase 5 - Development.** One feature agent owns the change and, for UI, both UI and behavior. Implement the confirmed direction/contract; reuse the design system. A separate test agent writes tests only; never production code. Keep write scopes disjoint.
+**Phase 9 - Delivery by project docs.** No assumed MR/CI/deploy; no protected branch; no merge/deploy with red CI; confirm remote/deploy/delete; report what ran and what did not; migrations state backup/rollback.
 
-**Phase 6 - Independent testing.** For No UI: functional/CLI/API, negative/disabled, permissions/invalid input, state transitions, data/migration, cleanup, repeatable runs; no UI checks. For UI behavior: changed UI states. For UI design: mobile viewport, long-text/large-data, accessibility. Always real API/mutation paths, unique fixture markers, exact commands/evidence.
+### Research pipeline
+**R0 Context.** Read docs/code; infer; ask once for question/decision/audience/deliverable/depth/output if unclear; persist the research doc after approval.
 
-**Phase 7 - Independent verification.** Read-only verifier checks diff scope, official tests, real data/permissions/edges, fixture residue. UI design: independent re-score (never reuse the UI scorer's). UI behavior: changed states/actions, no design score. No UI: functional/CLI/API, no UI score. Output PASS/REJECT with evidence/risks. PASS = green tests, no blocking defect; UI design also >=85, no P0/P1, no blocking a11y issue.
+**R1 Brief.** Question, decision, audience, scope/non-goals, sources, deliverable, depth, citation style, quality, risks; approve significant research.
 
-**Phase 8 - User preview.** Give preview steps, test data, acceptance checklist; No UI can use a command/sample/output. User must confirm before delivery; fix/retest/re-verify after feedback; internal PASS is not user acceptance.
+**R2 Source plan.** Code paths, git history, docs, tests, official docs, web only if needed; access/recency/quality/triangulation; no fabricated sources.
 
-**Phase 9 - Delivery by project docs.** Re-read and execute the delivery section; assume no MR/CI/deploy. Never push a protected branch; never merge/deploy with red CI; confirm remote/deploy/delete. Report what ran and what did not; migrations state backup/rollback.
+**R3 Evidence.** Read-only collectors; log file:line, URL, date, quotes; separate observation from interpretation; reproducible; no code edits.
 
-### Subagent roles
+**R4 Synthesis.** Themes, comparison, tradeoffs, facts vs assumptions vs recommendations, confidence, contradictions, gaps.
 
-Use `subagent` for UI direction/implementation, independent scoring, feature work, tests, and read-only verification; use `workflow` for fan-out. Program/module roles and write scopes are in `dev-workflow-program` and `dev-workflow-roles`. Module leads may spawn UI/feature/test/verifier children; keep scopes disjoint.
+**R5 Independent review.** Fresh read-only reviewer checks citations, source quality, coverage, logic, bias, sample claims; PASS/REVISE; no self-approval.
 
-Start independent delegations together; if unavailable, use a fresh-context sequential fallback, keep duties separate, and record it.
+**R6 Deliverable.** Memo/report/matrix/root-cause; recommendation/options, evidence, risks, open questions; user acceptance.
 
-### Reporting and blocked states
+**R7 Handoff.** Implementation -> development contract; link research; no production code during research.
 
-Check code/docs first; batch questions; don't repeatedly ask about delivery. If blocked by a missing credential, service, or product ambiguity, state it and what you tried, then ask once. Never fabricate screenshots, tests, CI status, preview approval, or delivery.
+### Subagents
+Use `subagent` for UI direction/implementation, scoring, feature work, tests, read-only verification, research collection/analysis, and program/module leads; use `workflow` for fan-out. Roles/write scopes are in `rd-workflow-roles`/`rd-workflow-program`. Module leads may spawn UI/feature/test/verifier children; keep scopes disjoint; research collectors/reviewers read-only. If unavailable, use a fresh-context sequential fallback, keep duties separate, and record it.
 
-Playbooks, templates, rubric, roles, and reports are in `dev-workflow` and `dev-workflow-program`.
+### Reporting
+Check code/docs first; batch questions; don't repeatedly ask about delivery. If blocked by a missing credential, service, or product ambiguity, state it and what you tried, then ask once. Never fabricate screenshots, tests, CI status, sources, preview approval, or delivery.
+
+Detailed playbooks, templates, rubric, roles, and research/report templates are in `rd-workflow`, `rd-workflow-research`, and `rd-workflow-program`; load them as needed.

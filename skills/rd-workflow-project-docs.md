@@ -12,8 +12,10 @@ document does not exist:
 1. `AGENTS.md` - repository instructions, command conventions, boundaries.
 2. `docs/DEV_WORKFLOW.md` - development, review, and testing process.
 3. `docs/DELIVERY.md` - release and delivery process.
-4. `README.md` - project purpose, setup, common commands.
-5. Other docs and manifests - `docs/`, `CONTRIBUTING`, `Makefile`, CI config,
+4. `docs/UI.md` - UI direction count, screenshots, demo, freeze, design system.
+5. `docs/RESEARCH.md` - technical research questions, sources, citations, depth.
+6. `README.md` - project purpose, setup, common commands.
+7. Other docs and manifests - `docs/`, `CONTRIBUTING`, `Makefile`, CI config,
    package manifests, migration directories, deployment scripts.
 
 Also inspect the repository shape: top-level directories, test layout, CI
@@ -88,11 +90,28 @@ make the user restate it every session:
    compare? Should I build a static demo and freeze the UI? I will write the
    answer to `docs/UI.md` and follow it later."
 3. After the answer, update the most specific existing file, or create
-   `docs/DEV_WORKFLOW.md`, `docs/UI.md`, and `docs/DELIVERY.md` as needed.
+   `docs/DEV_WORKFLOW.md`, `docs/UI.md`, `docs/DELIVERY.md`, and `docs/RESEARCH.md` as needed.
 4. Report the paths and follow them in later sessions; do not ask again.
 5. Never write credentials, tokens, private keys, or personal secrets into these
    docs. If the project forbids doc edits, record the decision in the contract
    and ask before writing.
+
+## Research policy template
+
+Use this when the project needs durable research conventions.
+
+```markdown
+# Research policy
+
+- Default research question/decision: <...>
+- Covered types: technical/codebase; external sources: <allowed/not>
+- Source rules: primary first, cite file:line or URL + access date
+- Required depth: quick scan / standard (brief + source plan + independent review) / deep
+- Deliverable: memo / matrix / root-cause / report
+- Output directory: docs/research/
+- Review gate: fresh read-only reviewer; PASS/REVISE
+- Handoff: accepted research feeds a development contract
+```
 
 ## UI policy template
 

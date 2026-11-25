@@ -1,7 +1,7 @@
 {
-  "name": "dsh-dev-workflow",
-  "version": "0.4.0",
-  "description": "Non-default Dev Workflow agent preset for DeepSeek Harness: a fixed ten-phase delivery pipeline with independent UI scoring, isolated testing, and read-only verification.",
+  "name": "dsh-rd-workflow",
+  "version": "0.5.0",
+  "description": "Non-default R&D Workflow agent preset for DeepSeek Harness: development and technical research pipelines, convention bootstrap, independent review, UI scoring, and recursive module/program orchestration.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -30,7 +30,8 @@
     "dsh-plugin",
     "deepseek-harness",
     "agent-preset",
-    "dev-workflow",
+    "rd-workflow",
+    "research",
     "ui-review",
     "subagents"
   ],
@@ -52,12 +53,12 @@
     }
   },
   "author": "DennisZhangOiler",
-  "homepage": "https://github.com/DennisZhangOiler/dsh-dev-workflow#readme",
+  "homepage": "https://github.com/DennisZhangOiler/dsh-rd-workflow#readme",
   "bugs": {
-    "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow/issues"
+    "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git"
+    "url": "git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git"
   }
 }

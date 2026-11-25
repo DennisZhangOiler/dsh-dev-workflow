@@ -1,28 +1,29 @@
-# Dev Workflow playbook
+# R&D Workflow playbook
 
-Load this skill after the fixed `dev-workflow:contract` section. It expands the
+Load this skill after the fixed `rd-workflow:contract` section. It expands the
 pipeline with templates and decision rules. The contract in the system prompt
 wins on conflict.
 
 ## Operating rule
 
-1. Classify the request: pure question/read-only investigation, or change work.
-   Pure questions get a direct answer. Change work runs the pipeline.
+1. Classify every request: question, bugfix/polish, new feature/refactor,
+   research, or program. If the objective changes, announce it and restart
+   Phase 1/R1; do not continue a bugfix loop or reuse its contract/test plan.
 2. Read project conventions before touching code (see
-   `dev-workflow-project-docs`).
+   `rd-workflow-project-docs`).
 3. Classify UI impact in Phase 1 using the triage table. Do not skip or force
    UI phases from the project type alone.
 4. Scale ceremony to risk, not to the user's impatience. A copy change can skip
    Phase 2; a code change cannot skip Phase 6 and Phase 7.
-5. Keep the user oriented: one short update per phase, and a clear question
-   only when the answer changes the work.
+5. Keep the user oriented: one short update per phase; ask only when the
+   answer changes the work.
 
 ## Phase 0 - Project brief
 
 Record the project purpose, stack, UI surfaces, install/dev/test/lint/typecheck/
 build commands, delivery, constraints, and key files before proposing anything.
 
-Read the project docs in the order described by `dev-workflow-project-docs`.
+Read the project docs in the order described by `rd-workflow-project-docs`.
 
 Record existing UI surfaces here, but do not decide the pipeline yet: a CLI
 project can add a GUI, and a UI project can have a backend-only change. The
@@ -73,7 +74,7 @@ and test scope. For `No UI`, state "no UI involved" and keep tests functional.
 
 ## Phase 2 - UI directions (UI design only)
 
-Use `dev-workflow-roles` for the explorer prompt. Skip this phase for
+Use `rd-workflow-roles` for the explorer prompt. Skip this phase for
 `UI behavior` and `No UI`. Rules:
 
 - Three directions must differ structurally (hierarchy, layout, density,
@@ -85,7 +86,7 @@ Use `dev-workflow-roles` for the explorer prompt. Skip this phase for
 
 ## Phase 3 - Independent UI score (UI design only)
 
-Use `dev-workflow-ui-rubric` and the scorer prompt in `dev-workflow-roles`.
+Use `rd-workflow-ui-rubric` and the scorer prompt in `rd-workflow-roles`.
 Do not produce a UI score for `UI behavior` or `No UI`.
 Never score your own implementation. A direction below the gate is not a
 candidate: rework it before user review. If all three fail, redesign; do not
@@ -112,7 +113,7 @@ go-ahead.
 
 ## Phase 6 - Test plan
 
-Use the test-author prompt in `dev-workflow-roles`. Always cover:
+Use the test-author prompt in `rd-workflow-roles`. Always cover:
 
 - happy path and primary action;
 - negative, disabled, and unauthorized actions;
@@ -133,7 +134,7 @@ as skipped with the reason, never as passed.
 
 ## Phase 7 - Verification
 
-Use the verifier prompt in `dev-workflow-roles`. The verifier is read-only:
+Use the verifier prompt in `rd-workflow-roles`. The verifier is read-only:
 
 - `git diff` / `git status` scope check against the confirmed list;
 - official project test command, untouched;

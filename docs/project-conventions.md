@@ -81,6 +81,23 @@ If a rule is missing, the agent asks one batched question with a default, then
 updates this file (or `docs/DEV_WORKFLOW.md` / `docs/DELIVERY.md`) and follows it
 in later sessions. Do not make the user restate the same policy every task.
 
+## `docs/RESEARCH.md` (optional but recommended)
+
+```markdown
+# Research conventions
+
+- Covered research: technical/codebase investigation, architecture/dependency
+  comparison, feasibility, root cause.
+- Default depth: standard (brief + source plan + independent review).
+- Sources: code, git history, project docs, tests, official docs; external web
+  only when needed and always with URL + access date.
+- Citations: file:line for code; URL + date for web; no fabricated sources.
+- Output: docs/research/<topic>.md; decision memo unless another format is agreed.
+- Review: fresh read-only reviewer checks citations, coverage, logic, bias.
+- Handoff: accepted research feeds a development contract; no production code
+  changes during research.
+```
+
 ## `docs/TESTING.md` (optional)
 
 ```markdown

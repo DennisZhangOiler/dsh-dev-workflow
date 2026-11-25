@@ -28,7 +28,7 @@ Expected:
 
 - `prompt.md` is 6000-8000 characters.
 - Each skill body is <= 8192 characters.
-- One prompt section named `dev-workflow:contract`, order 100, no interpolation.
+- One prompt section named `rd-workflow:contract`, order 100, no interpolation.
 - Four skills registered with valid names, descriptions, `whenToUse`, and the
   `skills/` resource base.
 - Package files include every shipped runtime file.
@@ -88,13 +88,36 @@ Run these as analysis-only prompts; no code change is needed.
    lead and a user decision, not a silent invention.
 6. Integration uses a read-only verifier and the project's full test command.
 
+## A6. New-objective re-entry
+
+1. Start with a bugfix/polish objective in an existing contract.
+2. Then ask for a new feature or a research question that is not part of that
+   contract.
+3. Expected: the agent announces a new objective, starts Phase 1/R1, and does
+   not continue the previous fix loop or reuse its test plan.
+4. Ask for a bugfix inside the existing contract: expected to stay in the
+   existing contract.
+
+## A7. Technical research mode
+
+1. Ask a non-trivial codebase/architecture question without requesting code
+   changes. Expected: a research brief, source plan, evidence with
+   `file:line`, and no production edits.
+2. Confirm standard depth: brief + source plan + independent review.
+3. Ask the reviewer to check a sample of claims; expected PASS/REVISE, never
+   self-approval.
+4. Ask to implement a finding; expected a development contract/handoff, not
+   code changes inside the research phase.
+5. Ask a simple factual question; expected a direct answer, not the full
+   research pipeline.
+
 ## B. Disposable install
 
 ```sh
 export DSH_HOME="$TMP_HOME"
 dsh --profile devflow-test --from-default-profile web --dump-config
-dsh plugin --profile devflow-test add /absolute/path/to/dsh-dev-workflow
-# add "dsh-dev-workflow" to dsh.profile.bundles through the bundle manager
+dsh plugin --profile devflow-test add /absolute/path/to/dsh-rd-workflow
+# add "dsh-rd-workflow" to dsh.profile.bundles through the bundle manager
 dsh --profile devflow-test --dump-config
 ```
 
@@ -102,7 +125,7 @@ Expected:
 
 - Composed tree includes `preset-dev-workflow` with `id: dev-workflow`.
 - `agent-preset-registry` still says `default: standard`.
-- The `dev-workflow-contract` row is active, not failed.
+- The `rd-workflow-contract` row is active, not failed.
 - No diagnostic from the bundle patch.
 
 ## C. Web UI and prompt
@@ -116,13 +139,13 @@ DSH_HOME="$TMP_HOME" dsh --profile devflow-test --port 3091 --no-open
 Expected:
 
 - Server starts and the GUI loads.
-- A new session's preset menu lists **Dev Workflow**, and **Standard** is still
+- A new session's preset menu lists **研发流程**, and **Standard** is still
   the default.
-- Selecting Dev Workflow and sending a message produces a session log whose
+- Selecting 研发流程 and sending a message produces a session log whose
   system prompt contains the contract text.
 - A Standard session does not contain the contract text.
 - `subagent`, `subagent_fork`, `workflow`, `todo_write`, `ask_user_question`,
-  and `skill` are present in the Dev Workflow session (tool call or schema
+  and `skill` are present in the 研发流程 session (tool call or schema
   evidence).
 - No error in the server log for the preset activation.
 
@@ -137,8 +160,8 @@ Expected:
 ## E. Uninstall and residue
 
 ```sh
-dsh plugin --profile devflow-test remove dsh-dev-workflow
-# remove "dsh-dev-workflow" from dsh.profile.bundles
+dsh plugin --profile devflow-test remove dsh-rd-workflow
+# remove "dsh-rd-workflow" from dsh.profile.bundles
 dsh --profile devflow-test --dump-config
 ```
 
@@ -146,7 +169,7 @@ Expected:
 
 - `preset-dev-workflow` is gone.
 - `agent-preset-registry` still has the original default.
-- No `dsh-dev-workflow` in `package.json`, `pnpm-lock.yaml`, or
+- No `dsh-rd-workflow` in `package.json`, `pnpm-lock.yaml`, or
   `node_modules`.
 - The disposable profile patch is unchanged from its initial template.
 - The user profile hashes match the before values.
@@ -156,7 +179,7 @@ Expected:
 - A missing `skills/` file makes activation fail loudly, not silently drop the
   contract.
 - The plugin is not mounted globally: a Standard session has no
-  `dev-workflow:contract` section.
+  `rd-workflow:contract` section.
 - Without a UI project, the prompt says to mark UI phases N/A and keep testing
   and verification.
 - Without documented delivery, the agent asks once and keeps changes local.

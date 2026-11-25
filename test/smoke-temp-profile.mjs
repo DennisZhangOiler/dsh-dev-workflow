@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url'
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const dsh = process.env.DSH_BIN ?? 'dsh'
-const tmp = mkdtempSync(join(tmpdir(), 'dsh-dev-workflow-smoke-'))
+const tmp = mkdtempSync(join(tmpdir(), 'dsh-rd-workflow-smoke-'))
 const home = join(tmp, 'home')
 const profileDir = join(home, 'profiles', 'smoke')
 const env = {
@@ -92,21 +92,21 @@ try {
   assert(!installed.includes('preset-devflow'), 'unexpected old preset after install')
 
   const manifest = readManifest()
-  assert(manifest.dependencies?.['dsh-dev-workflow'] !== undefined, 'dependency missing after install')
-  assert(manifest.dsh?.profile?.bundles?.includes('dsh-dev-workflow'), 'bundle selection missing after install')
+  assert(manifest.dependencies?.['dsh-rd-workflow'] !== undefined, 'dependency missing after install')
+  assert(manifest.dsh?.profile?.bundles?.includes('dsh-rd-workflow'), 'bundle selection missing after install')
 
   console.log('smoke: removing bundle')
-  run(['plugin', '--profile', 'smoke', 'remove', 'dsh-dev-workflow'])
+  run(['plugin', '--profile', 'smoke', 'remove', 'dsh-rd-workflow'])
 
   const removed = run(['--profile', 'smoke', '--dump-config'])
-  assert(!removed.includes('dev-workflow'), 'preset remains after removal')
+  assert(!removed.includes('preset-dev-workflow'), 'preset remains after removal')
   assert(removed.includes('default: standard'), 'default preset changed after removal')
 
   const after = readManifest()
-  assert(after.dependencies?.['dsh-dev-workflow'] === undefined, 'dependency remains after removal')
-  assert(!after.dsh?.profile?.bundles?.includes('dsh-dev-workflow'), 'bundle selection remains after removal')
-  assert(!existsSync(join(profileDir, 'node_modules', 'dsh-dev-workflow')), 'node_modules residue after removal')
-  assert(!readFileSync(join(profileDir, 'pnpm-lock.yaml'), 'utf8').includes('dsh-dev-workflow'), 'lockfile residue after removal')
+  assert(after.dependencies?.['dsh-rd-workflow'] === undefined, 'dependency remains after removal')
+  assert(!after.dsh?.profile?.bundles?.includes('dsh-rd-workflow'), 'bundle selection remains after removal')
+  assert(!existsSync(join(profileDir, 'node_modules', 'dsh-rd-workflow')), 'node_modules residue after removal')
+  assert(!readFileSync(join(profileDir, 'pnpm-lock.yaml'), 'utf8').includes('dsh-rd-workflow'), 'lockfile residue after removal')
 
   console.log('smoke: PASS')
 } finally {

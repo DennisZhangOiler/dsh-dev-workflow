@@ -1,15 +1,22 @@
-# dsh-dev-workflow
+# dsh-rd-workflow
 
 [English](README.md) | [中文](README.zh.md)
 
 一个**非默认**的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
-智能体预设。为新会话选择 **开发流程**（Dev Workflow）后，只需要描述“哪里不满意、要改成
-什么、期望效果”，Agent 会按固定的十阶段交付流程推进，不需要每次粘贴长 Prompt。
+智能体预设。为新会话选择 **研发流程**（R&D Workflow）后，只需要描述要调研或修改什么；
+Agent 会路由到技术调研、开发或大型项目编排流程，不需要每次粘贴长 Prompt。
 
 安装这个 bundle 只新增预设：**不会**修改 profile 的默认预设，不会注册
 Host 级的全局行，也不会影响使用 Standard 或其他预设的会话。
 
-![新会话预设菜单中的开发流程](docs/screenshot-preset.png)
+![新会话预设菜单中的研发流程](docs/screenshot-preset.png)
+
+## 它做什么
+
+第一条规则是 **每轮请求路由**：把当前消息分为问答、bugfix/微调、新功能/重构、调研或
+Program。目标变了就明确说出来，重新进入契约或调研 brief，而不是继续上一轮 bugfix。
+
+![新功能请求重新进入 Phase 0/1，而不是继续 bugfix 循环](docs/screenshot-reentry.png)
 
 ## 它做什么
 
@@ -28,6 +35,26 @@ Host 级的全局行，也不会影响使用 Standard 或其他预设的会话�
 | 7. 独立验收 | 只读 verifier 检查 diff 越界、官方测试、真实数据/权限/边界和夹具残留；仅 UI design 重评 UI；输出 PASS/REJECT |
 | 8. 用户预览验收 | 给出预览方式/测试数据/验收清单；No UI 可用命令、样例请求或输出样例；内部 PASS 不等于用户验收 |
 | 9. 交付 | 严格按项目文档执行；不假设一定有 MR/PR/CI/自动部署 |
+
+### 技术调研模式
+
+非平凡的技术/代码库调研、架构或依赖对比、可行性分析、根因分析走只读调研流程：
+
+| 阶段 | 结果 |
+|---|---|
+| R0 上下文 | 读文档/代码；不清楚时一次问清问题、决策、深度、交付物和输出位置 |
+| R1 Brief | 问题、支持的决策、受众、范围/非目标、来源、交付格式、引用标准、质量要求 |
+| R2 来源计划 | 代码路径、git 历史、文档、测试、官方文档/必要网页；访问、时效、质量、三角验证 |
+| R3 证据 | 只读收集，记录 `file:line`、URL、日期、短引用；观察和解释分开 |
+| R4 综合 | 对比、权衡、置信度、矛盾、空白；事实/假设/建议分开 |
+| R5 独立复核 | 全新只读 reviewer 检查引用、来源质量、覆盖度、逻辑、偏差、抽样事实；PASS/REVISE |
+| R6 交付 | 决策备忘录/报告/矩阵/根因报告；证据、建议、风险、开放问题；用户验收 |
+| R7 交接 | 后续要开发时生成开发契约；调研阶段不改生产代码 |
+
+这一版覆盖技术/代码库调研；外部市场调研和用户调研不在范围内。调研默认只读，网页内容
+视为不可信数据。标准强度 = brief + 来源计划 + 独立复核。
+
+![技术调研：证据、独立复核、开放问题与只读交接](docs/screenshot-research.png)
 
 ### 大型项目：Program mode
 
@@ -49,22 +76,18 @@ Host 级的全局行，也不会影响使用 Standard 或其他预设的会话�
    然后用户预览，最后按项目文档交付。
 
 Program lead 是唯一对用户说话的入口；模块负责人把证据汇总回来。共享文件有唯一
-owner，串行修改；独立模块可以并行。完整规则见 `dev-workflow-program` skill。
-
-![Program mode 规划：架构、UI 选择、静态 demo、冻结 UI、模块 Agent 与递归子智能体](docs/screenshot-program.png)
+owner，串行修改；独立模块可以并行。完整规则见 `rd-workflow-program` skill。
 
 ### 约定学一次，后面照着做
 
 Agent 会先读项目里的约定文档。如果缺少它需要的规则（UI 方向数量、静态 demo、
 交付方式、测试命令等），它会先从代码和需求推断，然后**一次性**问清需要用户决定
 的缺口（带推荐默认值），再把答案写进项目文档：优先更新已有文件，没有就写
-`docs/DEV_WORKFLOW.md`、`docs/UI.md` 或 `docs/DELIVERY.md`。后续会话读文档，
-不再重复问。
+`docs/DEV_WORKFLOW.md`、`docs/UI.md`、`docs/DELIVERY.md` 或 `docs/RESEARCH.md`。
+后续会话读文档，不再重复问。
 
 所以你不需要每次都说“给我出三版 UI”或“本地交付”。说一次（或者让 Agent 问一次），
 规则就沉淀到项目里了。
-
-![新会话直接按项目文档执行，不再重复问](docs/screenshot-bootstrap.png)
 
 ### UI 影响按每次改动判断
 
@@ -81,10 +104,6 @@ Phase 1 判断的是这次改动，而不是项目类型：
 后端-only 改动也可以判为 **No UI**。分级会写进 Phase 1 契约，出现新界面时可以
 重新分级。
 
-![UI 分级：No UI 与 UI design](docs/screenshot-triage.png)
-
-![Dev Workflow 会话中，Agent 派出子智能体并运行 workflow](docs/screenshot-session.png)
-
 项目文档按自然语言处理。如果项目没有写交付方式，改动默认只保留在本地，并且
 只问用户一次希望如何交付。凭据不会写入项目文档。远程或破坏性操作执行前必须
 获得用户确认。
@@ -93,24 +112,24 @@ Phase 1 判断的是这次改动，而不是项目类型：
 
 ### 从 GitHub 安装
 
-npm 上的 `dsh-dev-workflow` 已经被另一个无关的包占用。**不要从 npm 安装本插件**，
+npm 名 `dsh-rd-workflow` 目前可用，但这个版本还没有发布到 npm；**不要尝试安装不存在的 npm 版本**，
 请从本仓库安装：
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
 ```
 
 需要可复现的发布版本时，固定完整 commit SHA：
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git#<完整 40 位 commit>
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#<完整 40 位 commit>
 ```
 
-安装后新建会话，打开预设菜单，选择 **开发流程**。安装不会修改默认预设，也不影响
+安装后新建会话，打开预设菜单，选择 **研发流程**。安装不会修改默认预设，也不影响
 其他会话。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。当前 release 是 `v0.4.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
+探测），或安装 release tarball。当前 release 是 `v0.5.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
 `restart-required`。
 
 ### 安装前备份
@@ -125,17 +144,17 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ### 通过 DSH Web UI
 
 1. 打开 **Plugins**。
-2. 选择 **Add plugin** 并选中本地 `dsh-dev-workflow` checkout；GitHub 源请用上面的
+2. 选择 **Add plugin** 并选中本地 `dsh-rd-workflow` checkout；GitHub 源请用上面的
    `plugin_manager` 命令安装。
 3. 保持 bundle 启用。它只新增预设，不会自动选中。
-4. 新建会话，打开预设菜单，选择 **开发流程**。
+4. 新建会话，打开预设菜单，选择 **研发流程**。
 
 ### 通过 `plugin_manager` 工具
 
 ```text
-plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow
+plugin_manager action=install_bundle target=/绝对路径/dsh-rd-workflow
 # 或已打包的 release tarball：
-plugin_manager action=install_bundle target=/绝对路径/dsh-dev-workflow-0.4.0.tgz
+plugin_manager action=install_bundle target=/绝对路径/dsh-rd-workflow-0.5.0.tgz
 ```
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的
@@ -149,22 +168,22 @@ bundle 代码需要 Full access 或审批。preset 变更可能会返回
 
 ```sh
 # GitHub 源
-dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
 # 或本地 checkout
-dsh plugin --profile <profile> add /绝对路径/dsh-dev-workflow
+dsh plugin --profile <profile> add /绝对路径/dsh-rd-workflow
 # 重启后按下面步骤验证；卸载：
-dsh plugin --profile <profile> remove dsh-dev-workflow
+dsh plugin --profile <profile> remove dsh-rd-workflow
 ```
 
 ### 验证预设
 
 ```sh
-dsh --profile <profile> --dump-config | grep -A3 preset-dev-workflow
+dsh --profile <profile> --dump-config | grep -A3 preset-rd-workflow
 dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 ```
 
 第二条应仍显示原来的默认值（例如 `default: standard`）。新会话的预设列表中
-应能看到 **开发流程**（Dev Workflow）。
+应能看到 **研发流程**（R&D Workflow）。
 
 ## 使用
 
@@ -175,8 +194,8 @@ dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 ```
 
 之后由预设的契约 section 驱动完整流程。也可以按名称加载配套 skill：
-`dev-workflow`、`dev-workflow-project-docs`、`dev-workflow-ui-rubric`、
-`dev-workflow-roles`。
+`rd-workflow`、`rd-workflow-project-docs`、`rd-workflow-ui-rubric`、
+`rd-workflow-roles`。
 
 ### 建议的项目文档
 
@@ -188,7 +207,7 @@ dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
   仅补丁）。
 - `README.md`：安装和常用命令。
 
-示例见 `dev-workflow-project-docs` skill 和
+示例见 `rd-workflow-project-docs` skill 和
 [`docs/project-conventions.md`](docs/project-conventions.md)。示例不是固定
 字段 schema。
 
@@ -208,8 +227,8 @@ dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 
 ## 它不做什么
 
-- 不会把 **开发流程** 设为默认预设。
-- DSH 0.2.2-rc.5 的 `presetDisplayText` 只翻译内置 preset；自定义 preset 的名称/描述是静态字符串。本 bundle 的菜单文案使用中文（**开发流程**）以匹配 zh-CN 系统；bundle 卡片和详情页通过 `locale/*.json` 本地化。若要英文菜单，请在安装前替换 `cordis.patch.yml` 中的这两个字符串；仅切换 DSH 界面语言不会重新翻译它们。
+- 不会把 **研发流程** 设为默认预设。
+- DSH 0.2.2-rc.5 的 `presetDisplayText` 只翻译内置 preset；自定义 preset 的名称/描述是静态字符串。本 bundle 的菜单文案使用中文（**研发流程**）以匹配 zh-CN 系统；bundle 卡片和详情页通过 `locale/*.json` 本地化。若要英文菜单，请在安装前替换 `cordis.patch.yml` 中的这两个字符串；仅切换 DSH 界面语言不会重新翻译它们。
 - 不做 sandbox 级的角色隔离；角色和写作用域由 prompt 与父 Agent 的检查保证。
   如果未来的 DSH 版本提供子智能体工具限制，应接入。
 - 不安装项目 skill、设计系统、浏览器或测试框架；使用项目和会话已有的能力。
@@ -244,10 +263,10 @@ test/                    单元、打包与临时 profile smoke 测试
 
 ## 卸载
 
-在 **Plugins** 中移除 **dsh-dev-workflow** bundle，或：
+在 **Plugins** 中移除 **dsh-rd-workflow** bundle，或：
 
 ```text
-plugin_manager action=remove_bundle target=dsh-dev-workflow
+plugin_manager action=remove_bundle target=dsh-rd-workflow
 ```
 
 移除后预设和 prompt section 一并消失。已经在运行的会话会保留启动时的预设

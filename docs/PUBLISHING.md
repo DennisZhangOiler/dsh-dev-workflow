@@ -15,12 +15,11 @@ Sources read in the installed DSH package:
 
 ## Current status
 
-- GitHub: <https://github.com/DennisZhangOiler/dsh-dev-workflow> (public).
+- GitHub: <https://github.com/DennisZhangOiler/dsh-rd-workflow> (public).
 - Install from Git: see the README. Do not install from npm.
-- npm: **not published**. The npm name `dsh-dev-workflow` is already used by an
-  unrelated package (`0.2.0`, `urzz/lodestar`). Publishing under that name would
-  be wrong; use a scoped name such as `@<your-scope>/dsh-dev-workflow` if npm is
-  needed later.
+- npm: **not published for this release**. The name `dsh-rd-workflow` is
+  available; a scoped name is not required. GitHub installation is the current
+  supported path.
 - Marketplace index: not served publicly yet.
 
 ## What DSH currently supports
@@ -42,10 +41,9 @@ Sources read in the installed DSH package:
 
 ## Before publishing
 
-1. The plain npm name `dsh-dev-workflow` is taken. Keep the Git package name
-   for GitHub installation, or choose a scoped npm name that you control. A
-   scope change also changes the preset plugin row `name: 'dsh-dev-workflow'`
-   in `cordis.patch.yml` and the installation/uninstallation name.
+1. The package name is `dsh-rd-workflow` and the npm name is available.
+   Confirm you control it before publishing; the preset plugin row `name` in
+   `cordis.patch.yml` must match the package name.
 2. Fill the metadata deliberately in `package.json`:
    - `repository`, `homepage`, and `bugs` with your real URLs;
    - `author` with the publisher name;
@@ -77,9 +75,8 @@ Sources read in the installed DSH package:
 
 ## Publish an npm package (optional, scoped)
 
-Not used for this release because the plain name is taken. If you choose a
-scoped npm name, update `package.json` `name` and the preset plugin row in
-`cordis.patch.yml` before packing, then:
+Optional for this release. If you publish to npm, keep `package.json` `name`,
+the preset plugin row in `cordis.patch.yml`, and the install target aligned:
 
 ```sh
 npm login
@@ -94,16 +91,16 @@ behalf without confirmation.
 The public repository is the release source:
 
 ```sh
-git remote add origin git@github.com:DennisZhangOiler/dsh-dev-workflow.git
+git remote add origin git@github.com:DennisZhangOiler/dsh-rd-workflow.git
 git push -u origin main
-git tag -a v0.4.0 -m "dsh-dev-workflow 0.4.0"
-git push origin v0.4.0
+git tag -a v0.5.0 -m "dsh-rd-workflow 0.5.0"
+git push origin v0.5.0
 ```
 
 Install from GitHub (the repository root is the package):
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
 ```
 
 Pin the **full 40-character commit SHA** for a reproducible install. A Git
@@ -112,7 +109,7 @@ index entry installs that exact commit:
 ```json
 {
   "type": "git",
-  "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow",
+  "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow",
   "commit": "<40-hex-sha>",
   "path": "."
 }
@@ -129,26 +126,26 @@ before serving):
 ```json
 {
   "format": 1,
-  "title": { "en": "Dev Workflow plugins", "zh": "Dev Workflow 插件" },
+  "title": { "en": "R&D Workflow plugin", "zh": "研发流程插件" },
   "plugins": [
     {
-      "name": "dsh-dev-workflow",
-      "title": { "en": "Dev Workflow", "zh": "Dev Workflow" },
+      "name": "dsh-rd-workflow",
+      "title": { "en": "R&D Workflow", "zh": "研发流程" },
       "description": {
-        "en": "Non-default ten-phase delivery preset with independent UI scoring, testing, and verification.",
-        "zh": "非默认的十阶段交付预设，包含独立 UI 评分、测试和验收。"
+        "en": "Non-default R&D preset with development and technical-research pipelines, independent review, UI scoring, and program orchestration.",
+        "zh": "非默认的研发流程预设，包含开发/技术调研双流程、独立评审、UI 评分和大型项目编排。"
       },
-      "icon": "icons/dsh-dev-workflow.svg",
+      "icon": "icons/dsh-rd-workflow.svg",
       "author": "DennisZhangOiler",
-      "homepage": "https://github.com/DennisZhangOiler/dsh-dev-workflow#readme",
-      "repository": { "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow" },
+      "homepage": "https://github.com/DennisZhangOiler/dsh-rd-workflow#readme",
+      "repository": { "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow" },
       "versions": [
         {
-          "version": "0.4.0",
+          "version": "0.5.0",
           "publishTimestamp": 0,
           "source": {
             "type": "git",
-            "url": "https://github.com/DennisZhangOiler/dsh-dev-workflow",
+            "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow",
             "commit": "<40-hex-sha>",
             "path": "."
           },
@@ -205,7 +202,7 @@ python3 -m http.server 8088 --directory market-site
 
 ## Not done in this repository
 
-- No npm publication has been performed; the plain name is taken.
+- No npm publication has been performed; the name is available.
 - A public GitHub repository exists; no GitHub Release asset is required for
   Git installation.
 - No marketplace index has been served publicly.

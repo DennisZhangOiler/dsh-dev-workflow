@@ -1,17 +1,27 @@
-# dsh-dev-workflow
+# dsh-rd-workflow
 
 [English](README.md) | [中文](README.zh.md)
 
 A **non-default** agent preset for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-Pick **开发流程** (Dev Workflow) for a session and describe what you want
-changed; the agent follows a fixed ten-phase delivery pipeline instead of
-asking you to paste a long prompt each time.
+Pick **研发流程** (R&D Workflow) for a session and describe what you want to
+research or change; the agent routes the request to a technical-research,
+development, or program pipeline instead of asking you to paste a long prompt
+each time.
 
 Installing the bundle only adds the preset. It does **not** change the profile's
 default preset, does not add a Host-wide row, and does not affect sessions that
 use Standard or another preset.
 
-![开发流程 (Dev Workflow) in the new-session preset menu](docs/screenshot-preset.png)
+![研发流程 (R&D Workflow) in the new-session preset menu](docs/screenshot-preset.png)
+
+## What it does
+
+The first rule is a **request router**. On every message the agent classifies
+the request as a question, bugfix/polish, new feature/refactor, research, or
+program. If the objective changed, it says so and starts a new contract or
+research brief instead of continuing the previous bugfix loop.
+
+![A new feature request re-enters Phase 0/1 instead of continuing the bugfix loop](docs/screenshot-reentry.png)
 
 ## What it does
 
@@ -30,6 +40,29 @@ and do not depend on the conversation history.
 | 7. Independent verification | Read-only verifier checks diff scope, runs the official tests, checks real data/permissions/edge cases and fixture residue; UI score only for UI design; PASS/REJECT |
 | 8. User preview | Preview steps/test data/checklist; for No UI a command, sample request, or output sample; internal PASS is not user acceptance |
 | 9. Delivery | Follows the project's documented delivery exactly; no assumed MR/PR/CI/deploy |
+
+### Technical research mode
+
+For a non-trivial technical/codebase investigation, architecture or dependency
+comparison, feasibility study, or root cause, the agent runs a read-only
+research pipeline:
+
+| Stage | Result |
+|---|---|
+| R0 Context | Read docs/code; ask once for the question, decision, depth, deliverable, and output path when unclear |
+| R1 Brief | Question, decision, audience, scope/non-goals, sources, deliverable, citation style, quality bar |
+| R2 Source plan | Code paths, git history, docs, tests, official docs/web when needed; access, recency, quality, triangulation |
+| R3 Evidence | Read-only collection with `file:line`, URL, date, short quotes; facts separated from interpretation |
+| R4 Synthesis | Comparison, tradeoffs, confidence, contradictions, gaps; facts vs assumptions vs recommendations |
+| R5 Independent review | Fresh read-only reviewer checks citations, source quality, coverage, logic, bias, sample claims; PASS/REVISE |
+| R6 Deliverable | Memo/report/matrix/root-cause; evidence, recommendation, risks, open questions; user acceptance |
+| R7 Handoff | If implementation follows, create a development contract; no production code during research |
+
+This version covers technical/codebase research. External market and user
+research are out of scope. Research is read-only; web content is untrusted.
+Standard depth = brief + source plan + independent review.
+
+![Technical research: evidence, independent review, open questions, and a read-only handoff](docs/screenshot-research.png)
 
 ### Large projects: Program mode
 
@@ -57,9 +90,7 @@ lead becomes a program orchestrator instead of implementing everything itself:
 
 The program lead is the only user interface; module leads report evidence back
 to it. Shared files have one owner and change sequentially; independent modules
-may run in parallel. See the `dev-workflow-program` skill for the full playbook.
-
-![Program mode plan: architecture, UI choice, static demo, frozen UI, module agents and recursive subagents](docs/screenshot-program.png)
+may run in parallel. See the `rd-workflow-program` skill for the full playbook.
 
 ### Conventions are learned once
 
@@ -67,14 +98,13 @@ The agent reads the project's convention docs first. If a rule it needs is
 missing or unclear (UI direction count, static demo, delivery, test commands),
 it infers what it can, asks **one batched question** with a recommended default,
 then writes the answer into the project's convention docs - updating existing
-files first, otherwise `docs/DEV_WORKFLOW.md`, `docs/UI.md`, or
-`docs/DELIVERY.md`. Later sessions read that document and do not ask again.
+files first, otherwise `docs/DEV_WORKFLOW.md`, `docs/UI.md`,
+`docs/DELIVERY.md`, or `docs/RESEARCH.md`. Later sessions read that document
+and do not ask again.
 
 So you do not have to restate "give me three UI options" or "deliver locally" on
 every task. State it once (or let the agent ask once), and it becomes part of the
 project.
-
-![A new session follows the project docs instead of asking again](docs/screenshot-bootstrap.png)
 
 ### UI impact is decided per change
 
@@ -93,10 +123,6 @@ GUI; an existing UI project can get **No UI** for a backend-only change. The
 triage is stated in the Phase 1 contract and can be revisited if a new surface
 appears.
 
-![UI triage: No UI vs UI design](docs/screenshot-triage.png)
-
-![A Dev Workflow session where the agent delegates to a child agent and runs a workflow](docs/screenshot-session.png)
-
 Project documents are treated as natural language. If the project does not
 document delivery, changes stay local and the agent asks **once** how to deliver.
 Credentials never go into project files. Remote or destructive commands need
@@ -106,26 +132,28 @@ explicit confirmation immediately before they run.
 
 ### From GitHub
 
-The npm name `dsh-dev-workflow` is already used by an unrelated package. **Do
-not install this plugin from npm**; install this repository instead.
+The npm name `dsh-rd-workflow` is free but this release is not published to npm
+
+**Do not try to install a non-existent npm release**; install this repository
+instead.
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
 ```
 
 For a reproducible release, pin the full commit SHA:
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git#<full-40-hex-commit>
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#<full-40-hex-commit>
 ```
 
-Then open a new session, open the preset menu, and choose **开发流程** (Dev
+Then open a new session, open the preset menu, and choose **研发流程** (Dev
 Workflow). Installing the bundle changes no default preset and affects no other
 session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.4.0`; the CLI command was verified on this repo. A
+current release is `v0.5.0`; the CLI command was verified on this repo. A
 preset update may also report `restart-required`.
 
 ### Before installing
@@ -140,17 +168,17 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ### From the DSH Web UI
 
 1. Open **Plugins**.
-2. Choose **Add plugin** and select a local `dsh-dev-workflow` checkout; for the
+2. Choose **Add plugin** and select a local `dsh-rd-workflow` checkout; for the
    GitHub source use the `plugin_manager` command above instead.
 3. Keep the bundle enabled. It adds the preset only; it does not select it.
-4. Open a new session, open the preset menu, choose **开发流程**.
+4. Open a new session, open the preset menu, choose **研发流程**.
 
 ### With the `plugin_manager` agent tool
 
 ```text
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-dev-workflow-0.4.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.5.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and
@@ -166,22 +194,22 @@ selection and patch validation and takes effect on the next start:
 
 ```sh
 # GitHub source
-dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-dev-workflow.git
+dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
 # or a local checkout
-dsh plugin --profile <profile> add /absolute/path/to/dsh-dev-workflow
+dsh plugin --profile <profile> add /absolute/path/to/dsh-rd-workflow
 # after a restart, verify below; to remove:
-dsh plugin --profile <profile> remove dsh-dev-workflow
+dsh plugin --profile <profile> remove dsh-rd-workflow
 ```
 
 ### Verify the preset
 
 ```sh
-dsh --profile <profile> --dump-config | grep -A3 preset-dev-workflow
+dsh --profile <profile> --dump-config | grep -A3 preset-rd-workflow
 dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
 ```
 
 The second command should still show the original default (for example
-`default: standard`). A new session's preset roster should list **开发流程** (Dev Workflow).
+`default: standard`). A new session's preset roster should list **研发流程** (R&D Workflow).
 
 ## Use
 
@@ -193,8 +221,8 @@ keep the existing design system, and make it work on mobile.
 ```
 
 The preset's contract section then runs the pipeline. You can also trigger the
-playbook skills by name: `dev-workflow`, `dev-workflow-project-docs`,
-`dev-workflow-ui-rubric`, and `dev-workflow-roles`.
+playbook skills by name: `rd-workflow`, `rd-workflow-project-docs`,
+`rd-workflow-ui-rubric`, and `rd-workflow-roles`.
 
 ### Recommended project documents
 
@@ -206,7 +234,7 @@ The preset works without any of them, but projects get better results with:
   manual release, patch only).
 - `README.md` - setup and common commands.
 
-Examples are in the `dev-workflow-project-docs` skill and in
+Examples are in the `rd-workflow-project-docs` skill and in
 [`docs/project-conventions.md`](docs/project-conventions.md). They are examples,
 not a required schema.
 
@@ -229,10 +257,10 @@ profile on DSH `0.2.2-rc.5`. Details, evidence, and unverified items are in
 
 ## What it does not do
 
-- It does not make **开发流程** the default.
+- It does not make **研发流程** the default.
 - DSH 0.2.2-rc.5 translates only shipped presets (`presetDisplayText`);
   user-authored preset metadata is static. This bundle declares Chinese roster
-  copy (**开发流程**) to match a zh-CN system. The bundle card and detail page
+  copy (**研发流程**) to match a zh-CN system. The bundle card and detail page
   are localized through `locale/*.json`. For an English roster, replace the
   two strings in `cordis.patch.yml` before installing; changing DSH's UI
   language alone does not retranslate them.
@@ -276,10 +304,10 @@ test/                    Unit, packaging, and disposable-profile smoke tests
 
 ## Uninstall
 
-In **Plugins**, remove the **dsh-dev-workflow** bundle, or:
+In **Plugins**, remove the **dsh-rd-workflow** bundle, or:
 
 ```text
-plugin_manager action=remove_bundle target=dsh-dev-workflow
+plugin_manager action=remove_bundle target=dsh-rd-workflow
 ```
 
 Removing the bundle removes the preset and its prompt section. Sessions already

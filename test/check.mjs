@@ -13,8 +13,8 @@ const read = path => readFileSync(join(root, path), 'utf8')
 const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
-assert.equal(manifest.name, 'dsh-dev-workflow')
-assert.equal(manifest.version, '0.4.0')
+assert.equal(manifest.name, 'dsh-rd-workflow')
+assert.equal(manifest.version, '0.5.0')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
@@ -39,11 +39,12 @@ for (const entry of required) assert.ok(shipped.has(entry), `files is missing ${
 
 for (const path of [
   'index.js', 'prompt.md', 'cordis.patch.yml', 'icon.svg',
-  'skills/dev-workflow.md',
-  'skills/dev-workflow-program.md',
-  'skills/dev-workflow-project-docs.md',
-  'skills/dev-workflow-ui-rubric.md',
-  'skills/dev-workflow-roles.md',
+  'skills/rd-workflow.md',
+  'skills/rd-workflow-research.md',
+  'skills/rd-workflow-program.md',
+  'skills/rd-workflow-project-docs.md',
+  'skills/rd-workflow-ui-rubric.md',
+  'skills/rd-workflow-roles.md',
   'docs/DETAIL.md',
   'docs/DETAIL.zh.md',
   'docs/preview.svg',
@@ -51,6 +52,8 @@ for (const path of [
   'docs/screenshot-program.png',
   'docs/screenshot-recursion.png',
   'docs/screenshot-bootstrap.png',
+  'docs/screenshot-reentry.png',
+  'docs/screenshot-research.png',
   'locale/en.json',
   'locale/zh.json',
 ]) {
@@ -74,7 +77,8 @@ for (const marker of [
   'id: preset-dev-workflow',
   "name: '@deepseek-ai/dsh-agent-preset'",
   'id: dev-workflow',
-  "name: 'dsh-dev-workflow'",
+  'id: rd-workflow-contract',
+  "name: 'dsh-rd-workflow'",
   'order: 5',
   "name: '@deepseek-ai/dsh-tool-fs'",
   "name: '@deepseek-ai/dsh-tool-fs-search'",

@@ -4,6 +4,28 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-11-25
+
+### Added
+
+- Request router: every message is classified as question, bugfix, new
+  feature/refactor, research, or program. A changed objective is announced and
+  restarts Phase 1/R1 instead of continuing the previous bugfix loop.
+- Technical/codebase research mode (R0-R7): research brief, source plan,
+  evidence log, synthesis, independent review, deliverable, and development
+  handoff.
+- `rd-workflow-research` playbook, research roles, `docs/RESEARCH.md` policy
+  template, and research test plan.
+- New documentation for the router, research mode, and name migration.
+
+### Changed
+
+- Renamed the package, repository, and display name from `dsh-dev-workflow` /
+  Dev Workflow to `dsh-rd-workflow` / R&D Workflow / 研发流程.
+- The preset id remains `dev-workflow` for existing-session compatibility.
+- The system prompt is now 7,987 characters; the playbooks stay within the
+  tool-result budget.
+
 ## [0.4.0] - 2026-11-20
 
 ### Added
@@ -28,7 +50,7 @@ All notable changes to this project are documented here. The format follows
 - Program mode for new systems and multi-module products: architecture and IA
   first, UI direction selection, static frontend demo and UI freeze, vertical
   module decomposition, and module agents that recursively run the pipeline.
-- `dev-workflow-program` playbook with program/module gates, shared-file
+- `rd-workflow-program` playbook with program/module gates, shared-file
   ownership, module delegation, and the frozen-UI gap rule.
 - `maxDepth: 3` on the delegation tools, so the program lead can dispatch
   module leads that spawn their own UI/feature/test/verifier children.
@@ -68,9 +90,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- Non-default `dev-workflow` agent preset with a fixed ten-phase delivery
+- Non-default `rd-workflow` agent preset with a fixed ten-phase delivery
   pipeline.
-- `dev-workflow:contract` system-prompt section, kept independent of chat
+- `rd-workflow:contract` system-prompt section, kept independent of chat
   history and context compaction.
 - Project-convention discovery for `AGENTS.md`, `docs/DEV_WORKFLOW.md`,
   `docs/DELIVERY.md`, `README.md`, and other natural-language project docs.
@@ -78,8 +100,8 @@ All notable changes to this project are documented here. The format follows
   key actions complete) with a generic rubric fallback.
 - Subagent and workflow roles for UI exploration, independent scoring, feature
   implementation, test authoring, and read-only verification.
-- On-demand playbook skills: `dev-workflow`, `dev-workflow-project-docs`,
-  `dev-workflow-ui-rubric`, `dev-workflow-roles`.
+- On-demand playbook skills: `rd-workflow`, `rd-workflow-project-docs`,
+  `rd-workflow-ui-rubric`, `rd-workflow-roles`.
 - Preset plugin list with filesystem, search, shell, jobs, plan mode, todo,
   subagent/fork, workflow, ask-user, skill, web, and present tools.
 - Bundle metadata, icon, localized descriptions, detail document, preview

@@ -2,7 +2,7 @@
 
 Use this skill for a new system, a multi-module product, an architecture/IA
 redesign, or a large feature split across agents. For a single change, use
-`dev-workflow`.
+`rd-workflow`.
 
 Program mode is a layer above the change pipeline. The program lead owns
 architecture, UI selection, the static demo, the module plan, and integration.
@@ -48,7 +48,8 @@ How the program will be built and released, from project docs
 <user-owned choices only>
 ```
 
-Do not write module code in this phase. Ask only user-owned product decisions,
+Use accepted research docs as evidence; do not redo. Do not write module code
+in this phase. Ask only user-owned product decisions,
 batched once. Get explicit architecture approval before UI work.
 
 ## P2 - UI direction selection
@@ -124,8 +125,8 @@ module lead a self-contained prompt with:
 
 - the program architecture and the frozen UI contract;
 - its module contract, owned paths, shared-file rules, and dependencies;
-- the change-mode pipeline from `dev-workflow` and the roles from
-  `dev-workflow-roles`;
+- the change-mode pipeline from `rd-workflow` and the roles from
+  `rd-workflow-roles`;
 - the instruction to report back, not to ask the user directly.
 
 A module lead: checks the project docs and module contract; triages the module
