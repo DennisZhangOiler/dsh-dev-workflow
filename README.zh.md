@@ -145,26 +145,27 @@ Phase 1 判断的是这次改动，而不是项目类型：
 
 ### 从 GitHub 安装
 
-版本说明：[`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md)。
+版本说明：[`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md)。
 
-0.8.0 已发布到 GitHub；npm 包**未发布**。优先安装 release tarball：
-
-```text
-plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.8.0/dsh-rd-workflow-0.8.0.tgz
-```
-
-或安装 Git tag：
+0.9.0 已准备为 scoped 包，将发布到 npm 公共 registry 和 GitHub Packages。
+**当前仍在等待维护者完成 registry 认证**；认证后下面的安装 target 才可用：
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.8.0
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.0
 ```
 
-需要可复现安装时固定完整 40 位 commit SHA。安装后新建会话，打开预设菜单，选择
-**研发流程**。安装会新增预设和仅客户端 UI 包；不会修改默认预设，也不影响其他
-preset。preset 更新可能返回 `restart-required`。
+GitHub Packages 需要先配置 scope 和认证（不要把 token 提交到仓库）：
 
-如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或直接安装 release tarball。
+```ini
+@denniszhangoiler:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+然后使用同样的 target。旧 0.8.0 GitHub Release tarball 仍然保留；0.9.0 是新的
+scoped 包，切换时需要重新安装。`dev-workflow` preset id 不变。
+
+安装后新建会话，打开预设菜单，选择 **研发流程**。安装会新增预设和仅客户端 UI 包；
+不会修改默认预设，也不影响其他 preset。preset 更新可能返回 `restart-required`。
 
 ### 安装前备份
 

@@ -13,16 +13,17 @@ const read = path => readFileSync(join(root, path), 'utf8')
 const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
-assert.equal(manifest.name, 'dsh-rd-workflow')
-assert.equal(manifest.version, '0.8.0')
+assert.equal(manifest.name, '@denniszhangoiler/dsh-rd-workflow')
+assert.equal(manifest.version, '0.9.0')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
 assert.ok(manifest.exports?.['./icon'])
 assert.ok(manifest.exports?.['./locale/*.json'])
-assert.equal(manifest.dependencies?.['dsh-rd-workflow-client'], 'file:./client-package')
+assert.equal(manifest.dependencies?.['@denniszhangoiler/dsh-rd-workflow-client'], '0.9.0')
 const clientManifest = json('client-package/package.json')
-assert.equal(clientManifest.name, 'dsh-rd-workflow-client')
+assert.equal(clientManifest.name, '@denniszhangoiler/dsh-rd-workflow-client')
+assert.equal(clientManifest.version, '0.9.0')
 assert.equal(clientManifest.dsh?.client?.platform, 'web')
 assert.ok(clientManifest.files?.includes('client.js'))
 
@@ -40,7 +41,6 @@ const required = [
   'README.zh.md',
   'CHANGELOG.md',
   'LICENSE',
-  'client-package',
 ]
 for (const entry of required) assert.ok(shipped.has(entry), `files is missing ${entry}`)
 
@@ -129,8 +129,8 @@ for (const marker of [
   "name: '@deepseek-ai/dsh-agent-preset'",
   'id: dev-workflow',
   'id: rd-workflow-contract',
-  "name: 'dsh-rd-workflow'",
-  "name: 'dsh-rd-workflow-client'",
+  "name: '@denniszhangoiler/dsh-rd-workflow'",
+  "name: '@denniszhangoiler/dsh-rd-workflow-client'",
   'id: rd-mode-client',
   'order: 5',
   "name: '@deepseek-ai/dsh-tool-fs'",

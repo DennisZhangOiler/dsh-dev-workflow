@@ -92,21 +92,21 @@ try {
   assert(!installed.includes('preset-devflow'), 'unexpected old preset after install')
 
   const manifest = readManifest()
-  assert(manifest.dependencies?.['dsh-rd-workflow'] !== undefined, 'dependency missing after install')
-  assert(manifest.dsh?.profile?.bundles?.includes('dsh-rd-workflow'), 'bundle selection missing after install')
+  assert(manifest.dependencies?.['@denniszhangoiler/dsh-rd-workflow'] !== undefined, 'dependency missing after install')
+  assert(manifest.dsh?.profile?.bundles?.includes('@denniszhangoiler/dsh-rd-workflow'), 'bundle selection missing after install')
 
   console.log('smoke: removing bundle')
-  run(['plugin', '--profile', 'smoke', 'remove', 'dsh-rd-workflow'])
+  run(['plugin', '--profile', 'smoke', 'remove', '@denniszhangoiler/dsh-rd-workflow'])
 
   const removed = run(['--profile', 'smoke', '--dump-config'])
   assert(!removed.includes('preset-dev-workflow'), 'preset remains after removal')
   assert(removed.includes('default: standard'), 'default preset changed after removal')
 
   const after = readManifest()
-  assert(after.dependencies?.['dsh-rd-workflow'] === undefined, 'dependency remains after removal')
-  assert(!after.dsh?.profile?.bundles?.includes('dsh-rd-workflow'), 'bundle selection remains after removal')
-  assert(!existsSync(join(profileDir, 'node_modules', 'dsh-rd-workflow')), 'node_modules residue after removal')
-  assert(!readFileSync(join(profileDir, 'pnpm-lock.yaml'), 'utf8').includes('dsh-rd-workflow'), 'lockfile residue after removal')
+  assert(after.dependencies?.['@denniszhangoiler/dsh-rd-workflow'] === undefined, 'dependency remains after removal')
+  assert(!after.dsh?.profile?.bundles?.includes('@denniszhangoiler/dsh-rd-workflow'), 'bundle selection remains after removal')
+  assert(!existsSync(join(profileDir, 'node_modules', '@denniszhangoiler/dsh-rd-workflow')), 'node_modules residue after removal')
+  assert(!readFileSync(join(profileDir, 'pnpm-lock.yaml'), 'utf8').includes('@denniszhangoiler/dsh-rd-workflow'), 'lockfile residue after removal')
 
   console.log('smoke: PASS')
 } finally {

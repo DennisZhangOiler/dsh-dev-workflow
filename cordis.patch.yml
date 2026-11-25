@@ -33,7 +33,7 @@
           - id: time-context
             name: '@deepseek-ai/dsh-time-context'
           - id: rd-workflow-contract
-            name: 'dsh-rd-workflow'
+            name: '@denniszhangoiler/dsh-rd-workflow'
           - id: tool-bash
             name: '@deepseek-ai/dsh-tool-bash'
             disabled: !!js process.platform === 'win32'
@@ -138,4 +138,4 @@
 # only the dsh.client half registers the control.
 - insert:
     - id: rd-mode-client
-      name: 'dsh-rd-workflow-client'
+      name: '@denniszhangoiler/dsh-rd-workflow-client'

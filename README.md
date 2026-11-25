@@ -188,29 +188,31 @@ explicit confirmation immediately before they run.
 
 ### From GitHub
 
-Release notes: [`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md).
+Release notes: [`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md).
 
-0.8.0 is released on GitHub; the npm package is **not** published. Install the
-release tarball:
-
-```text
-plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.8.0/dsh-rd-workflow-0.8.0.tgz
-```
-
-Or install the Git tag:
+0.9.0 is prepared as a scoped package for the npm public registry and GitHub
+Packages. **Registry publication is pending maintainer authentication**; the
+targets below become available after that publish:
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.8.0
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.0
 ```
 
-For a reproducible install, pin the full 40-character commit SHA. Then open a
-new session, open the preset menu, and choose **研发流程**. Installing adds the
-preset plus the client-only UI package; it changes no default preset and does
-not affect other presets. A preset update may report `restart-required`.
+For GitHub Packages, configure the scope and authenticate (do not commit the
+token), then use the same target:
 
-If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
-install below (it has no 5-second probe), or install the release tarball
-directly.
+```ini
+@denniszhangoiler:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+The old 0.8.0 GitHub Release tarball remains available, but 0.9.0 is the scoped
+registry release. The two names are different packages; reinstall when moving to
+0.9.0. The `dev-workflow` preset id is unchanged.
+
+Then open a new session, open the preset menu, and choose **研发流程**. Installing
+adds the preset plus the client-only UI package; it changes no default preset and
+does not affect other presets. A preset update may report `restart-required`.
 
 ### Before installing
 

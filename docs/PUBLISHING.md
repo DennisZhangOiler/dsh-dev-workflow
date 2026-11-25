@@ -15,12 +15,34 @@ Sources read in the installed DSH package:
 
 ## Current status
 
-- GitHub: <https://github.com/DennisZhangOiler/dsh-rd-workflow> (public).
-- Release `v0.8.0`: tag, GitHub Release, and `dsh-rd-workflow-0.8.0.tgz` asset.
-  Install from the release tarball or the Git tag; see the README.
-- npm: **not published for this release**. The name `dsh-rd-workflow` is
-  available; a scoped name is not required. GitHub is the supported path.
+- GitHub repo: <https://github.com/DennisZhangOiler/dsh-rd-workflow> (public).
+- Latest GitHub Release: **v0.8.0** (unscoped install target).
+- **0.9.0 registry preparation**: scoped names
+  `@denniszhangoiler/dsh-rd-workflow` and
+  `@denniszhangoiler/dsh-rd-workflow-client`.
+- npm public: **not yet published**; requires npm login at
+  `https://registry.npmjs.org` (the configured npmmirror/cnpm mirror is
+  read-only and cannot publish).
+- GitHub Packages: **not yet published**; requires a token with
+  `write:packages` (`gh auth refresh -s write:packages`).
 - Marketplace index: not served publicly yet.
+
+## Publish 0.9.0 to both registries
+
+Publish the client package first, then the main package, to each registry.
+
+```sh
+# npm public
+npm publish --registry=https://registry.npmjs.org --access public   # run in client-package/
+npm publish --registry=https://registry.npmjs.org --access public   # run in repo root
+
+# GitHub Packages (scoped; token with write:packages)
+npm publish --registry=https://npm.pkg.github.com --access public   # client-package/
+npm publish --registry=https://npm.pkg.github.com --access public   # repo root
+```
+
+Do not commit registry tokens. GitHub Packages installation requires the
+`@denniszhangoiler` scope to be configured and an authenticated read token.
 
 ## What DSH currently supports
 

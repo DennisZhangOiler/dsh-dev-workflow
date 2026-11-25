@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-11-25
+
+### Changed
+
+- **Scoped registry packages**: `@denniszhangoiler/dsh-rd-workflow` and
+  `@denniszhangoiler/dsh-rd-workflow-client`.
+- The client-only UI package is now a separately published dependency instead of
+  a local `file:` dependency, so npm and GitHub Packages can resolve it.
+- Plugin rows, tests, and install docs use the scoped names. The preset id stays
+  `dev-workflow`.
+- Prepared for publication to the npm public registry and GitHub Packages;
+  publication is pending registry authentication. This is a breaking
+  install-name change from the unscoped 0.8.0 GitHub Release.
+
 ## [0.8.0] - 2026-11-25
 
 ### Added
