@@ -1,139 +1,130 @@
-# MODE-REVIEW — R2 修复后复审
+# MODE-REVIEW — R3 拆分 client 包后复审
 
 - Reviewer: `mode-selector-reviewer`（独立复审；只读代码，只写本文件）
 - 日期: 2026-11-25
-- 对象: `dsh-rd-workflow` 0.8.0，`7e07bf2` "fix: isolate global client row and sync mode with host"
-- 环境: 提供的最终实例 `127.0.0.1:3099`（profile `modeui`，DSH 0.2.2-rc.5 web；Chrome 158 headless / Playwright 1.65；1440x900、390x844）
-- 结论: **REVISE — 47/100**；**新的 P1 回归**：研发流程 preset 的 Host 半未挂载，chip/菜单在、但模式切换无效，R&D prompt、9 个 skill、`/mode` 命令全部缺失。
+- 对象: `dsh-rd-workflow` 0.8.0，`8a50d8b` "fix: isolate client UI in its own package and restore preset host"
+- 环境: 提供的最终实例 `127.0.0.1:3101`（profile `modeui`，DSH 0.2.2-rc.5 web；Chrome 158 headless / Playwright 1.65；1440x900）
+- 结论: **PASS — 81/100**；**0 P0 / 0 P1**，关键切换可用；保留 3 个 P2、若干 P3。
 
 ## 结论摘要
 
-修复的“标准 preset 零污染”已独立验证通过：新建 `标准模式` 会话的 system prompt 无 `## R&D Workflow`、无 `Mode:`、无 `rd-workflow*` skill，命令菜单无 `mode`。
+本轮拆分方案成立：
 
-但同一修复把研发流程 preset 的 Host 半一起关掉了：
+- `client-package/`（`dsh-rd-workflow-client`）只含 composer chip 与 frame-wide menu，Host `index.js` 为 no-op；主包只保留 preset Host，不再有全局 Host row。
+- 标准 preset 会话实测：无 chip、system prompt 无 `## R&D Workflow` / `Mode:`、`rd-workflow*` skill 为 0、命令菜单无 `mode`。
+- 研发流程会话实测：有 `## R&D Workflow` + `Mode: standard`；`/mode` 命令存在；chip 切深度成功，下一轮 `Mode: deep.`；切轻量后刷新，chip 仍轻量，下一轮 `Mode: light.`。
+- 已有对话中菜单由 `shell.overlay` 渲染，不被 composer 裁剪；实际外框 **184×106**（border-box）。
+- 键盘：打开聚焦选中项，ArrowUp/Down/Home/End、Escape 回焦均成立；有 `aria-controls="rd-mode-menu"`。
 
-- 新建会话 header `agentPreset:"standard"` → UI 选择 `研发流程`（session log 有 `agent-preset/selected: dev-workflow`）→ 首轮 system prompt **没有** R&D contract、没有 `Mode:`；`/` 命令菜单**没有** `mode`；chip 却照常出现。
-- 点击 chip → 选 `深度`：菜单关闭，chip 仍显示 `标准`，`localStorage` 回到 `standard`，聊天没有 `mode · 已完成` 命令行；`/mode` 根本不存在。也就是说目标功能在研发流程会话里**不可用**，不是视觉问题。
-- 该回归没有被 `npm test`/`check`/`smoke` 捕获，也未出现在新证据截图里（新截图只证明菜单打开，不证明切换成功）。
-
-因此原 P1 的“标准污染”解决了，但出现 **新的 P1 回归**；原 P1 的“状态一致”也无法在当前构建里端到端验证。PASS 条件不成立。
+因此上一轮的两个 P1 已关闭，目标功能可用，按“无 P0/P1、关键交互可用”判定 PASS。剩余问题集中在状态同步的副作用、测试空白和细节，不阻塞本次 PASS。
 
 ## 维度表（0-100）
 
 | 维度 | 权重 | 得分 | 依据 |
 |---|---:|---:|---|
-| 功能与状态正确性 | 30% | 20 | 标准隔离通过；研发流程 Host 半缺失、切模式无效；刷新/第二客户端无法验证 |
-| UI 视觉一致性 | 25% | 82 | chip 与权限选择器一致；菜单已修到 184；行高/阴影仍有 P3 漂移 |
-| 代码与隔离 | 20% | 35 | `clientOnly` 关掉 preset Host 半；mount 时用 localStorage 向 Host 推送；无服务端状态读取 |
-| 可访问性 | 10% | 75 | 打开聚焦、Arrow/Home/End、Escape 回焦、`aria-controls` 成立；Tab/listbox 模式仍不完整 |
-| 证据与测试 | 15% | 35 | 命令全绿；无 Host 半或切换成功的修复后证据；测试不含运行时 preset 组合 |
-| **合计** | 100% | **47** | **REVISE**；修 P1 回归并补端到端测试后重评 |
+| 功能与状态正确性 | 30% | 88 | 标准隔离、RD prompt、切换、刷新后 Mode 均实测；无 P1 |
+| UI 视觉一致性 | 25% | 82 | chip 与权限选择器一致；菜单 184 已修；行高/阴影/2px 间距有 P3 漂移 |
+| 代码与隔离 | 20% | 78 | 拆分方案成立；mount 同步重复写命令、会覆盖 server 状态；无客户端测试 |
+| 可访问性 | 10% | 80 | 打开聚焦、方向键/Home/End、Escape 回焦、aria-controls；Tab/listbox 模式未收口 |
+| 证据与测试 | 15% | 70 | `split-rd/standard/menu` 截图有效；三命令通过；无运行时 client 测试，deep 切换无归档截图 |
+| **合计** | 100% | **81** | **PASS**；保留 P2/P3 |
 
 ## 速查清单
 
-- [问题 1] `index.js:190-194` + `cordis.patch.yml:139-143`：`clientOnly: true` 后研发流程会话的 Host 半也没了；system prompt 无 R&D、无 `Mode:`、命令菜单无 `/mode`，chip 选深度无效 → 研发流程必须恢复 prompt/9 skills/`/mode`，且标准 preset 仍零污染；需有真实 dev-workflow 会话截图/日志。
-- [问题 2] `client.js:115-121`：mount 时把 localStorage 模式 `/mode` 推给 Host；没有读 Host、没有等待/失败处理 → 要么由 Host 返回当前模式，要么明确“客户端覆盖”并处理失败；专门验证切 light/deep → 刷新 → 下一轮 `Mode:` 一致；另开无 localStorage 客户端不能静默改档而不告知。
-- [问题 3] `test/`：`npm test`/`check`/`smoke` 全绿，但不创建 dev-workflow 运行时会话；`check.mjs` 只查 `clientOnly: true` 字符串 → 增加真实 profile 的 standard + dev-workflow 两套 prompt/命令断言，纳入默认测试。
-- [问题 4] `client.js:145`：菜单高度按 104 算，实际 106，chip 上间距实测 4px（目标 6px）；菜单打开后 Tab 仍停留在菜单（移到下一 option），未按菜单模式关闭 → 修 2px 定位并定义 Tab/离开行为。
-- [问题 5] 证据：`repro-overlay-menu-final.png` 只展示菜单打开；`final-mode-*` 是 16:51/16:54 修复前截图；`MODE-SELECTOR.md` 仍引用 `repro-overlay-menu.png`，新文件未被引用 → 重拍“切 deep 成功 + 命令行 + 已存在对话”，并更新引用。
+- [问题 1] `client-package/client.js:115-121`：mount 时无条件 `/mode <localStorage>`，每次打开/刷新都写一条 `mode · 已完成`，同一会话实测出现 4 条以上；即使模式没变也会写 → 只在模式与 Host 不同时同步，或把自动同步做成不可见/去重记录；刷新一次不应新增无意义命令行。
+- [问题 2] `client-package/client.js:115-121`：第二个无 localStorage 客户端打开 dev 会话时，mount 会把 Host 从 deep 静默改回 standard；本次实测 turn 4 `Mode: standard.`。chip 与 server 一致，但“打开会话就改档”是产品决策 → 文档化“chip 为准”，或读取 Host 状态/冲突提示；不能既不告知又覆盖。
+- [问题 3] `test/`：`npm test`/`check`/`smoke` 全绿，但没有运行时 client/preset 测试 → 增加 standard 零污染、dev prompt + `/mode`、切 light/deep、刷新、第二客户端、184 菜单与键盘的 E2E，并纳入默认命令。
+- [问题 4] `client-package/client.js:145`：菜单高度仍按 `3*32+8 = 104` 计算，实际 106，chip 上间距 4px 而非 6px；Tab 从选中项移到下一项且菜单不关闭 → 2px 定位修掉；Tab/离开菜单行为明确为关闭并回焦。
+- [问题 5] 证据：`split-rd-final.png` 只有 mount 同步的标准命令行，没有 deep/light 成功切换画面；`final-mode-*` 是旧截图；`repro-overlay-menu-final.png` 只证明菜单可见 → 补一张切换后 chip+命令行+下一轮 Mode 的归档图，更新 `MODE-SELECTOR.md` 引用。
 
-- [提升 1] `.rd-mode-menu`：保留 184/10/32，但对齐 host elevation/shadow 与 12px 行圆角，减小手写 `rgba(0,0,0,.12)` 阴影的偏重感。
-- [提升 2] 行字重：host 菜单是 13px/400，本菜单 500；统一后菜单与权限菜单并排更像一套。
-- [提升 3] 失败态：`/mode` 失败或 mount 同步失败时在 composer 内显示可见错误（不只 `title`），避免“点了没反应”。
-- [提升 4] 动效：chevron 120ms 已够；菜单瞬时出现与 host 一致，不需要再加装饰性动效。
-- [提升 5] 无障碍：给 option 加 roving tabindex/listbox 语义，Tab 离开时关闭并回焦，避免焦点留在打开菜单后面的选项。
+- [提升 1] `.rd-mode-menu` 保留 184/10/32，但统一 host elevation 阴影、13px/400 行字重和 12px 行圆角，让菜单与权限菜单并排像一套。
+- [提升 2] 切换/同步失败时显示 composer 内可见错误，而不是只改 chip 的 `title`；当前 mount 同步失败完全静默。
+- [提升 3] 加选项（option）的 roving tabindex/`:focus-visible` 环；Tab 离开关闭；保持现有方向键手感。
+- [提升 4] 自动同步命令不产生聊天记录（或只在真正变更时记录），减少 `mode · 已完成` 噪声。
+- [提升 5] 动效：chevron 120ms 已够，菜单瞬时出现与 host 一致；不需要新增装饰性动效。
 
-## P1 回归（本轮阻塞项）
+## 已验证通过（本轮实测）
 
-### P1-1 研发流程 preset 的 Host 半未挂载
+### 隔离
 
-**位置**：`index.js:190-194`（`clientOnly` early return）、`cordis.patch.yml:139-143`（全局 `rd-mode-client` 的 `config: { clientOnly: true }`）。
+- 标准 preset 会话 `session-23bb…`：header/投影 `agentPreset:"standard"`；无 chip；system prompt `R&D false / Mode none`；`rd-workflow*` skill 0；`/` 命令菜单无 `mode`。
+- 研发流程会话 `session-5b8…`：`agent-preset/selected dev-workflow`；system prompt `R&D true / Mode: standard.`；`/` 命令菜单有 `mode`；chip 出现。
+- `npm test`：12 pass + `E2E gate: 3 packs pass, 4 scores present, hashes verified`；`npm run check`：YAML parsed / packaging checks passed；`npm run test:smoke`：PASS。
 
-**独立实测（最终实例，当前代码）**
+### 切换与 State
 
-1. 新建空白会话（header `"agentPreset":"standard"`），在 native preset 菜单选择 `研发流程`；session log 出现 `agent-preset/selected {"agentPreset":"dev-workflow"}`。
-2. 选择后 chip 出现（说明 client 半正常），首轮系统消息实测：
-   - 无 `## R&D Workflow`；
-   - 无 `Mode: standard.`；
-   - `available_skills` 无任一 `rd-workflow*`；
-   - `/` 命令菜单无 `mode`。
-3. 点击 chip，选择 `深度`：菜单关闭，chip 仍为 `标准`，`localStorage` 为 `standard`，聊天无 `mode · 已完成` 行；没有 console error。切换失败但没有可见错误。
-4. 同一 profile 的另一个 17:17 会话 `session-d6560…`（会话创建在修复前，但首轮发生在修复后的服务实例）也呈现同样现象：header 是 `standard`，但 seq 4 有 `agent-preset/selected dev-workflow`，turn 1 的 system prompt 无 R&D、无 Mode。**如果把它当作“标准 preset 会话无 R&D”的证据，会误判**；它实际是选择研发流程后的会话，恰好证明 dev-workflow 的 Host 半没有挂载。
+- 5b8 切 **深度**：`command/run name=mode args=" deep"` → `command/done kind:success`；chip 变 `深度`；下一轮 turn 2 system prompt `Mode: deep.`。
+- 5b8 切 **轻量** → 刷新：chip 仍 `轻量`；mount 同步 `/mode light` 成功；下一轮 turn 5 system prompt `Mode: light.`。
+- 深度切换后刷新：chip 仍 `深度`；mount 同步 `/mode deep` 成功；未出现标签与 server 相反。
+- 第二浏览器上下文（无 localStorage）打开 5b8：chip `标准`；mount 同步 `/mode standard` 成功；下一轮 turn 4 system prompt `Mode: standard.`。**chip 与 server 一致**，但会把之前的 deep 静默改为 standard（P2-2）。
+- 切换与 mount 同步均不产生 user 气泡；记录只有 `mode · 已完成` 命令行和真实用户消息。
 
-**对照**：新建标准 preset 会话 turn 1 的 system prompt 无 R&D、无 Mode、`rd-workflow*` skill 0；`/` 命令菜单无 `mode`。标准隔离是对的；问题只在研发流程 Host 半。
+### UI / 交互
 
-**判断**：`clientOnly` 的 config 影响到了研发流程 preset 的同一个 package 挂载（preset row 没有显式 config，或共享了全局 row 的 config）。无论精确机制是哪一个，当前构建的研发流程 Host 半没有 `applyWithMode()`，所以：R&D prompt、mode section、9 skills、`/mode` command 全部缺失，chip 的切换必然失败并回滚。
+- 新建空白会话选择研发流程：首轮前 chip 可见（标准）；切换命令成功；菜单可在首轮前打开。
+- 已有研发流程对话中菜单打开：bounding box **184×106**，`box-sizing:border-box`，10px 圆角，32px 行，白色 layer-1 表面，当前项 check；菜单在 `shell.overlay` / `pI_x6G_overlayLayer`，`elementFromPoint` 命中菜单内部，未被 composer 裁剪。
+- chip：28px、13px/500、14px 图标、chevron、透明底、host hover；与权限选择器同高。
+- 键盘：Enter 打开后焦点在选中项；Home/End/ArrowUp/Down 正确；Escape 关闭并回到 chip；`aria-controls="rd-mode-menu"`、`aria-expanded` 正确。
+- 外部点击、resize 关闭；本次浏览器操作无 console error / page error。
 
-**修完验收**：
-- 新建研发流程会话的 system prompt 必须有恰好 1 份 `## R&D Workflow` + 1 条 `Mode:`；skill 列表恰好 9 个 `rd-workflow*`；`/` 菜单有 `mode`。
-- chip 切 light/standard/deep 后必须出现 `mode · 已完成` 命令行并留存；下一步 system prompt 的 `Mode:` 等于所选。
-- 标准 preset 会话必须继续保持 0 污染（R&D/Mode/skills/command 全无）。
-- 增加覆盖上述两种运行时会话的集成测试；不要只检查 `clientOnly: true` 字符串。
-- 修法建议：显式给 preset row 的 `rd-workflow-contract` 传 `clientOnly: false` 并验证是否覆盖全局 config；若 config 仍共享，改用独立的 client-only 入口/包或移除全局 row，让 preset row 同时承担 client 半。
+## P2（不阻塞 PASS，但需登记/决定）
 
-## P2 / P3
+### P2-1 mount 同步重复写命令记录
 
-### P2-1 状态 synced 的实现与验证都未完成（原 P1 待重验）
+`client-package/client.js:115-121` 在每次 chip mount 都发送 `/mode <localStorage>`，不判断 Host 当前值。实测同一 5b8 会话在若干次打开/刷新/切换后出现多条 `mode · 已完成`；命令日志包含 `standard`、`standard`、`deep`、`deep`、`light`、`light` 等重复项。即使模式没变也会写聊天记录。
 
-`client.js:115-121` 在 mount 时读 localStorage 初始值，直接 `live.command('/mode <mode>')`，没有读取 Host 当前模式，也没有处理返回错误。设计上这是“chip 覆盖 Host”：
+**验收**：打开/刷新一次不新增无意义的 `mode` 命令行；只有实际变更才留记录（或同步走不可见的内部命令）。保留“切换成功有一条轻量记录”。
 
-- 在无 localStorage 的客户端打开一个 server 已是 deep/light 的会话，会把 server 改成 chip 的 standard，而不是显示 server 的 deep/light；chip 与下一轮 `Mode:` 会一致，但会话状态被静默改变。
-- 反向：server 重启后 Host 回到 standard，若 localStorage 仍是 deep，mount 会把 Host 改回 deep；这是选定的行为，但必须文档化，且需处理 `/mode` 不可用（当前就是失败但无提示）。
-- 本构建研发流程 `/mode` 不存在，无法验证“切 light/deep → 刷新 → 一致”或“另开无 localStorage 客户端”；**未验证**，不是已通过。
+### P2-2 chip 覆盖 Host；第二客户端会静默改档
 
-**验收**：如果你坚持“chip 为准”，至少要在 mount 同步失败时可见报错，并说明“打开会话会改档”；如果希望尊重 server 状态，应增加 server-side projection/查询，在 chip 显示前读取当前 mode，冲突时由用户决定。新增第二客户端/刷新 E2E。
+这是当前设计的直接后果：mount 以 localStorage 为准，第二个无 localStorage 客户端把 5b8 从 deep 改为 standard（下一步 `Mode: standard.`，chip 也 standard）。一致性成立，但用户只是“打开会话”就改变了会话模式，且没有提示。
 
-### P2-2 测试没有覆盖运行时 preset 组合
+**验收决定**：若产品接受“chip 为准”，在 README/MODE-SELECTOR 明确写出“打开会话会按客户端保存的模式同步 Host”；若不接受，增加 Host 当前 mode 的读取/projection，冲突时提示用户而不是静默覆盖。无论哪种，mount 同步失败必须有可见错误。
 
-执行结果（本轮复跑，全部通过）：
+### P2-3 没有运行时 client/preset 测试
 
-```text
-npm test        # 12 tests pass; E2E gate: 3 packs pass, 4 scores present, hashes verified
-npm run check   # cordis.patch.yml parsed as YAML; packaging checks passed
-npm run test:smoke  # smoke: PASS
-```
+测试覆盖了打包、Host 注册和 profile 安装，但不执行 `client-package/client.js`，也不创建标准/研发流程运行时会话。上一轮“Host 半被关掉”的回归能全绿通过，说明这个缺口真实存在。
 
-但 `test/plugin.test.mjs` 只 mock Host 注册；`test/check.mjs` 只做文件/字符串断言；`smoke-temp-profile.mjs` 只安装/卸载。**没有测试在真实 profile 中创建 dev-workflow 会话并检查 prompt/命令**；所以一个使目标功能完全不可用的回归仍然全绿。这是本轮最需要补的 P2。
+**验收**：新增 Playwright/真实 profile E2E：
+1. 标准会话：无 chip、无 R&D/Mode/skills/command。
+2. 研发流程会话：R&D/Mode、9 skills、`/mode`、chip 可见。
+3. 切 light/deep：命令行 + 下一轮 `Mode:`。
+4. 刷新/第二客户端：chip 与下一轮 `Mode:` 一致（并记录覆盖行为）。
+5. 菜单 184、overlay 不裁剪、键盘路径。
 
-### P3
+## P3
 
-- `client.js:145` 菜单高度仍按 `3*32+8 = 104` 计算；实测菜单 184x106，chip 上间距 4px（目标 6px）；宽度已修（实际 bounding box 184）。
-- 键盘核心已修：打开聚焦选中项、ArrowUp/Down/Home/End、Escape 回焦 chip、`aria-controls="rd-mode-menu"` 均实测成立。但 Tab 会移到下一个 option 且菜单保持打开，没有 listbox roving tabindex/离开关闭；属于 P3 的完整性问题。
-- 切换失败/ mount 同步失败只有 chip `title`（“切换失败”），没有可见错误；本轮的 dev preset 失败就表现为“点了没反应”。
-- `MODE-SELECTOR.md` 仍引用 `repro-overlay-menu.png`（旧），新增的 `repro-overlay-menu-final.png` 尚未被引用；`repro-existing-menu.png` 已被删除但旧引用仍存在（历史文件）。
-- 新证据 `repro-overlay-menu-final.png` 只显示菜单打开，没有展示一次成功的切换；`final-mode-*` 均为修复前截图。`repro-overlay-menu-final-report.json` 仅有一条与选择器无关的 `High` 对比度提示。
-- 菜单视觉 token 仍与 host 有差异：host 13px/400、行高 34、行圆角 12、surface 16、elevation token；本菜单 13px/500、行高 32、行圆角 6、surface 10、手写阴影。
-- `README.md:14-16` 的“does not add a Host-wide row”仍与代码中的全局 `rd-mode-client` 有措辞歧义；建议明确“client-only global mount”。
-- 未验证：刷新/第二客户端（被 P1 阻断）、server 重启后的模式持久性、切换期间对话运行、subagent composer、200% zoom、屏幕阅读器实际播报。
-
-## 已实测通过（本轮）
-
-- chip 视觉：28px 高、13px/500、14px 图标、chevron、透明底、host hover；与权限选择器同高。
-- 新菜单宽度：bounding box **184 x 106**（`box-sizing:border-box` 已生效）；10px 圆角、32px 行、leading 图标、`aria-selected` check；在已有对话中由 `shell.overlay` 渲染、未被 composer 裁剪。
-- 首轮前和已有对话中 chip 均可见；点击菜单可打开。
-- 键盘：Enter 打开后聚焦标准项；Home/End/ArrowUp/Down 正常；Escape 关闭并回焦 chip；`aria-controls` 存在。
-- Escape、外部点击、resize 关闭；390x844 下菜单在视口内。
-- 标准 preset 会话：system prompt 无 R&D、无 Mode、无 `rd-workflow*` skill，命令菜单无 `mode`（隔离修复成立）。
-- 本次浏览器操作无 console error、无 page error。
-- 三个测试命令全绿（但覆盖不到本轮回归）。
+- 菜单高度仍按 104 计算而实际 106，chip 上间距实测 4px（目标 6px）；宽度已修。
+- Tab 从选中 option 移到下一项且菜单不关闭；listbox roving tabindex/离开关闭未收口。
+- 菜单行 13px/500、行圆角 6、surface 10、z-index 1001、手写 `0 6px 20px rgba(0,0,0,.12)` 与 host 权限菜单（13px/400、行高 34、行圆角 12、surface 16、z-index 1100、elevation token）仍有细节漂移；按验收 target 是 184/10/32，可保留但应统一阴影/字重。
+- 切换失败与 mount 同步失败只有 `title`，没有 composer 内可见错误。
+- `split-rd-final.png` 只有 mount 同步的 `mode · 已完成`，没有 deep/light 成功切换截图；`final-mode-*` 是旧截图；`repro-overlay-menu-final.png` 只证明菜单可见。
+- `client-package` 是 `private: true` 的本地 `file:` 依赖；本地 tarball 安装（smoke）通过，但公共 npm registry 分发/升级路径未验证；发布前应确认 client 包会随 bundle 安装并被解析。
+- 未复测：390x844 当前 split 构建、200% zoom、英文 locale、屏幕阅读器实际播报、滚动关闭、server 重启后的持久性、运行中切换、subagent composer。
+- `README.md:14-16` 的“does not add a Host-wide row”仍可读成“没有全局 row”；建议明确“只有 client-only 全局 row，Host 半为 no-op”。
 
 ## 关键证据
 
-- [repro-overlay-menu-final.png](repro-overlay-menu-final.png)（新，1440x900，菜单打开；未展示切换成功）
-- [final-mode-matched.png](final-mode-matched.png)、[final-mode-menu2.png](final-mode-menu2.png)、[final-mode-matched-deep.png](final-mode-matched-deep.png)（16:51/16:54，修复前；视觉有效，但不证明本轮状态修复）
-- 标准会话 `session-01c165e7…`：system prompt R&D false / Mode none / rd skills 0。
-- 研发流程会话 `session-d9e386a0…`：header standard、`agent-preset/selected dev-workflow`、system prompt R&D false / Mode none；`/` 无 `mode`；chip 切深度后仍标准、localStorage standard、无命令行。
-- 旧 `session-d6560…`：同样 header standard + selected dev-workflow + 无 R&D，说明本轮“标准无 R&D”证据实际是 dev-workflow 会话，不能证明修复。
+**截图**（均读取）：
+- [split-rd-final.png](split-rd-final.png)：研发流程会话 + chip + mount 同步命令行；证明 Host prompt 已恢复。
+- [split-standard-final.png](split-standard-final.png)：标准模式会话无 chip；证明隔离。
+- [repro-overlay-menu-final.png](repro-overlay-menu-final.png)：已有对话菜单可见，未被裁剪。
+- [final-mode-matched.png](final-mode-matched.png)、[final-mode-menu2.png](final-mode-menu2.png)、[final-mode-matched-deep.png](final-mode-matched-deep.png)：旧截图，仅用于 chip/menu 视觉基线，不证明本轮状态修复。
+
+**本轮实测补充**：
+- 标准会话：prompt `R&D false / Mode none`、rd skills 0、命令菜单无 `mode`、chip 0。
+- 研发流程：prompt `R&D true / Mode standard`；`/mode` 命令存在；切 deep → turn 2 `Mode: deep.`；切 light → 刷新 → turn 5 `Mode: light.`。
+- 第二客户端：chip standard；mount 同步 standard；turn 4 `Mode: standard.`（并覆盖了之前的 deep，见 P2-2）。
+- 菜单 184×106；overlay 父级；elementFromPoint 命中；键盘 focus/Arrow/Home/End/Escape 回焦；`aria-controls`。
+- 无 console/page error。
+- 测试命令：`npm test`（12 pass + E2E gate）、`npm run check`（packaging checks passed）、`npm run test:smoke`（PASS）。
 
 ## 保留
 
-保留静悄悄的透明 chip、与权限选择器同高同字重的对齐、`mode · 已完成` 命令行而不注入 user 气泡，以及 `shell.overlay` 菜单不裁剪的修复方向。不要为了补救回归把 chip 变成显眼按钮或把菜单塞回 composer。
+保留三件事：**(1)** 透明、与权限选择器同高同字重的 chip；**(2)** 切换只留 `mode · 已完成`、不注入 user 气泡的轻量记录；**(3)** 独立 client 包 + `shell.overlay` 菜单的拆分方向——它同时解决了跨 preset 污染和已有对话裁剪，不应改回全局 Host row。
 
-## 最小修复条件（REVISE → PASS）
+## 结论
 
-1. 修 P1-1：研发流程会话恢复 R&D prompt、`Mode:`、9 skills、`/mode`；chip 切 light/standard/deep 成功并出现命令行；标准 preset 仍零污染。加真实 profile 集成测试。
-2. 补 P1-2 的端到端验证：切 light/deep → 刷新 → chip 与下一轮 `Mode:` 一致；第二客户端行为明确（若坚持 chip 覆盖，至少失败可见并文档化）。
-3. 修 P3 菜单 2px 定位/失败可见错误/Tab 行为；更新截图引用与 `MODE-SELECTOR.md`，重拍一次修复后成功切换的证据。
-4. 复跑 `npm test` / `npm run check` / `npm run test:smoke`，并新增运行时 preset 测试。
+**PASS — 81/100**：功能与 UI 无 P0/P1；标准隔离、研发流程 prompt、模式切换、刷新/第二客户端一致性、184px 菜单、键盘核心路径均成立。P2 是状态同步的产品决策/噪声/测试空白，不阻塞本次 PASS；P3 为细节与文档证据。
 
-**最终判定：REVISE — 47/100。** 标准隔离、菜单宽度、键盘焦点三项修复成立；但研发流程 Host 半的 P1 回归使目标功能不可用，PASS 条件不成立。
+**最终判定：PASS — 81/100。**
