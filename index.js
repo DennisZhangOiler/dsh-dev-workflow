@@ -10,7 +10,6 @@
  */
 
 import { readFileSync } from 'node:fs'
-import { randomUUID } from 'node:crypto'
 import { dirname, join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -109,14 +108,38 @@ const SKILLS = [
  */
 export function applyWithMode(ctx, mode = 'standard') {
   const contract = readFileSync(join(HERE, 'prompt.md'), 'utf8')
-  const text = `${contract}\n\nMode: ${mode}.`
+  const controllers = new WeakMap()
+
+  const ensureMode = (agent) => {
+    let state = controllers.get(agent)
+    if (state) return state
+    state = { value: mode }
+    controllers.set(agent, state)
+    const systemPrompt = agent.ctx.get?.('systemPrompt') ?? agent.ctx.systemPrompt
+    if (systemPrompt) {
+      agent.ctx.effect(
+        () => systemPrompt.section({
+          name: 'rd-workflow:mode',
+          order: 101,
+          text: () => `\n\nMode: ${state.value}.`,
+          interpolate: false,
+        }),
+        'rd-workflow.mode-section',
+      )
+    }
+    return state
+  }
+
+  if (typeof ctx.on === 'function') {
+    ctx.effect(() => ctx.on('agent/created', ({ agent }) => { ensureMode(agent) }), 'rd-workflow.mode-created')
+  }
 
   ctx.effect(
     () =>
       ctx.systemPrompt.section({
         name: 'rd-workflow:contract',
         order: 100,
-        text,
+        text: contract,
         // The contract is prose; never interpolate `{{...}}` fragments.
         interpolate: false,
       }),
@@ -149,11 +172,9 @@ export function applyWithMode(ctx, mode = 'standard') {
             handler: ({ agent, rawInput }) => {
               const mode = rawInput.trim().toLowerCase()
               if (!['light', 'standard', 'deep'].includes(mode)) return { kind: 'error', text: '用法：/mode light|standard|deep' }
-              agent.inject({
-                id: randomUUID(), role: 'user', source: { kind: 'user' },
-                content: [{ type: 'text', text: `Workflow mode: ${mode}. Apply the ${mode} rules from the R&D Workflow section from the next turn; this is a session-level instruction, not a preset/tool swap.` }],
-              })
-              return { kind: 'success', text: `流程强度：${mode}` }
+              const state = ensureMode(agent)
+              state.value = mode
+              return { kind: 'success' }
             },
           }),
         'rd-workflow.mode-command',

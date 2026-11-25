@@ -1,11 +1,11 @@
 # Composer mode selector E2E
 
-- Preset: one **研发流程** preset (default Standard).
-- Control: always-visible **流程强度** select in the composer left tool row.
-- Before first turn: `composer-mode-before-first-turn.png`.
-- After switching standard → deep: `composer-mode-deep-works.png`; the command
-  result shows `流程强度：deep`, and the injected context is visible in chat.
-- Switching sends `/mode <light|standard|deep>`; it changes session-level
-  instructions, not the preset/tool set.
-- Tested in a disposable web profile with the packaged bundle; no credentials
-  beyond the normal local model route.
+- Preset: one **研发流程** preset, starting in Standard.
+- Control: always-visible **流程强度** chip in the composer left tool row, styled
+  with the host theme tokens (icon + current mode + chevron). It appears before
+  the first turn and remains visible during the conversation.
+- Screenshots: `final-mode-before.png`, `final-mode-deep.png`.
+- Switching sends `/mode <light|standard|deep>`. The Host updates an
+  agent-scoped prompt section; no extra chat bubble is injected. The command row
+  only shows `mode · 已完成`.
+- It is a session-level intensity instruction, not a preset/tool swap.

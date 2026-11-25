@@ -32,13 +32,20 @@ window.__ModuleLoader__.load({
             }
           }).catch(() => { setMode(previous); setFailed(true) })
         }
-        const label = { label: t('label'), aria: t('aria'), light: t('light'), standard: t('standard'), deep: t('deep') }
-        return h('label', { title: failed ? t('error') : label.aria, style: { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--dsw-alias-text-secondary)' } },
-          h('span', { style: { whiteSpace: 'nowrap' } }, label.label),
-          h('select', {
-            id: 'rd-mode-select', 'aria-label': label.aria, value: mode, disabled: !sessionId, onChange,
-            style: { height: 26, padding: '0 4px', borderRadius: 6, border: '1px solid var(--dsw-alias-border-secondary)', background: 'var(--dsw-alias-bg-secondary)', color: 'var(--dsw-alias-text-primary)', fontSize: 11, cursor: 'pointer' },
-          }, MODES.map(id => h('option', { key: id, value: id }, label[id]))))
+        const label = { label: t('label'), aria: t('aria'), light: t('light'), standard: t('standard'), deep: t('deep'), error: t('error') }
+        const css = `.rd-mode-chip{display:inline-flex;align-items:center;gap:3px;height:26px;padding:0 6px 0 5px;border:1px solid transparent;border-radius:8px;color:var(--dsw-alias-label-secondary);font-family:inherit;font-size:12px;line-height:1;cursor:pointer;transition:background .15s ease,color .15s ease}.rd-mode-chip:hover{background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary)}.rd-mode-chip:focus-within{background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);box-shadow:0 0 0 1px var(--dsw-alias-border-l2)}.rd-mode-chip select{appearance:none;border:0;background:transparent;color:inherit;font:inherit;line-height:1;height:100%;padding:0 12px 0 1px;cursor:pointer;outline:none}.rd-mode-chip option{background:var(--dsw-alias-bg-overlay);color:var(--dsw-alias-label-primary)}`
+        const icon = h('svg', { width: 13, height: 13, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': true, style: { flex: 'none' } },
+          h('path', { d: 'M2.5 5h11M2.5 8h7M2.5 11h4', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' }))
+        const chevron = h('svg', { width: 10, height: 10, viewBox: '0 0 10 10', fill: 'none', 'aria-hidden': true, style: { marginLeft: -10, pointerEvents: 'none', opacity: 0.65 } },
+          h('path', { d: 'M2.2 3.8 5 6.6l2.8-2.8', stroke: 'currentColor', strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round' }))
+        return h(React.Fragment, null,
+          h('style', { key: 'rd-mode-css' }, css),
+          h('label', { className: 'rd-mode-chip', title: failed ? label.error : label.aria },
+            icon,
+            h('select', {
+              id: 'rd-mode-select', 'aria-label': label.aria, value: mode, disabled: !sessionId, onChange,
+            }, MODES.map(id => h('option', { key: id, value: id }, label[id]))),
+            chevron))
       }
     }
 
