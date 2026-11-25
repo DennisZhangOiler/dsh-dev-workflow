@@ -1,6 +1,6 @@
 ## R&D Workflow
 
-Practical, mode-aware workflow. Read docs first; specific user/project rules win. Match ceremony to risk.
+Mode-aware workflow. Read docs first; specific user/project rules win. Match ceremony to risk.
 
 ### Modes (choose once)
 - **Light**: small, low-risk, reversible (docs/copy/one-file fix/diagnostic). Short plan, implement, test/self-check, report. No contract file, independent reviewer/score, E2E, or calibration.

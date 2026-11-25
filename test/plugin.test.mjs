@@ -57,7 +57,7 @@ test('registers exactly one stable system-prompt section', () => {
   assert.equal(section.name, 'rd-workflow:contract')
   assert.equal(section.order, 100)
   assert.equal(section.interpolate, false)
-  assert.equal(section.text, PROMPT)
+  assert.ok(section.text === PROMPT || section.text.startsWith(PROMPT + '\n\nMode: '), 'section should be prompt plus a mode line')
   assert.ok(PROMPT.length >= 6000 && PROMPT.length <= 8000, `prompt is ${PROMPT.length} chars`)
 })
 
@@ -142,5 +142,16 @@ test('contributed text has no machine-specific paths or secrets', () => {
     assert.doesNotMatch(text, /https?:\/\//u)
     assert.doesNotMatch(text, /\b(?:github|gitlab)\.com\b/u)
     assert.doesNotMatch(text, /\b(?:password|passwd|secret|token)\s*[:=]\s*\S+/iu)
+  }
+})
+
+
+test('mode entry points expose Light/Standard/Deep wrappers', async () => {
+  const light = await import('../light.js')
+  const deep = await import('../deep.js')
+  for (const mod of [light, deep]) {
+    assert.equal(mod.name, 'rd-workflow')
+    assert.deepEqual(mod.inject, ['systemPrompt', 'skills'])
+    assert.equal(typeof mod.apply, 'function')
   }
 })

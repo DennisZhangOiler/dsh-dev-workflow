@@ -9,7 +9,9 @@
     "./package.json": "./package.json",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./locale/*.json": "./locale/*.json",
-    "./icon": "./icon.svg"
+    "./icon": "./icon.svg",
+    "./light": "./light.js",
+    "./deep": "./deep.js"
   },
   "files": [
     "index.js",
@@ -23,7 +25,9 @@
     "README.md",
     "README.zh.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "light.js",
+    "deep.js"
   ],
   "keywords": [
     "dsh",

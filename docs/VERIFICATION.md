@@ -21,7 +21,7 @@ Results:
   installed it, asserted the `preset-dev-workflow` row with `id: dev-workflow`
   and `default: standard`, removed it, and asserted no dependency, lockfile, or
   `node_modules` residue: PASS.
-- `npm pack`: 38 files.
+- `npm pack`: 40 files.
 
 Sizes:
 

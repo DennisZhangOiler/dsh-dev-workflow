@@ -1,5 +1,10 @@
 # Modes: Light / Standard / Deep
 
+In DSH these are three native presets — **研发流程 · Light**, **研发流程 ·
+Standard**, **研发流程 · Deep** — so you choose one in the new-session preset
+roster, before the first message. The Standard preset keeps the old
+`dev-workflow` id for session compatibility. You can also switch in chat.
+
 Pick the mode that matches the work. The agent should ask once if it is unclear;
 the default is **Standard**. You can switch at any time ("go light", "use deep").
 Mode is about ceremony, not quality: every mode still tests what it claims.

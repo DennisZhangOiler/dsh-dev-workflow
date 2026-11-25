@@ -3,7 +3,8 @@
 [English](README.md) | [中文](README.zh.md)
 
 一个**非默认**的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
-智能体预设。为新会话选择 **研发流程**（R&D Workflow）后，只需要描述要调研或修改什么；
+智能体预设。在新会话的原生预设菜单里选择 **研发流程 · Light**、**研发流程 · Standard** 或
+**研发流程 · Deep**；预设决定起始流程强度，之后也可以在对话里切换模式。
 Agent 会路由到技术调研、开发或大型项目编排流程，不需要每次粘贴长 Prompt。
 
 安装这个 bundle 只新增预设：**不会**修改 profile 的默认预设，不会注册
@@ -33,7 +34,7 @@ Program。目标变了就明确说出来，重新进入契约或调研 brief，�
 ## 开发流程（Deep playbook）
 
 Deep 使用下面完整阶段；Standard 按比例使用；Light 跳过契约/评分/E2E 形式。流程规则写在 system prompt section 中，因此不依赖聊天历史，也不会在上下文压缩后
-丢失。
+丢失。每个预设会追加一行 `Mode:`，prompt 据此使用对应强度的检查。
 
 | 阶段 | 结果 |
 |---|---|

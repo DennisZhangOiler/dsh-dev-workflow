@@ -3,10 +3,11 @@
 [English](README.md) | [中文](README.zh.md)
 
 A **non-default** agent preset for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-Pick **研发流程** (R&D Workflow) for a session and describe what you want to
-research or change; the agent routes the request to a technical-research,
-development, or program pipeline instead of asking you to paste a long prompt
-each time.
+Pick **研发流程 · Light**, **研发流程 · Standard**, or **研发流程 · Deep**
+from the native preset roster before starting a session; the preset sets the
+starting ceremony, and you can switch mode later in the conversation. The agent
+routes the request to a technical-research, development, or program pipeline
+instead of asking you to paste a long prompt each time.
 
 Installing the bundle only adds the preset. It does **not** change the profile's
 default preset, does not add a Host-wide row, and does not affect sessions that
@@ -41,7 +42,8 @@ research brief instead of continuing the previous bugfix loop.
 ## Development workflow (Deep playbook)
 
 Deep uses the full table below. Standard uses the same steps proportionally; Light skips the contract/score/E2E ceremony. The rules live in a system-prompt section, so they survive context compaction
-and do not depend on the conversation history.
+and do not depend on the conversation history. Each preset appends a one-line
+`Mode:` marker; the prompt then applies the proportional checks.
 
 | Phase | Result |
 |---|---|

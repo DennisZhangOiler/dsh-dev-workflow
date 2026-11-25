@@ -106,15 +106,16 @@ const SKILLS = [
  * Register the prompt contract and playbooks for the mounting preset.
  * @param {import('@deepseek-ai/cordis').Context} ctx - preset-scoped Cordis context.
  */
-export function apply(ctx) {
+export function applyWithMode(ctx, mode = 'standard') {
   const contract = readFileSync(join(HERE, 'prompt.md'), 'utf8')
+  const text = `${contract}\n\nMode: ${mode}.`
 
   ctx.effect(
     () =>
       ctx.systemPrompt.section({
         name: 'rd-workflow:contract',
         order: 100,
-        text: contract,
+        text,
         // The contract is prose; never interpolate `{{...}}` fragments.
         interpolate: false,
       }),
@@ -136,4 +137,10 @@ export function apply(ctx) {
       `rd-workflow.skill(${skill.name})`,
     )
   }
+}
+
+
+/** Standard mode: the default preset entry point. */
+export function apply(ctx) {
+  return applyWithMode(ctx, 'standard')
 }
