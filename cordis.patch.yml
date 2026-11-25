@@ -12,7 +12,7 @@
       name: '@deepseek-ai/dsh-agent-preset'
       config:
         id: dev-workflow-light
-        name: 研发流程 · Light
+        name: 研发流程 · 轻量
         description: 轻量研发流程：小改动/文档/诊断，短计划和检查，不写契约文件、不派独立 reviewer、不做完整 E2E。
         order: 4
         plugins:
@@ -131,7 +131,7 @@
       name: '@deepseek-ai/dsh-agent-preset'
       config:
         id: dev-workflow
-        name: 研发流程 · Standard
+        name: 研发流程 · 标准
         description: 默认研发流程：非平凡工作写契约、实现、测试；中高风险/UI/关键决策派一次独立 review；不做 90 分/盲校准形式。
         order: 5
         plugins:
@@ -250,7 +250,7 @@
       name: '@deepseek-ai/dsh-agent-preset'
       config:
         id: dev-workflow-deep
-        name: 研发流程 · Deep
+        name: 研发流程 · 深度
         description: 重度研发流程：高风险/安全/迁移/生产/大型 Program；完整契约、独立 plan/results/verifier review、UI/调研评分、E2E、人类 gate。
         order: 6
         plugins:

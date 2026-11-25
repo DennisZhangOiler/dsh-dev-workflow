@@ -3,10 +3,11 @@
 [English](README.md) | [中文](README.zh.md)
 
 A **non-default** agent preset for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-Pick **研发流程 · Light**, **研发流程 · Standard**, or **研发流程 · Deep**
+Pick **研发流程 · 轻量**, **研发流程 · 标准**, or **研发流程 · 深度**
 from the native preset roster before starting a session; the preset sets the
-starting ceremony, and you can switch mode later in the conversation. The agent
-routes the request to a technical-research, development, or program pipeline
+starting ceremony. Before the first turn you can change it from the new-session
+preset chip; after a turn DSH does not swap the preset (its prompt/tool
+composition is fixed). The agent routes the request to a technical-research, development, or program pipeline
 instead of asking you to paste a long prompt each time.
 
 Installing the bundle only adds the preset. It does **not** change the profile's
