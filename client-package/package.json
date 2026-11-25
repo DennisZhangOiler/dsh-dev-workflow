@@ -1,0 +1,23 @@
+{
+  "name": "dsh-rd-workflow-client",
+  "version": "0.8.0",
+  "private": true,
+  "type": "module",
+  "description": "Client-only composer mode selector for the DSH R&D Workflow preset.",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "package.json"
+  ],
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}

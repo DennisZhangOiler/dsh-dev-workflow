@@ -20,7 +20,11 @@ assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
 assert.ok(manifest.exports?.['./icon'])
 assert.ok(manifest.exports?.['./locale/*.json'])
-assert.equal(manifest.exports?.['./client'], './client.js')
+assert.equal(manifest.dependencies?.['dsh-rd-workflow-client'], 'file:./client-package')
+const clientManifest = json('client-package/package.json')
+assert.equal(clientManifest.name, 'dsh-rd-workflow-client')
+assert.equal(clientManifest.dsh?.client?.platform, 'web')
+assert.ok(clientManifest.files?.includes('client.js'))
 
 const shipped = new Set(manifest.files)
 const required = [
@@ -36,6 +40,7 @@ const required = [
   'README.zh.md',
   'CHANGELOG.md',
   'LICENSE',
+  'client-package',
 ]
 for (const entry of required) assert.ok(shipped.has(entry), `files is missing ${entry}`)
 
@@ -82,7 +87,9 @@ for (const path of [
   'docs/e2e/0.8/ui/MODE-SELECTOR.md',
   'docs/e2e/0.8/ui/final-mode-matched.png',
   'docs/e2e/0.8/ui/final-mode-menu2.png',
-  'docs/e2e/0.8/ui/repro-overlay-menu.png',
+  'docs/e2e/0.8/ui/repro-overlay-menu-final.png',
+  'docs/e2e/0.8/ui/split-rd-final.png',
+  'docs/e2e/0.8/ui/split-standard-final.png',
   'docs/e2e/0.8/ui/final-mode-matched-deep.png',
   'docs/e2e/0.8/program/PROGRAM-SCORE-R2.md',
   'docs/e2e/0.8/program/RUNLOG.md',
@@ -123,7 +130,8 @@ for (const marker of [
   'id: dev-workflow',
   'id: rd-workflow-contract',
   "name: 'dsh-rd-workflow'",
-  'clientOnly: true',
+  "name: 'dsh-rd-workflow-client'",
+  'id: rd-mode-client',
   'order: 5',
   "name: '@deepseek-ai/dsh-tool-fs'",
   "name: '@deepseek-ai/dsh-tool-fs-search'",

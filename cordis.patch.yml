@@ -138,6 +138,4 @@
 # only the dsh.client half registers the control.
 - insert:
     - id: rd-mode-client
-      name: 'dsh-rd-workflow'
-      config:
-        clientOnly: true
+      name: 'dsh-rd-workflow-client'

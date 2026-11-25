@@ -1,6 +1,6 @@
 /** Always-visible workflow intensity control plus its frame-wide menu. */
 window.__ModuleLoader__.load({
-  id: 'dsh-rd-workflow',
+  id: 'dsh-rd-workflow-client',
   factory(require) {
     const React = require('react')
     const h = React.createElement

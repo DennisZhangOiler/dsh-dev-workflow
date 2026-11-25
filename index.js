@@ -183,13 +183,8 @@ export function applyWithMode(ctx, mode = 'standard') {
   }
 }
 
-/**
- * Preset entry point. The same package is also mounted as a global client-only
- * row; that mount has no composed preset and must not add prompt text/skills.
- */
-export function apply(ctx, config = {}) {
-  if (config.clientOnly === true) return
-  const presets = typeof ctx.get === 'function' ? ctx.get('agentPresets') : undefined
-  if (presets && typeof presets.composedPreset === 'function' && presets.composedPreset(ctx) === undefined) return
+/** Preset entry point. */
+
+export function apply(ctx) {
   return applyWithMode(ctx, 'standard')
 }
