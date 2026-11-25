@@ -82,6 +82,7 @@ for (const path of [
   'docs/e2e/0.8/ui/MODE-SELECTOR.md',
   'docs/e2e/0.8/ui/final-mode-matched.png',
   'docs/e2e/0.8/ui/final-mode-menu2.png',
+  'docs/e2e/0.8/ui/repro-overlay-menu.png',
   'docs/e2e/0.8/ui/final-mode-matched-deep.png',
   'docs/e2e/0.8/program/PROGRAM-SCORE-R2.md',
   'docs/e2e/0.8/program/RUNLOG.md',
