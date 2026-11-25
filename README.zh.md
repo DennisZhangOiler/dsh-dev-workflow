@@ -45,22 +45,25 @@ Program。目标变了就明确说出来，重新进入契约或调研 brief，�
 | 阶段 | 结果 |
 |---|---|
 | R0 上下文 | 读文档/代码；确定决策、当前 baseline、指标、约束、时间盒和输出位置 |
-| R1 方向 | 2-3 个真正不同的方向：机制、预期指标、假设、风险、可证伪点、最小 demo、迁移风险；**用户确认方向后才开始搭建** |
-| R2 实验计划 | baseline 与候选方案在相同 workload 下对比；指标、运行次数、方差、环境、阈值、停止条件、保留物 |
-| R3 小 demo | 每个方向一个 experimenter；时间盒内做可证伪的小 demo，与 baseline 同条件；记录命令/版本/数据；失败也保留 |
+| R1 方向 | 提出**尽量多的真正不同方向**（不固定 2-3 个），用户选择要跑哪些；确认前不搭建 |
+| R2 计划 + 计划评审 | baseline/候选方案、workload、指标、运行/方差、阈值、停止条件、保留物；**独立评审**打分，>=85 且无 P0/P1 才允许开始 demo |
+| R3 小 demo | 在 sandbox 中做小 demo 与 baseline 同条件对比；检查语义一致性，记录命令/版本/数据；失败也保留；不改生产代码 |
 | R4 测量 | 正确性、性能与方差、成本、失败模式；观察和解释分开；不挑数据 |
-| R5 迁移检查 | 把领先方案用薄适配层接入项目副本，跑现有测试；测量依赖/构建/数据/migration/回滚/运维/安全/license/团队；区分 toy vs 真实仓库 vs 规模 |
-| R6 独立复现 | 全新只读 reviewer 重跑关键实验或抽样；检查 baseline 公平性、方差、保留物和迁移结论；PASS/REVISE |
-| R7 决策 | 备忘录标注 `measured-here`、`measured-sandbox`、`reported`；被否方向、迁移成本/风险、建议/置信度、开放问题 |
-| R8 交接 | 开发契约或 Program 输入；可选时间盒 pilot，写清成功标准、回滚和清理；调研阶段不改生产代码 |
+| R5 结果评审 | 全新 reviewer 审核过程（命令、数据、baseline 公平性、方差）和每条结论；明确 supported/partial/unsupported；不成立就补实验、降级或重写 |
+| R6 决策 | 只包含已评审结论的备忘录，标 `measured-here` / `measured-sandbox` / `reported`；被否方向、置信度、开放问题、不能得出什么 |
+| R7 交接 | 开发契约或 Program 输入；可选时间盒 pilot；真正的迁移/实现走开发流程，不算调研 |
 
-标准强度 = 2-3 个方向、每个可行方向至少一个实测 demo、迁移检查、独立复现。深度调研
-会做每个方向多个 demo、集成 spike 和敏感性分析。demo 放在 `research/<topic>/spikes/`
-这类 sandbox 中，调研阶段不改生产代码。
+**没有单独的迁移验证阶段**。实验必须使用代表性项目切片或副本，在测量过程中就验证
+适配性；真要迁移，走正常开发流程。
+
+标准强度 = 用户选定方向、通过实验计划评审、每个可行方向至少一个实测 demo、结果评审。
+深度调研会增加 demo/运行次数、矩阵和敏感性分析。
+
+评审意见必须明确：严重级别、位置、证据、为什么影响结论、要求的动作、通过条件。
+没有 finding 的分数、“建议优化”“看起来不错”这类反馈都算无效评审。只有通过评审的
+结论才能给用户看。
 
 这一版覆盖技术/代码库调研；外部市场调研和用户调研不在范围内。
-
-![先给研究方向和实验计划，用户确认后才开始搭建](docs/screenshot-directions.png)
 
 ![research/ 下的小 demo、语义检查和测量](docs/screenshot-research.png)
 
@@ -137,7 +140,7 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 其他会话。
 
 如果 `plugin_manager` 报 `github.com` 连接超时，改用下面的 CLI Git 安装（没有 5 秒
-探测），或安装 release tarball。当前 release 是 `v0.6.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
+探测），或安装 release tarball。当前 release 是 `v0.7.0`；CLI 命令已在本仓库验证。preset 更新也可能返回
 `restart-required`。
 
 ### 安装前备份
@@ -162,7 +165,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/绝对路径/dsh-rd-workflow
 # 或已打包的 release tarball：
-plugin_manager action=install_bundle target=/绝对路径/dsh-rd-workflow-0.6.0.tgz
+plugin_manager action=install_bundle target=/绝对路径/dsh-rd-workflow-0.7.0.tgz
 ```
 
 target 是包含 `package.json` 和 `cordis.patch.yml` 的 bundle 目录，或打包好的

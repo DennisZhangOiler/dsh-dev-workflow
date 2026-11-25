@@ -4,6 +4,26 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-25
+
+### Changed
+
+- Research directions are no longer capped at 2-3. The agent proposes a broad
+  set and the user chooses which to pursue.
+- Added an independent **plan review** gate before any demo: a 100-point rubric,
+  >=85 with no P0/P1, explicit blocking findings, and a pass condition.
+- Added an independent **results review** gate before conclusions reach the
+  user: process/data audit plus claim-by-claim supported/partial/unsupported
+  verdicts; unsupported claims must be revised, downgraded, or backed by more
+  experiments.
+- Removed the separate migration-validation phase. Experiments use a
+  representative project slice; actual migration goes through Development or
+  Program.
+- Review feedback must be explicit: severity, location, evidence, required
+  action, and pass condition. Vague feedback or a score without findings is a
+  failed review.
+- Added `rd-workflow-research-review` skill.
+
 ## [0.6.0] - 2026-11-25
 
 ### Added

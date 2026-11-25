@@ -1,6 +1,6 @@
-# Verification: R&D Workflow 0.6.0
+# Verification: R&D Workflow 0.7.0
 
-This file records the checks run for the `dsh-rd-workflow` 0.6.0 release. It is
+This file records the checks run for the `dsh-rd-workflow` 0.7.0 release. It is
 not a guarantee that a future project's commands are the same; the plugin reads
 each project's own conventions at runtime.
 
@@ -27,12 +27,13 @@ Results:
 
 Sizes:
 
-- `prompt.md`: 7,994 characters (limit 8,000).
+- `prompt.md`: 7,995 characters (limit 8,000).
 - `skills/rd-workflow.md`: 7,779.
 - `skills/rd-workflow-program.md`: 7,797.
 - `skills/rd-workflow-roles.md`: 7,800.
-- `skills/rd-workflow-research.md`: 7,794.
-- `skills/rd-workflow-project-docs.md`: 6,145.
+- `skills/rd-workflow-research.md`: 7,260.
+- `skills/rd-workflow-research-review.md`: 5,956.
+- `skills/rd-workflow-project-docs.md`: 6,549.
 - `skills/rd-workflow-ui-rubric.md`: 5,022.
 
 The preset keeps `id: dev-workflow` for existing sessions; the package,
@@ -62,7 +63,7 @@ feature code was written before the decision.
 
 ![A new feature re-enters Phase 0/1 with a contract instead of continuing the bugfix](screenshot-reentry.png)
 
-## 4. Experiment-driven technical research mode
+## 4. Experiment-driven research mode (0.6.x)
 
 A disposable ESM project with an O(n^2) `uniqueSlow` implementation was used.
 The project convention allowed demos only under `research/<topic>/` and kept
@@ -71,14 +72,14 @@ production code read-only during research.
 Observed:
 
 - R0/R1: it read the docs and code, defined the baseline, metrics, constraints,
-  and a decision rule, then presented two genuinely different directions
-  (native `Set` membership vs eliminating/reusing dedupe) and asked the user to
-  choose before building anything.
-- It called out real transfer constraints rather than repeating upstream claims:
-  the baseline could only be measured up to `n=3e4`, `Set` normalizes `-0` to
-  `+0` (`[...new Set()]` can change output), and the answer might be "keep the
+  and a decision rule, then presented genuinely different directions and asked
+  the user to choose before building anything. The 0.6 test used two selected
+  directions; 0.7 no longer caps the proposed set at two or three.
+- It called out real constraints rather than repeating upstream claims: the
+  baseline could only be measured up to `n=3e4`, `Set` normalizes `-0` to `+0`
+  (`[...new Set()]` can change output), and the answer might be "keep the
   current implementation" for small inputs.
-- After the user chose `D1+D3` and the scan matrix, it wrote
+- After the user chose directions and the scan matrix, it wrote
   `research/dedupe/PLAN.md`, then built a baseline, semantic parity checks,
   per-direction spikes, a subprocess benchmark harness with fixed seeds and
   median/p95 sampling, and raw matrix data.
@@ -88,14 +89,32 @@ Observed:
   `research/dedupe/` was written.
 
 The test window was stopped after the demo/measurement stage; the final memo and
-independent reproduction (R6/R7) were not completed. The direction gate and
-actual demo-building behavior were verified.
-
-![Research directions and experiment plan before any build](screenshot-directions.png)
+independent results review were not completed in that window. The direction
+gate and actual demo-building behavior were verified.
 
 ![Small demos, semantic checks, and measurement under the research sandbox](screenshot-research.png)
 
-## 5. Earlier behavior retained
+## 5. Independent review gates (0.7)
+
+The 0.7 prompt, `rd-workflow-research` and `rd-workflow-research-review` contain
+and statically exercise:
+
+- a broad direction set with no fixed 2-3 limit, selected by the user;
+- a 100-point plan review with a `>=85`, no-P0/P1 gate before any demo;
+- explicit plan findings: severity, location, evidence, required action, and
+  pass condition; vague feedback is rejected;
+- a results review that audits process/data/baseline and returns per-claim
+  `supported` / `partial` / `unsupported` verdicts;
+- a rule that unsupported claims must be revised, downgraded, or backed by more
+  experiments before the user sees them;
+- no separate migration-validation phase; experiments use a representative
+  project slice and actual migration goes through Development/Program.
+
+The 0.7 review gates were not exercised end-to-end in a live session in this
+window; the 0.6 live experiment above validates the demo/measurement substrate,
+and the review gates are covered by the skill and prompt tests.
+
+## 6. Earlier behavior retained
 
 The 0.4.x evidence for Program mode, UI triage, convention bootstrap, and
 recursive module delegation remains in this repository:
@@ -109,35 +128,34 @@ recursive module delegation remains in this repository:
 - `screenshot-session.png`: a R&D Workflow session delegating to a child.
 
 Those screenshots predate the display-name change and may show the old
-**开发流程** label; the behavior is unchanged and the 0.6.0 preset is
+**开发流程** label; the behavior is unchanged and the 0.7.0 preset is
 **研发流程**.
 
-## 6. Current profile install
+## 7. Current profile install
 
-The packed 0.6.0 tarball was installed in the active `web` profile with
+The packed 0.7.0 tarball was installed in the active `web` profile with
 `plugin_manager`. The tool returned `application: restart-required`
 (`unmanaged-plugin`), so the running Host must be restarted before new sessions
 use the new revision. This is expected for this preset plugin, not an install
 failure.
 
-- Profile dependency: `dsh-rd-workflow` 0.6.0.
+- Profile dependency: `dsh-rd-workflow` 0.7.0.
 - Bundle: `dsh-rd-workflow`.
 - Preset: `dev-workflow`, display **研发流程**.
 - Default preset remains `standard`.
 - The old `dsh-dev-workflow` 0.4.0 dependency and node_modules tree were removed.
 - The active Host was still running the previous revision when this was written;
   restart DSH before testing. Existing sessions keep their old composition until
-  restart; new sessions after restart use 0.6.0. The preset id stays
+  restart; new sessions after restart use 0.7.0. The preset id stays
   `dev-workflow`, so existing preset sessions can recover under the new
   definition.
 
-## 7. Release
+## 8. Release
 
-- Version: 0.6.0.
+- Version: 0.7.0.
 - Repository: `DennisZhangOiler/dsh-rd-workflow` (renamed from
   `dsh-dev-workflow`; the old URL redirects).
-- Commit: `c69931725ba3266e4e4821e3e1fbce71975d64f2`.
-- Commit: `36cd473e335751c908a2e696b45426d132fd4b56`.
-- Tag: `v0.6.0`.
+- Commit: `<pending>`.
+- Tag: `v0.7.0`.
 - npm: not published; `dsh-rd-workflow` is available.
-- Active profile: `dsh-rd-workflow` 0.6.0, installed from the packed tarball.
+- Active profile: `dsh-rd-workflow` 0.7.0, installed from the packed tarball.

@@ -105,15 +105,17 @@ Use this when the project needs durable research conventions.
 
 - Default research question/decision: <...>
 - Covered types: technical/codebase; external market/user research: <out>
-- Direction count: 2-3; user confirms directions before experiments
+- Directions: propose a broad set; the user selects which to pursue
 - Demo policy: small timeboxed spikes under research/<topic>/spikes/;
   production code is not changed
 - Baseline and metrics: <current approach, workload, thresholds>
-- Required depth: standard (directions + measured demos + transfer check +
-  independent reproduction) / deep
-- Transfer check: integrate a leading candidate into a copy; run existing tests
+- Required depth: standard (selected directions + approved plan + measured demos
+  + results review) / deep
+- Review gates: independent plan review (>=85, no P0/P1) before demos; independent
+  results review before showing conclusions; explicit findings only
+- No separate migration phase: experiments use a representative project slice;
+  actual migration goes through Development/Program
 - Deliverable: decision memo / matrix / root-cause / report
-- Review gate: fresh read-only reviewer reruns or audits; PASS/REVISE
 - Handoff: accepted research feeds a development contract or pilot
 ```
 

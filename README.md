@@ -52,25 +52,29 @@ representative sandbox.
 | Stage | Result |
 |---|---|
 | R0 Context | Read docs/code; define the decision, current baseline, metrics, constraints, timebox, and output |
-| R1 Directions | 2-3 genuinely different options with mechanism, expected metric, assumptions, risks, falsifier, smallest demo, and transfer risk; **user chooses before any build** |
-| R2 Experiment plan | Baseline vs candidate on the same workload; metrics, runs, variance, environment, thresholds, stop criteria, artifacts |
-| R3 Small demos | One experimenter per direction; timeboxed, falsifiable demos and baseline under the same conditions; commands/versions/data recorded; failures kept |
+| R1 Directions | Propose a **broad set** of genuinely different directions (no fixed 2-3); user selects which to pursue; no build before this gate |
+| R2 Plan + plan review | Baseline/candidate, workload, metrics, runs/variance, thresholds, stop criteria, artifacts; an **independent plan review** scores it and gates it at >=85 with no P0/P1 before any demo |
+| R3 Small demos | Small falsifiable demos and baseline under the same conditions, in a sandbox; semantic parity, commands/versions/data; failures kept; production code untouched |
 | R4 Measurement | Correctness, performance with variance, cost, failure modes; observation separated from interpretation; no cherry-picking |
-| R5 Transfer check | Integrate the leading candidate into a copy with a thin adapter; run existing tests; measure dependencies/build/data/migration/rollback/ops/security/license/team; toy vs repo vs scale |
-| R6 Independent reproduction | Fresh read-only reviewer reruns the decisive experiment or a sample; checks baseline fairness, variance, artifacts, and transfer claims; PASS/REVISE |
-| R7 Decision | Memo with evidence labels `measured-here`, `measured-sandbox`, `reported`; rejected directions, transfer cost/risks, recommendation/confidence, open questions |
-| R8 Handoff | Development contract or Program input; optional time-boxed pilot with success criteria, rollback, cleanup; no production code during research |
+| R5 Results review | A fresh reviewer audits the process (commands, data, baseline fairness, variance) and every claim; explicit supported/partial/unsupported verdicts; unsupported claims must be revised, downgraded, or backed by more experiments |
+| R6 Decision | Memo containing only reviewed claims, with `measured-here` / `measured-sandbox` / `reported` labels; rejected directions, confidence, open questions, what cannot be concluded |
+| R7 Handoff | Development contract or Program input; optional time-boxed pilot; actual migration/implementation is Development work, not research |
 
-Standard depth = 2-3 directions, at least one measured demo per viable
-direction, a transfer check, and independent reproduction. Deep research adds
-multiple demos per direction, an integration spike, and sensitivity analysis.
-Demos live in a sandbox such as `research/<topic>/spikes/`; production code is
-not changed during research.
+There is **no separate migration-validation phase**. Experiments use a
+representative project slice or copy so fit is exercised during measurement; if
+real migration is needed, it goes through the normal development pipeline.
+
+Standard depth = user-selected directions, an approved experiment plan, at least
+one measured demo per selected viable direction, and a results review. Deep
+research adds more demos/runs, larger matrices, and sensitivity analysis.
+
+Review feedback is explicit: severity, location, evidence, why it matters, the
+required action, and the pass condition. A score without findings, or feedback
+such as "improve this" or "looks reasonable", is a failed review. Only reviewed
+conclusions are shown to the user.
 
 This version covers technical/codebase research. External market and user
 research are out of scope.
-
-![Research directions and experiment plan before any build](docs/screenshot-directions.png)
 
 ![Small demos, semantic checks, and measurement under the research sandbox](docs/screenshot-research.png)
 
@@ -163,7 +167,7 @@ session.
 
 If `plugin_manager` reports a `github.com` connection timeout, use the CLI Git
 install below (it has no 5-second probe), or install a release tarball. The
-current release is `v0.6.0`; the CLI command was verified on this repo. A
+current release is `v0.7.0`; the CLI command was verified on this repo. A
 preset update may also report `restart-required`.
 
 ### Before installing
@@ -188,7 +192,7 @@ cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
 ```text
 plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow
 # or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.6.0.tgz
+plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.7.0.tgz
 ```
 
 The target is the bundle directory containing `package.json` and

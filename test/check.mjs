@@ -14,7 +14,7 @@ const json = path => JSON.parse(read(path))
 
 const manifest = json('package.json')
 assert.equal(manifest.name, 'dsh-rd-workflow')
-assert.equal(manifest.version, '0.6.0')
+assert.equal(manifest.version, '0.7.0')
 assert.equal(manifest.license, 'MIT')
 assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml')
 assert.ok(manifest.engines?.dsh)
@@ -41,6 +41,7 @@ for (const path of [
   'index.js', 'prompt.md', 'cordis.patch.yml', 'icon.svg',
   'skills/rd-workflow.md',
   'skills/rd-workflow-research.md',
+  'skills/rd-workflow-research-review.md',
   'skills/rd-workflow-program.md',
   'skills/rd-workflow-project-docs.md',
   'skills/rd-workflow-ui-rubric.md',
@@ -54,7 +55,6 @@ for (const path of [
   'docs/screenshot-bootstrap.png',
   'docs/screenshot-reentry.png',
   'docs/screenshot-research.png',
-  'docs/screenshot-directions.png',
   'locale/en.json',
   'locale/zh.json',
 ]) {

@@ -9,6 +9,7 @@ const PROMPT = read('prompt.md')
 const SKILL_FILES = [
   'rd-workflow.md',
   'rd-workflow-research.md',
+  'rd-workflow-research-review.md',
   'rd-workflow-program.md',
   'rd-workflow-project-docs.md',
   'rd-workflow-ui-rubric.md',
@@ -62,8 +63,9 @@ test('prompt contains the router, modes, phases, and gates', () => {
   for (const marker of [
     'Request router', 'New objective', 'Phase 0', 'Phase 1', 'Phase 2', 'Phase 3',
     'Phase 4', 'Phase 5', 'Phase 6', 'Phase 7', 'Phase 8', 'Phase 9',
-    'R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8',
-    'Experiment-first', 'transfer', 'Reproduce', 'measured-here',
+    'R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7',
+    'Experiment-first', 'broad direction set', 'plan review', 'Results review',
+    'explicit', 'measured-here', 'rd-workflow-research-review',
     '>=85', 'P0/P1', 'PASS/REJECT', 'UI design', 'UI behavior', 'No UI',
     'UI design only', 'Bootstrap missing rules', 'ask once with defaults',
     'AGENTS.md', 'docs/DEV_WORKFLOW.md', 'docs/DELIVERY.md', 'docs/UI.md',
@@ -87,7 +89,7 @@ test('registers the six playbooks', () => {
     assert.equal(skill.source, 'bundled')
     assert.equal(skill.resourceBase.kind, 'directory')
     assert.ok(skill.content.length > 1000)
-    const limit = ['rd-workflow', 'rd-workflow-research', 'rd-workflow-program', 'rd-workflow-roles'].includes(skill.name) ? 7800 : 8192
+    const limit = ['rd-workflow', 'rd-workflow-research', 'rd-workflow-research-review', 'rd-workflow-program', 'rd-workflow-roles'].includes(skill.name) ? 7800 : 8192
     assert.ok(skill.content.length <= limit, `${skill.name} is ${skill.content.length} chars`)
   }
 })
@@ -104,12 +106,20 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['rd-workflow'], /Conventions bootstrap/u)
   assert.match(bodies['rd-workflow-research'], /R0/u)
   assert.match(bodies['rd-workflow-research'], /R7/u)
-  assert.match(bodies['rd-workflow-research'], /R8/u)
+  
   assert.match(bodies['rd-workflow-research'], /experiment/iu)
-  assert.match(bodies['rd-workflow-research'], /transfer/iu)
-  assert.match(bodies['rd-workflow-research'], /reproduc/iu)
+  assert.match(bodies['rd-workflow-research'], /plan review/iu)
+  assert.match(bodies['rd-workflow-research'], /results review/iu)
+  assert.match(bodies['rd-workflow-research'], /representative project slice/iu)
+  assert.match(bodies['rd-workflow-research'], /PASS.*REVISE/u)
   assert.match(bodies['rd-workflow-research'], /PASS.*REVISE/u)
   assert.match(bodies['rd-workflow-research'], /read-only/iu)
+  assert.match(bodies['rd-workflow-research-review'], /Plan review/u)
+  assert.match(bodies['rd-workflow-research-review'], /Results review/u)
+  assert.match(bodies['rd-workflow-research-review'], />=85/u)
+  assert.match(bodies['rd-workflow-research-review'], /P0\/P1/u)
+  assert.match(bodies['rd-workflow-research-review'], /supported \/ partial \/ unsupported/u)
+  assert.match(bodies['rd-workflow-research-review'], /Forbidden feedback/u)
   assert.match(bodies['rd-workflow-program'], /Program mode/u)
   assert.match(bodies['rd-workflow-program'], /Frozen UI/u)
   assert.match(bodies['rd-workflow-program'], /module lead/u)

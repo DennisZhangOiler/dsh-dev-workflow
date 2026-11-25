@@ -45,6 +45,14 @@ const SKILLS = [
       'Load for a non-trivial technical investigation, architecture/dependency comparison, feasibility study, or root-cause analysis.',
   },
   {
+    name: 'rd-workflow-research-review',
+    file: 'rd-workflow-research-review.md',
+    description:
+      'Independent plan and results review rubric for technical research: scoring, blocking findings, claim verdicts, and explicit pass conditions.',
+    whenToUse:
+      'Load before starting research demos (plan review) and before delivering conclusions to the user (results review).',
+  },
+  {
     name: 'rd-workflow-program',
     file: 'rd-workflow-program.md',
     description:

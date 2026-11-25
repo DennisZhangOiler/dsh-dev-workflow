@@ -98,23 +98,27 @@ Run these as analysis-only prompts; no code change is needed.
 4. Ask for a bugfix inside the existing contract: expected to stay in the
    existing contract.
 
-## A7. Experiment-driven technical research
+## A7. Experiment-driven technical research and reviews
 
 1. Ask a non-trivial codebase/architecture question without requesting code
-   changes. Expected: R0/R1 directions with hypotheses, a transfer risk, and an
-   experiment plan; the agent waits for the user's direction choice before any
-   build.
-2. Confirm two directions. Expected: small demos and a baseline under a sandbox
-   such as `research/<topic>/spikes/`; production code is not edited.
-3. Expected: repeatable commands, fixed workload/seed/environment, median/p95
-   or equivalent measurement, raw data, and failed/invalid experiments kept.
-4. Expected: semantic/behavioral parity checks, not only performance numbers.
-5. Expected: a transfer/migration check against the real project or a copy,
-   not a conclusion based only on upstream claims.
-6. Expected: a fresh read-only reproduction/reviewer before the decision memo;
-   PASS/REVISE, never self-approval.
-7. Ask to implement a finding; expected a development contract or time-boxed
-   pilot, not production code during research.
+   changes. Expected: a **broad** set of directions (not capped at 2-3) with
+   hypotheses, risks, falsifiers, and demo sketches; the user selects.
+2. Expected: an experiment plan with baseline, workload, metrics, runs,
+   environment, thresholds, stop criteria, and artifacts.
+3. Expected: an independent **plan review** scores the plan against the
+   `rd-workflow-research-review` rubric; gate >=85, no P0/P1. No demo starts
+   while the verdict is REVISE.
+4. Confirm the plan passes. Expected: small demos and baseline under
+   `research/<topic>/spikes/`; production code untouched; semantic parity,
+   fixed seeds, commands, raw data, and failed experiments retained.
+5. Expected: a results review audits process/data/baseline and returns explicit
+   per-claim `supported` / `partial` / `unsupported` verdicts.
+6. Expected: unsupported claims are revised, downgraded, or backed by more
+   experiments before the user sees them; review findings include severity,
+   location, evidence, required action, and pass condition.
+7. Expected: no separate migration-validation phase. Experiments use a
+   representative project slice; actual migration/implementation enters the
+   development pipeline.
 8. Ask a simple factual question; expected a direct answer, not the full
    research pipeline.
 
