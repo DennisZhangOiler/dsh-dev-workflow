@@ -4,22 +4,78 @@ window.__ModuleLoader__.load({
   factory(require) {
     const React = require('react')
     const h = React.createElement
+    const { useEffect, useRef, useState } = React
     const EN = { label: 'Workflow', aria: 'R&D workflow intensity', light: 'Light', standard: 'Standard', deep: 'Deep', error: 'Switch failed' }
     const COPY = {
-      zh: { label: '流程强度', aria: '研发流程强度', light: '轻量', standard: '标准', deep: '深度', error: '切换失败' },
+      zh: { label: '流程', aria: '研发流程强度', light: '轻量', standard: '标准', deep: '深度', error: '切换失败' },
       en: EN, ja: EN, es: EN, fr: EN, de: EN, ru: EN, pt: EN,
     }
     const MODES = ['light', 'standard', 'deep']
+
+    const css = `
+      .rd-mode-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:180px;height:28px;padding:0 4px 0 8px;border:none;border-radius:var(--dsw-radius-sm);outline:none;background:transparent;color:var(--dsw-alias-label-secondary);font-family:inherit;font-size:13px;line-height:20px;font-weight:500;cursor:pointer}
+      .rd-mode-chip:hover{background:var(--dsw-alias-interactive-bg-hover)}
+      .rd-mode-chip:focus-visible{box-shadow:0 0 0 2px var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary))}
+      .rd-mode-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .rd-mode-chevron{display:inline-flex;flex:0 0 auto;color:var(--dsw-alias-label-caption);transition:transform 120ms ease}
+      .rd-mode-chevron.open{transform:rotate(180deg)}
+      .rd-mode-menu{position:fixed;z-index:1000;width:184px;padding:4px;border:1px solid var(--dsw-alias-border-l1);border-radius:10px;background:var(--dsw-alias-bg-layer-1);box-shadow:0 6px 20px rgba(0,0,0,.12);font-family:inherit}
+      .rd-mode-option{display:flex;align-items:center;gap:8px;width:100%;height:32px;padding:0 8px;border:0;border-radius:6px;background:transparent;color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;line-height:20px;font-weight:500;text-align:left;cursor:pointer}
+      .rd-mode-option:hover{background:var(--dsw-alias-interactive-bg-hover)}
+      .rd-mode-option .rd-mode-check{margin-left:auto;color:var(--dsw-alias-brand-primary);opacity:0}
+      .rd-mode-option-icon{display:inline-flex;flex:0 0 auto;color:var(--dsw-alias-label-caption)}
+      .rd-mode-option[aria-selected="true"] .rd-mode-check{opacity:1}
+    `
 
     function makeControl(ctx) {
       return function ModeControl({ sessionId, useSessions, t }) {
         const preset = useSessions(state => state.byId[sessionId]?.projectionValues?.agentPreset)
         const initial = (() => { try { return localStorage.getItem(`rd-mode:${sessionId}`) || 'standard' } catch { return 'standard' } })()
-        const [mode, setMode] = React.useState(initial)
-        const [failed, setFailed] = React.useState(false)
+        const [mode, setMode] = useState(initial)
+        const [open, setOpen] = useState(false)
+        const [pos, setPos] = useState({ top: 0, left: 0 })
+        const [failed, setFailed] = useState(false)
+        const trigger = useRef(null)
+        const menu = useRef(null)
+
+        useEffect(() => {
+          if (!open) return undefined
+          const onPointer = (event) => {
+            if (trigger.current?.contains(event.target) || menu.current?.contains(event.target)) return
+            setOpen(false)
+          }
+          const onKey = (event) => { if (event.key === 'Escape') setOpen(false) }
+          const onViewport = () => setOpen(false)
+          document.addEventListener('mousedown', onPointer)
+          document.addEventListener('keydown', onKey)
+          window.addEventListener('resize', onViewport)
+          window.addEventListener('scroll', onViewport, true)
+          return () => {
+            document.removeEventListener('mousedown', onPointer)
+            document.removeEventListener('keydown', onKey)
+            window.removeEventListener('resize', onViewport)
+            window.removeEventListener('scroll', onViewport, true)
+          }
+        }, [open])
+
         if (preset !== 'dev-workflow') return null
-        const onChange = (event) => {
-          const next = event.currentTarget.value
+
+        const label = { label: t('label'), aria: t('aria'), light: t('light'), standard: t('standard'), deep: t('deep'), error: t('error') }
+        const current = label[mode]
+        const openMenu = () => {
+          if (open) { setOpen(false); return }
+          const rect = trigger.current?.getBoundingClientRect()
+          if (!rect) return
+          const width = 184
+          const height = MODES.length * 32 + 8
+          const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))
+          const top = rect.top >= height + 8 ? rect.top - height - 6 : rect.bottom + 6
+          setPos({ top, left })
+          setOpen(true)
+        }
+        const choose = (next) => {
+          setOpen(false)
+          if (next === mode) return
           const previous = mode
           setMode(next); setFailed(false)
           try { localStorage.setItem(`rd-mode:${sessionId}`, next) } catch {}
@@ -32,21 +88,33 @@ window.__ModuleLoader__.load({
             }
           }).catch(() => { setMode(previous); setFailed(true) })
         }
-        const label = { label: t('label'), aria: t('aria'), light: t('light'), standard: t('standard'), deep: t('deep'), error: t('error') }
-        const css = `.rd-mode-chip{position:relative;display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:180px;height:28px;padding:0 4px 0 8px;border:none;border-radius:var(--dsw-radius-sm);outline:none;background:transparent;color:var(--dsw-alias-label-secondary);font-family:inherit;font-size:13px;line-height:20px;font-weight:500;cursor:pointer}.rd-mode-chip:hover{background:var(--dsw-alias-interactive-bg-hover)}.rd-mode-chip:focus-within{box-shadow:0 0 0 2px var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary))}.rd-mode-chip select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.rd-mode-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rd-mode-chevron{display:inline-flex;flex:0 0 auto;color:var(--dsw-alias-label-caption);transition:transform 120ms ease}.rd-mode-chip:focus-within .rd-mode-chevron{transform:rotate(180deg)}`
-        const icon = h('svg', { width: 14, height: 14, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': true, style: { flex: 'none' } },
-          h('path', { d: 'M2.5 5h11M2.5 8h7M2.5 11h4', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' }))
+
+        const glyph = (id) => {
+          const d = id === 'light' ? 'M2.5 8h11' : id === 'standard' ? 'M2.5 6h11M2.5 10h7' : 'M2.5 5h11M2.5 8h7M2.5 11h4'
+          return h('svg', { width: 14, height: 14, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': true },
+            h('path', { d, stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' }))
+        }
+        const icon = glyph(mode)
         const chevron = h('svg', { width: 12, height: 12, viewBox: '0 0 10 10', fill: 'none', 'aria-hidden': true },
           h('path', { d: 'M2.2 3.8 5 6.6l2.8-2.8', stroke: 'currentColor', strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round' }))
+        const check = h('svg', { className: 'rd-mode-check', width: 12, height: 12, viewBox: '0 0 12 12', fill: 'none', 'aria-hidden': true },
+          h('path', { d: 'm2.4 6.2 2.3 2.3 4.9-4.9', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }))
+
         return h(React.Fragment, null,
           h('style', { key: 'rd-mode-css' }, css),
-          h('label', { className: 'rd-mode-chip', title: failed ? label.error : label.aria },
-            icon,
-            h('span', { className: 'rd-mode-label' }, label[mode]),
-            h('span', { className: 'rd-mode-chevron' }, chevron),
-            h('select', {
-              id: 'rd-mode-select', 'aria-label': label.aria, value: mode, disabled: !sessionId, onChange,
-            }, MODES.map(id => h('option', { key: id, value: id }, label[id])))))
+          h('button', {
+            ref: trigger, type: 'button', className: 'rd-mode-chip', title: failed ? label.error : label.aria,
+            'aria-label': label.aria, 'aria-haspopup': 'listbox', 'aria-expanded': open,
+            disabled: !sessionId, onClick: openMenu,
+          },
+          icon,
+          h('span', { className: 'rd-mode-label' }, current),
+          h('span', { className: `rd-mode-chevron${open ? ' open' : ''}` }, chevron)),
+          open && h('div', { ref: menu, className: 'rd-mode-menu', role: 'listbox', 'aria-label': label.aria, style: { top: pos.top, left: pos.left } },
+            MODES.map(id => h('button', {
+              key: id, type: 'button', role: 'option', className: 'rd-mode-option',
+              'aria-selected': id === mode, onClick: () => choose(id),
+            }, h('span', null, label[id]), check))))
       }
     }
 

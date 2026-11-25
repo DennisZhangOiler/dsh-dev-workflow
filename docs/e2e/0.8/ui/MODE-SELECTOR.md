@@ -8,6 +8,7 @@
 - Switching sends `/mode <light|standard|deep>`. The Host updates an
   agent-scoped prompt section; no extra chat bubble is injected. The command
   row shows only `mode · 已完成`.
-- Screenshots: `final-mode-matched.png` (standard, before first turn),
-  `final-mode-matched-deep.png` (deep, after switching).
+- Screenshots: `final-mode-matched.png` (trigger, before first turn),
+  `final-mode-menu2.png` (open menu matching DSH), `final-mode-matched-deep.png`
+  (deep trigger).
 - Session-level instruction, not a preset/tool swap.
