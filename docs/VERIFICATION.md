@@ -137,7 +137,7 @@ failure.
 - Repository: `DennisZhangOiler/dsh-rd-workflow` (renamed from
   `dsh-dev-workflow`; the old URL redirects).
 - Commit: `c69931725ba3266e4e4821e3e1fbce71975d64f2`.
-- Commit: `<pending>`.
+- Commit: `36cd473e335751c908a2e696b45426d132fd4b56`.
 - Tag: `v0.6.0`.
 - npm: not published; `dsh-rd-workflow` is available.
 - Active profile: `dsh-rd-workflow` 0.6.0, installed from the packed tarball.
