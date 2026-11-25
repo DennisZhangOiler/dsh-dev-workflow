@@ -17,14 +17,11 @@ Sources read in the installed DSH package:
 
 - GitHub repo: <https://github.com/DennisZhangOiler/dsh-rd-workflow> (public).
 - Latest GitHub Release: **v0.8.0** (unscoped install target).
-- **0.9.0 registry preparation**: scoped names
+- **0.9.0 scoped packages**:
   `@denniszhangoiler/dsh-rd-workflow` and
   `@denniszhangoiler/dsh-rd-workflow-client`.
-- npm public: **not yet published**; requires npm login at
-  `https://registry.npmjs.org` (the configured npmmirror/cnpm mirror is
-  read-only and cannot publish).
-- GitHub Packages: **not yet published**; requires a token with
-  `write:packages` (`gh auth refresh -s write:packages`).
+- npm public: **published** at `https://registry.npmjs.org`.
+- GitHub Packages: **published** at `https://npm.pkg.github.com`.
 - Marketplace index: not served publicly yet.
 
 ## Publish 0.9.0 to both registries

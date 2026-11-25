@@ -147,14 +147,14 @@ Phase 1 判断的是这次改动，而不是项目类型：
 
 版本说明：[`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md)。
 
-0.9.0 已准备为 scoped 包，将发布到 npm 公共 registry 和 GitHub Packages。
-**当前仍在等待维护者完成 registry 认证**；认证后下面的安装 target 才可用：
+0.9.0 已以 scoped 包名发布到 npm 公共 registry 和 GitHub Packages。npm 安装：
 
 ```text
 plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.0
 ```
 
-GitHub Packages 需要先配置 scope 和认证（不要把 token 提交到仓库）：
+如果 npm 名称仍在传播，改用下面的 GitHub Packages 或 release tarball。GitHub Packages
+需要先配置 scope 和认证（不要把 token 提交到仓库）：
 
 ```ini
 @denniszhangoiler:registry=https://npm.pkg.github.com

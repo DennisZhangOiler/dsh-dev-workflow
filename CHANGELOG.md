@@ -14,8 +14,7 @@ All notable changes to this project are documented here. The format follows
   a local `file:` dependency, so npm and GitHub Packages can resolve it.
 - Plugin rows, tests, and install docs use the scoped names. The preset id stays
   `dev-workflow`.
-- Prepared for publication to the npm public registry and GitHub Packages;
-  publication is pending registry authentication. This is a breaking
+- Published to the npm public registry and GitHub Packages. This is a breaking
   install-name change from the unscoped 0.8.0 GitHub Release.
 
 ## [0.8.0] - 2026-11-25

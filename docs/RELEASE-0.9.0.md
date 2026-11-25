@@ -1,14 +1,13 @@
 # dsh-rd-workflow 0.9.0
 
-Registry-distribution release preparation. The UI and workflow behavior are the
-same as 0.8.0; this release makes the package publishable to npm and GitHub
-Packages. **Publication is pending npm/GitHub authentication.**
+Registry-distribution release. The UI and workflow behavior are the same as
+0.8.0; this release publishes the package to npm and GitHub Packages.
 
 ## 中文摘要
 
 - 包名改为 scoped：`@denniszhangoiler/dsh-rd-workflow`。
 - 客户端包改为 `@denniszhangoiler/dsh-rd-workflow-client`，独立发布；主包依赖同一版本。
-- 同版本准备发布到 npm 公共 registry 和 GitHub Packages；preset 功能、`dev-workflow` id 和界面不变。
+- 同版本发布到 npm 公共 registry 和 GitHub Packages；preset 功能、`dev-workflow` id 和界面不变。
 - **这是安装名变更**：0.8.0 的 unscoped 安装和 0.9.0 的 scoped 安装是两个包；升级时需要重新安装。
 
 ## What changed
@@ -56,6 +55,10 @@ token for installation.
 
 - `npm test`: 12 tests + E2E gate.
 - `npm run check`: packaging checks passed.
-- Registry smoke: install the published client package, then the main package in
-  a disposable profile; verify the preset row, default preset, and no residue.
+- GitHub Packages: client + main installed in a disposable profile; preset row
+  present; no default preset change.
+- npm: both tarballs uploaded and return HTTP 200; immediately after publish the
+  npm packument (name lookup) was still 404. If `npm view` or install by name
+  fails, use the GitHub Packages registry or the direct tarball URLs and retry
+  npm after registry propagation.
 - Existing 0.8.0 functionality/UI review: PASS, 81/100, no P0/P1.

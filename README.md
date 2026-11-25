@@ -190,16 +190,16 @@ explicit confirmation immediately before they run.
 
 Release notes: [`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md).
 
-0.9.0 is prepared as a scoped package for the npm public registry and GitHub
-Packages. **Registry publication is pending maintainer authentication**; the
-targets below become available after that publish:
+0.9.0 is published as a scoped package to the npm public registry and GitHub
+Packages. Install from npm:
 
 ```text
 plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.0
 ```
 
-For GitHub Packages, configure the scope and authenticate (do not commit the
-token), then use the same target:
+If npm name lookup is still propagating, install from GitHub Packages (below) or
+use the release tarball. For GitHub Packages, configure the scope and
+authenticate (do not commit the token), then use the same target:
 
 ```ini
 @denniszhangoiler:registry=https://npm.pkg.github.com
