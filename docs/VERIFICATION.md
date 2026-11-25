@@ -114,12 +114,19 @@ failure.
 - Bundle: `dsh-rd-workflow`.
 - Preset: `dev-workflow`, display **研发流程**.
 - Default preset remains `standard`.
-- Existing sessions keep their old composition until restart; new sessions
-  after restart use 0.5.0.
+- The old `dsh-dev-workflow` 0.4.0 dependency and node_modules tree were removed.
+- The active Host was still running the previous revision when this was written;
+  restart DSH before testing. Existing sessions keep their old composition until
+  restart; new sessions after restart use 0.5.0. The preset id stays
+  `dev-workflow`, so existing preset sessions can recover under the new
+  definition.
 
 ## 7. Release
 
 - Version: 0.5.0.
 - Repository: `DennisZhangOiler/dsh-rd-workflow` (renamed from
   `dsh-dev-workflow`; the old URL redirects).
+- Commit: `c69931725ba3266e4e4821e3e1fbce71975d64f2`.
 - Tag: `v0.5.0`.
+- npm: not published; `dsh-rd-workflow` is available.
+- Active profile: `dsh-rd-workflow` 0.5.0, installed from the packed tarball.
