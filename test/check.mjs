@@ -39,6 +39,7 @@ const required = [
   'icon.svg',
   'README.md',
   'README.zh.md',
+  'README.en.md',
   'CHANGELOG.md',
   'LICENSE',
 ]
@@ -55,6 +56,9 @@ for (const path of [
   'skills/rd-workflow-project-docs.md',
   'skills/rd-workflow-ui-rubric.md',
   'skills/rd-workflow-roles.md',
+  'docs/README.md',
+  'docs/MODES.md',
+  'docs/AGENT-TEAMS.md',
   'docs/DETAIL.md',
   'docs/DETAIL.zh.md',
   'docs/preview.svg',

@@ -1,47 +1,37 @@
-# Modes: Light / Standard / Deep
+# 三档模式：轻量 / 标准 / 深度
 
-In DSH there is one **研发流程** preset, starting in **Standard**. The
-composer tool row has an always-visible **流程强度** selector (轻量 / 标准 /
-深度); changing it injects a session-level mode instruction. It works before the
-first turn and mid-conversation. It does **not** swap the preset or its tool
-set — DSH refuses preset swaps after a turn anyway. The Standard preset keeps
-the old `dev-workflow` id for session compatibility.
+DSH 里只有一个 **研发流程** 预设，默认是 **标准**。输入框左侧常驻 **流程强度** 选择器（轻量 / 标准 / 深度），切换后会更新当前会话的 agent prompt。开始对话前和对话中都可以调整。
 
-Pick the mode that matches the work. The agent should ask once if it is unclear;
-the default is **Standard**. You can switch at any time ("go light", "use deep").
-Mode is about ceremony, not quality: every mode still tests what it claims.
+它**不换 preset，也不换工具集**。第一轮对话后 DSH 本来也不允许换 preset；模式是会话级的流程指令。`dev-workflow` 这个 preset id 为兼容已有会话保持不变。
 
-| | Light | Standard (default) | Deep |
+## 怎么选
+
+按风险选，不要按习惯选。默认 **标准**；无法判断时只问一次，之后不要每步都问。用户随时可以说“切轻量/切深度”。
+
+| | 轻量 | 标准（默认） | 深度 |
 |---|---|---|---|
-| Best for | copy/docs, one-file fix, diagnostic, small reversible change | normal feature/bugfix/refactor, UI change, research question | high-risk, security/PII/migration/production/scale, large Program, regulated work |
-| Contract | short AC/check in chat | contract file for non-trivial work | full contract + hash + user confirmation |
-| Independent review | none (self-check) | one when medium/high risk, UI design, or a consequential research decision | plan review, results/verifier review, UI/research scoring |
-| UI | implement + self screenshot | one direction; score when UI design/high impact | directions, per-area floors, independent score, freeze |
-| Research | decision frame + one spike + internal unreviewed note | plan + spike + one review for a consequential decision | R0–R7, independent plan/results reviews, CLAIMS/memo |
-| E2E/calibration | none | only where risk requires it | full evidence pack; calibration when the decision is high-impact |
-| Human gate | destructive/remote ops | high-risk/destructive | all high-risk + release |
+| 适合 | 文案/文档、单文件修复、诊断、小而可逆改动 | 普通功能/bugfix/重构、UI 改动、调研问题 | 高风险、安全/PII/迁移/生产/规模化、大型 Program、受监管工作 |
+| 契约 | 聊天里写简短 AC/检查 | 非平凡工作写契约文件 | 完整契约 + hash + 用户确认 |
+| 独立评审 | 无（自检） | 中高风险、UI design、关键研究决策时一次 | plan review、results/verifier review、UI/调研评分 |
+| UI | 实现 + 自己截图 | 一个方向；UI design/高影响时评分 | 多方向、每领域 floor、独立评分、冻结 |
+| 调研 | 决策框架 + 一个 spike + 内部未评审 note | 计划 + spike；关键决策一次评审 | R0–R7、独立 plan/results review、CLAIMS/memo |
+| E2E/校准 | 无 | 仅在风险需要时 | 完整证据包；高影响决策做校准 |
+| 人类 gate | 破坏性/远程操作 | 高风险/破坏性操作 | 所有高风险 + 发布 |
 
-## Examples
+## 例子
 
-- **Light**: "rename this label", "fix this one-line null check", "why is this test failing?" — no contract file, no reviewer, but run the relevant test/check and report what was not run.
-- **Standard**: "add CSV export", "change this page's filter UI", "should we replace this library?" — write a short contract, implement, test; use one independent review when it is medium/high risk or user-facing design.
-- **Deep**: auth/payment/PII changes, data migration, production rollout, a multi-module Program, or a decision that will be cited externally — use the full gates and evidence.
+- **轻量**：“把这个文案改一下”“修这一行空指针”“这个测试为什么失败？”——不写契约文件、不派 reviewer，但要跑相关测试/检查，并说明没跑什么。
+- **标准**：“加一个 CSV 导出”“改这个页面的筛选 UI”“要不要替换这个库？”——写短契约、实现、测试；中高风险或用户可见设计时派一次独立评审。
+- **深度**：认证/支付/PII 改动、数据迁移、生产发布、多模块 Program、会被外部引用的决策——使用完整门禁和证据。
 
-## Selecting
+## 不能省的东西
 
-At the start of a task, infer from scope/risk. If ambiguous, ask once:
-“Light / Standard / Deep?” Do not ask again for every step. If the user says
-"just do it" or is away, choose the safer mode for the risk (Standard by
-default; Deep for high-risk) and state the assumption.
+安全、密钥、受保护分支、破坏性/远程操作的明确确认，以及高风险生产工作的人类批准，任何模式都不能省。轻量/标准可以省文档形式，不能省这些。
 
-## What is *not* optional
+## 模式与 Agent Teams
 
-Safety, secrets, protected branches, explicit confirmation for destructive/
-remote operations, and human approval for high-risk production work are never
-skipped. Light/Standard may skip artifacts, not those.
+模式只决定**流程强度**，不决定是否启用智能体团队。Team 是平台层的任务板协作机制；两者可以同时使用。详见 [与 DSH 智能体团队的关系](AGENT-TEAMS.md)。
 
-## Deep reference packs
+## 深度参考包
 
-The `docs/e2e/0.8/` packs (UI, No-UI, Program, high-risk, research) are
-**Deep-mode reference evidence**, not a requirement for every task. They show
-what a serious gate looks like; use them when the work warrants it.
+`docs/e2e/0.8/` 下的 UI、No-UI、Program、高风险、调研证据包是 **Deep 模式的参考证据**，不是每个任务都要照做的形式要求；按工作风险使用。

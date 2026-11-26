@@ -1,5 +1,10 @@
 # Publishing and marketplace notes
 
+> 中文导读：0.9.0 已以 scoped 包发布到 npm 公共 registry 和 GitHub Packages；
+> `@denniszhangoiler/dsh-rd-workflow` 与 `...-client`。npm 安装不需要 scope 配置；
+> GitHub Packages 需要 `@denniszhangoiler:registry=https://npm.pkg.github.com` 和
+> 一个可读取 packages 的 token。本文其余部分保留英文，便于对照 DSH/npm 原始字段。
+
 This document records the official mechanism as read from DeepSeek Harness
 `0.2.2-rc.5`. Do not assume a central upload or review process; verify against
 the DSH release you target before publishing.
