@@ -36,21 +36,21 @@ A **non-default** R&D workflow preset for [DeepSeek Harness](https://github.com/
 #### Option A: npm public registry (recommended)
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 CLI equivalent:
 
 ```sh
-dsh plugin --profile <profile> add @denniszhangoiler/dsh-rd-workflow@0.9.2
+dsh plugin --profile <profile> add @denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 > **About `npm install`:** the package is on npm, but a DSH plugin is not activated by putting it in a project `node_modules`. To inspect the package:
 >
 > ```sh
-> npm view @denniszhangoiler/dsh-rd-workflow@0.9.2
-> npm pack @denniszhangoiler/dsh-rd-workflow@0.9.2
-> npm install @denniszhangoiler/dsh-rd-workflow@0.9.2
+> npm view @denniszhangoiler/dsh-rd-workflow@0.9.3
+> npm pack @denniszhangoiler/dsh-rd-workflow@0.9.3
+> npm install @denniszhangoiler/dsh-rd-workflow@0.9.3
 > ```
 >
 > The last command only installs the package into the current directory; it does **not** register a DSH plugin. Use `plugin_manager` or `dsh plugin add` for DSH.
@@ -67,21 +67,21 @@ Configure the scope and a read token; do not commit the token:
 Then use the same target:
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 #### Option C: GitHub Release tarball
 
-Download from [v0.9.1](https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/tag/v0.9.2):
+Download from [v0.9.3](https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/tag/v0.9.3):
 
 ```text
-plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.9.2/denniszhangoiler-dsh-rd-workflow-0.9.2.tgz
+plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.9.3/denniszhangoiler-dsh-rd-workflow-0.9.3.tgz
 ```
 
 #### Option D: Git tag / local checkout
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.9.2
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.9.3
 ```
 
 For local development, use the absolute path to this repository.
@@ -233,8 +233,8 @@ Maintainer/release/history docs (not user entry points):
 - [`docs/TEST-PLAN.md`](docs/TEST-PLAN.md) — historical test plan (terminology updated)
 - [`docs/QUALITY-GATE.md`](docs/QUALITY-GATE.md), [`docs/project-conventions.md`](docs/project-conventions.md) — quality-gate and project-convention templates
 - [`docs/DETAIL.md`](docs/DETAIL.md) / [`docs/DETAIL.zh.md`](docs/DETAIL.zh.md) — English/Chinese plugin detail
-- [`docs/RELEASE-0.9.2.md`](docs/RELEASE-0.9.2.md) — current documentation release
-- [`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md), [`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md), [`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md) — historical release notes
+- [`docs/RELEASE-0.9.3.md`](docs/RELEASE-0.9.3.md) — current documentation release
+- [`docs/RELEASE-0.9.2.md`](docs/RELEASE-0.9.2.md), [`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md), [`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md), [`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md) — historical release notes
 - [`docs/e2e/`](docs/e2e/) — historical E2E evidence, Deep reference packs
 
 ## What it does not do

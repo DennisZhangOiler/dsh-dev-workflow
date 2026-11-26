@@ -1,7 +1,7 @@
 # Verification: R&D Workflow 0.8.0 (historical)
 
 This is the historical verification record for release `v0.8.0`. Current release:
-`v0.9.1`; the 0.9.1 change is documentation-only. See `docs/RELEASE-0.9.1.md`.
+`v0.9.3`; see `docs/RELEASE-0.9.3.md` for the documentation release. The 0.8.0 record below is not a current release status.
 
 ## 1. Static checks
 

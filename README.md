@@ -36,13 +36,13 @@
 #### 方式 A：npm 公共 registry（推荐）
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 CLI 等价写法：
 
 ```sh
-dsh plugin --profile <profile> add @denniszhangoiler/dsh-rd-workflow@0.9.2
+dsh plugin --profile <profile> add @denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 > **关于 `npm install`**：  
@@ -50,9 +50,9 @@ dsh plugin --profile <profile> add @denniszhangoiler/dsh-rd-workflow@0.9.2
 > 只查看包内容时可以：
 >
 > ```sh
-> npm view @denniszhangoiler/dsh-rd-workflow@0.9.2
-> npm pack @denniszhangoiler/dsh-rd-workflow@0.9.2
-> npm install @denniszhangoiler/dsh-rd-workflow@0.9.2
+> npm view @denniszhangoiler/dsh-rd-workflow@0.9.3
+> npm pack @denniszhangoiler/dsh-rd-workflow@0.9.3
+> npm install @denniszhangoiler/dsh-rd-workflow@0.9.3
 > ```
 >
 > 最后一条只把包装进当前目录，**不会注册到 DSH profile**。安装 DSH 插件请使用 `plugin_manager` 或 `dsh plugin add`。
@@ -70,23 +70,23 @@ GitHub Packages 用于安装的包名相同，但需要先配置 scope 和读取
 然后使用同样的安装命令：
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 GitHub Packages 是公开包，但仍然需要 authenticated read token；不要把 token 提交到仓库。
 
 #### 方式 C：GitHub Release tarball
 
-从 [v0.9.2 Release](https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/tag/v0.9.2) 下载：
+从 [v0.9.3 Release](https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/tag/v0.9.3) 下载：
 
 ```text
-plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.9.2/denniszhangoiler-dsh-rd-workflow-0.9.2.tgz
+plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.9.3/denniszhangoiler-dsh-rd-workflow-0.9.3.tgz
 ```
 
 #### 方式 D：Git tag / 本地 checkout
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.9.2
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.9.3
 ```
 
 本地开发时，把 target 换成本仓库的绝对路径即可。
@@ -97,7 +97,7 @@ plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOi
 
 1. 新建会话。
 2. 在预设菜单选择 **研发流程**。
-3. 输入框左侧出现 **强度** 选择器，默认 **标准**。
+3. composer 底部工具行出现 **强度** 选择器，默认 **标准**。
 4. 可以先在输入框里写一句普通任务，确认 agent 没有要求你重复粘贴长流程。
 
 ![composer 的强度选择器，与权限选择器同一行](docs/screenshot-mode-selector.png)
@@ -238,8 +238,8 @@ Agent 会在每条消息上做**路由**：问答、开发、调研或项目编�
 - [`docs/TEST-PLAN.md`](docs/TEST-PLAN.md)：历史测试计划（术语已更新）
 - [`docs/QUALITY-GATE.md`](docs/QUALITY-GATE.md)、[`docs/project-conventions.md`](docs/project-conventions.md)：质量门与项目约定模板
 - [`docs/DETAIL.md`](docs/DETAIL.md) / [`docs/DETAIL.zh.md`](docs/DETAIL.zh.md)：插件详情英文/中文
-- [`docs/RELEASE-0.9.2.md`](docs/RELEASE-0.9.2.md)：当前文档版本
-- [`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md)、[`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md)、[`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md)：历史发布说明
+- [`docs/RELEASE-0.9.3.md`](docs/RELEASE-0.9.3.md)：当前文档版本
+- [`docs/RELEASE-0.9.2.md`](docs/RELEASE-0.9.2.md)、[`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md)、[`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md)、[`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md)：历史发布说明
 - [`docs/e2e/`](docs/e2e/)：历史 E2E 证据，Deep 参考样例
 
 ## 它不做什么

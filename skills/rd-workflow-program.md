@@ -1,10 +1,10 @@
-# Program orchestration playbook
+# Program orchestration
 
 Use this skill for a new system, a multi-module product, an architecture/IA
 redesign, or a large feature split across agents. For a single change, use
 `rd-workflow`.
 
-Program orchestration is a layer above the change pipeline. The program lead owns
+Program orchestration is above the change pipeline. The program lead owns
 architecture, UI selection, the static demo, the module plan, and integration.
 Module leads run the change pipeline in one module and may spawn their own UI,
 feature, test, and verifier children.

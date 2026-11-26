@@ -32,6 +32,6 @@ plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.
 ## Verification
 
 - `npm test` / `npm run check` / `npm run test:smoke`.
-- Independent documentation review after this rewrite: pass threshold >=80,
-  layout/coverage/accuracy checked.
+- Independent documentation review is recorded in `DOC-REVIEW.md` (repository
+  root; not shipped in the package).
 - No UI/functionality change; previous UI review remains PASS, 81/100, no P0/P1.

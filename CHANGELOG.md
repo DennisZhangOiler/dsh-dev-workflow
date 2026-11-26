@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.3] - 2026-11-26
+
+### Fixed
+
+- Corrected the documentation review P1: the program skill is back under the
+  7,800-character test limit, and its terminology assertion now expects
+  "Program orchestration" instead of the old "Program mode".
+- Replaced the blank composer selector screenshot with a cropped, readable
+  selector image.
+- Corrected English release-link text, the publishing guide's client-version
+  statement, and the historical verification status.
+- Removed the old internal review file from the shipped docs.
+
+### Changed
+
+- No runtime or UI behavior changes. Client package remains 0.9.0.
+
 ## [0.9.2] - 2026-11-26
 
 ### Changed

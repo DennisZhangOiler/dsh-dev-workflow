@@ -123,7 +123,7 @@ test('skill bodies match their files and cover their required rules', () => {
   assert.match(bodies['rd-workflow-delivery'], /docs\/program/u)
   assert.match(bodies['rd-workflow-ui-rubric'], /floor/iu)
   assert.match(bodies['rd-workflow-research-review'], /CLAIMS\.md/u)
-  assert.match(bodies['rd-workflow-program'], /Program mode/u)
+  assert.match(bodies['rd-workflow-program'], /Program orchestration/u)
   assert.match(bodies['rd-workflow-program'], /Frozen UI/u)
   assert.match(bodies['rd-workflow-program'], /module lead/u)
   assert.match(bodies['rd-workflow-project-docs'], /Bootstrap missing conventions/u)

@@ -1,15 +1,15 @@
 # 发布与 registry 指南
 
-本文是维护者文档，描述当前 0.9.2 的发布方式和验证步骤。它不是用户安装入口；用户安装请看 [`README.md`](../README.md#快速开始)。
+本文是维护者文档，描述当前 0.9.3 的发布方式和验证步骤。它不是用户安装入口；用户安装请看 [`README.md`](../README.md#快速开始)。
 
 ## 当前状态
 
-- 主包：`@denniszhangoiler/dsh-rd-workflow@0.9.2`
+- 主包：`@denniszhangoiler/dsh-rd-workflow@0.9.3`
 - 客户端包：`@denniszhangoiler/dsh-rd-workflow-client@0.9.0`（本次无代码变化）
 - npm 公共 registry：已发布
 - GitHub Packages：已发布
 - GitHub repo：<https://github.com/DennisZhangOiler/dsh-rd-workflow>
-- GitHub Release：`v0.9.2`（发布后创建/更新）
+- GitHub Release：`v0.9.3`（发布后创建/更新）
 - Marketplace index：暂未提供公共索引；GitHub/npm/GitHub Packages 是当前安装渠道
 
 ## 包结构
@@ -19,7 +19,7 @@
 @denniszhangoiler/dsh-rd-workflow-client  客户端包：composer 强度选择器
 ```
 
-主包依赖同版本的客户端包。两个包必须一起存在；不要只发布主包。
+主包 0.9.3 依赖客户端 0.9.0；两个包必须同时存在，但本次客户端不变。
 
 ## 认证
 
@@ -90,7 +90,7 @@ npm view @denniszhangoiler/dsh-rd-workflow-client version --registry=https://reg
 registry 的 tarball/CDN 传播可能需要几分钟；metadata 先出现、tarball 后出现是正常现象。以实际 `npm install`/`plugin_manager` 安装成功为准。
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.3
 ```
 
 ## 发布前检查
@@ -116,19 +116,19 @@ npm pack --dry-run
 版本号确定后：
 
 ```sh
-git tag -a v0.9.2 -m "dsh-rd-workflow 0.9.2"
+git tag -a v0.9.3 -m "dsh-rd-workflow 0.9.3"
 git push origin main
-git push origin v0.9.2
-gh release create v0.9.2 \
-  denniszhangoiler-dsh-rd-workflow-0.9.2.tgz \
-  --notes-file docs/RELEASE-0.9.2.md
+git push origin v0.9.3
+gh release create v0.9.3 \
+  denniszhangoiler-dsh-rd-workflow-0.9.3.tgz \
+  --notes-file docs/RELEASE-0.9.3.md
 ```
 
 安装 target 与 Release asset 必须对应同一个 commit/tarball。
 
 ## 历史
 
-- **0.9.2**：文档结构重构；主包补丁；客户端保持 0.9.0。
+- **0.9.3**：文档复审修正、测试/命名/截图/发布说明修复；主包补丁；客户端保持 0.9.0。
 - **0.9.1**：中文默认文档、单一 Agent 文档的上一版布局；npm/GitHub Packages 已发布。
 - **0.9.0**：首次 scoped 包发布；主包 0.9.0，客户端 0.9.0。
 - **0.8.0**：unscoped GitHub Release（历史安装名）；不再作为当前安装入口。
