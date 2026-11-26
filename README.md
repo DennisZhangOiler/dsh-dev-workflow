@@ -178,18 +178,18 @@ Phase 1 判断的是这次改动，而不是项目类型：
 - Team 成员仍不等于“独立 reviewer”；独立评审要求新上下文/不同模型，不能自己批准自己。
 - 不要在插件里再建一套任务板或重复清单；任务完成也不等于 UI/测试/验收通过。
 
-详细说明见 [`docs/AGENT-TEAMS.md`](docs/AGENT-TEAMS.md)。
+**默认建议：Light/Standard 不开 Team；Deep Program、多模块并行、并行调研/审计再开。** 详细说明见 [`docs/AGENT-TEAMS.md`](docs/AGENT-TEAMS.md)。
 
 ## 安装
 
 ### 从 GitHub 安装
 
-版本说明：[`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md)。
+版本说明：[`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md)。
 
-0.9.0 已以 scoped 包名发布到 npm 公共 registry 和 GitHub Packages。npm 安装：
+0.9.1 已以 scoped 包名发布到 npm 公共 registry 和 GitHub Packages。npm 安装：
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.0
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.1
 ```
 
 如果 npm 名称仍在传播，改用下面的 GitHub Packages 或 release tarball。GitHub Packages
@@ -200,7 +200,7 @@ plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
-然后使用同样的 target。旧 0.8.0 GitHub Release tarball 仍然保留；0.9.0 是新的
+然后使用同样的 target。旧 0.8.0 GitHub Release tarball 仍然保留；0.9.1 是新的
 scoped 包，切换时需要重新安装。`dev-workflow` preset id 不变。
 
 安装后新建会话，打开预设菜单，选择 **研发流程**。安装会新增预设和仅客户端 UI 包；
@@ -307,7 +307,7 @@ GitHub；npm 包未发布。
 - [三档模式说明](docs/MODES.md)
 - [与 Agent Teams 的关系](docs/AGENT-TEAMS.md)
 - [发布与 registry 指南](docs/PUBLISHING.md)
-- [0.9.0 版本说明](docs/RELEASE-0.9.0.md)
+- [0.9.1 版本说明](docs/RELEASE-0.9.1.md)
 - [验证记录](docs/VERIFICATION.md)
 - [变更日志](CHANGELOG.md)
 

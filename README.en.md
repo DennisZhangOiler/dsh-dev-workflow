@@ -188,13 +188,13 @@ explicit confirmation immediately before they run.
 
 ### From GitHub
 
-Release notes: [`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md).
+Release notes: [`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md).
 
-0.9.0 is published as a scoped package to the npm public registry and GitHub
+0.9.1 is published as a scoped package to the npm public registry and GitHub
 Packages. Install from npm:
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.0
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.1
 ```
 
 If npm name lookup is still propagating, install from GitHub Packages (below) or
@@ -206,9 +206,9 @@ authenticate (do not commit the token), then use the same target:
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
-The old 0.8.0 GitHub Release tarball remains available, but 0.9.0 is the scoped
+The old 0.8.0 GitHub Release tarball remains available, but 0.9.1 is the scoped
 registry release. The two names are different packages; reinstall when moving to
-0.9.0. The `dev-workflow` preset id is unchanged.
+0.9.1. The `dev-workflow` preset id is unchanged.
 
 Then open a new session, open the preset menu, and choose **研发流程**. Installing
 adds the preset plus the client-only UI package; it changes no default preset and
@@ -320,7 +320,7 @@ client UI are released on GitHub; the npm package is not published.
 - [Modes: Light / Standard / Deep](docs/MODES.md)
 - [Relationship to DSH Agent Teams](docs/AGENT-TEAMS.md)
 - [Publishing and registries](docs/PUBLISHING.md)
-- [0.9.0 release notes](docs/RELEASE-0.9.0.md)
+- [0.9.1 release notes](docs/RELEASE-0.9.1.md)
 - [Verification record](docs/VERIFICATION.md)
 - [Changelog](CHANGELOG.md)
 
@@ -332,7 +332,9 @@ This preset is a process policy: Light/Standard/Deep, contracts, independent
 review, UI/research gates, and evidence. They are complementary — use the Team
 task board as the source of truth for work items, and keep the preset's quality
 gates. A completed Team task is not an accepted delivery, and a teammate is not
-automatically an independent reviewer. See the Chinese
+automatically an independent reviewer. Recommended default: keep Team off for
+Light/Standard; enable it for Deep Program, multi-module parallel work, or
+parallel research/audit. See the Chinese
 [Agent Teams note](docs/AGENT-TEAMS.md) for the full comparison.
 
 ## Requirements and compatibility

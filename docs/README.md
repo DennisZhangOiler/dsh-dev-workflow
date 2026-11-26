@@ -8,7 +8,7 @@
 - [三档模式：轻量 / 标准 / 深度](MODES.md)
 - [与 DSH 智能体团队（Agent Teams）的关系](AGENT-TEAMS.md)
 - [使用建议与项目文档](../README.md#使用)
-- [0.9.0 版本说明](RELEASE-0.9.0.md)
+- [0.9.1 版本说明](RELEASE-0.9.1.md)
 - [0.8.0 版本说明](RELEASE-0.8.0.md)
 - [变更日志](../CHANGELOG.md)
 
@@ -29,6 +29,6 @@
 
 - 默认中文：`README.md`、本索引、`MODES.md`、`AGENT-TEAMS.md`、`DETAIL.zh.md`。
 - 英文保留：`README.en.md`、`PUBLISHING.md`、`VERIFICATION.md`、`TEST-PLAN.md`、历史 E2E 评审记录。
-- 发布说明 `RELEASE-0.9.0.md` 为中英双语。
+- 发布说明 `RELEASE-0.9.1.md` 为中英双语。
 
 新增用户文档优先写中文；需要英文时同时维护对应版本，避免两边内容漂移。

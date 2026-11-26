@@ -1,6 +1,6 @@
 {
   "name": "@denniszhangoiler/dsh-rd-workflow",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Mode-aware R&D Workflow agent preset for DeepSeek Harness: Light/Standard/Deep development, research, UI, and Program workflows.",
   "license": "MIT",
   "type": "module",

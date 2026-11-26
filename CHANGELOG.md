@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-11-26
+
+### Changed
+
+- Default documentation is now Chinese: `README.md` is the Chinese entry point,
+  English moved to `README.en.md`, and the Chinese documentation index is in
+  `docs/README.md`.
+- Added `docs/AGENT-TEAMS.md` explaining how the preset relates to DSH Agent
+  Teams, including the recommendation: keep Team off for Light/Standard; enable
+  it for Deep Program, multi-module parallel work, or parallel research/audit.
+- No runtime or UI behavior changes. The client package remains 0.9.0; the main
+  package is 0.9.1.
+
 ## [0.9.0] - 2026-11-25
 
 ### Changed
