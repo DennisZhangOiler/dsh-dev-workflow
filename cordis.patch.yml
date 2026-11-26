@@ -19,7 +19,7 @@
         # locale/*.json. To publish an English roster instead, replace these
         # two strings with the English copy in README.md.
         name: 研发流程
-        description: 一个默认标准强度的研发流程 preset；在输入框左侧常驻“流程强度”下拉，可在对话中切换轻量/标准/深度（prompt 级指令，不换工具集）。
+        description: 一个默认标准强度的研发流程 preset；在 composer 底部工具行常驻“强度”选择器，可在对话中切换轻量/标准/深度（prompt 级指令，不换工具集）。
         order: 5
         plugins:
           - id: persona

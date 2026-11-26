@@ -4,6 +4,27 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.2] - 2026-11-26
+
+### Changed
+
+- Rewrote the human documentation as one Chinese README and one English README;
+  removed the extra `README.zh.md` redirect and the separate `docs/README.md`,
+  `docs/MODES.md`, and `docs/AGENT-TEAMS.md` copies.
+- Added the single agent-facing [`AGENT.md`](AGENT.md). It is the only
+  agent-oriented document; runtime prompt/skills remain in `prompt.md` and
+  `skills/`.
+- Unified terminology: **强度模式** = 轻量/标准/深度; **工作流程** =
+  开发/调研/项目编排. Removed "Deep playbook" / "技术调研模式" / "Program mode"
+  from current documentation.
+- Added explicit npm, GitHub Packages, tarball, Git-tag, and local-checkout
+  installation paths; clarified that a bare `npm install` does not register a
+  DSH plugin.
+- Rebuilt the publishing guide, historical verification status, test-plan
+  naming, Agent Teams guidance, and plugin-card locale descriptions.
+- No runtime, preset, or client UI behavior changes. Client package remains
+  0.9.0.
+
 ## [0.9.1] - 2026-11-26
 
 ### Changed

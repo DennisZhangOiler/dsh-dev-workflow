@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "研发流程（R&D Workflow）",
-    "description": "新增一个非默认的研发流程（R&D Workflow）智能体预设：开发与代码库调研双流程、项目约定 bootstrap、独立评审、隔离测试、只读验收，大型项目支持架构/UI demo/模块编排。在新会话的预设菜单中选择它；不会修改默认预设或其他会话。",
+    "description": "新增一个非默认的研发流程（R&D Workflow）智能体预设：开发 / 调研 / 项目编排三流程、项目约定 bootstrap、独立评审、隔离测试、只读验收，大型项目支持架构/UI demo/模块编排。在新会话的预设菜单中选择它；不会修改默认预设或其他会话。",
     "detail": "docs/DETAIL.zh.md"
   }
 }

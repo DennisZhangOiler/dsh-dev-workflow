@@ -1,7 +1,7 @@
-# Verification: R&D Workflow 0.8.0 (released)
+# Verification: R&D Workflow 0.8.0 (historical)
 
-This is the verification record for release `v0.8.0`. The tag, GitHub Release,
-and tarball asset are published; npm remains unpublished.
+This is the historical verification record for release `v0.8.0`. Current release:
+`v0.9.1`; the 0.9.1 change is documentation-only. See `docs/RELEASE-0.9.1.md`.
 
 ## 1. Static checks
 
@@ -181,7 +181,7 @@ executed and remain blocked. Evidence: `docs/e2e/0.8/high-risk/`.
   The author's Web profile has 0.8.0 installed; a restart may be required for
   the running Host to load it.
 
-## 8. Current profile and release status
+## 8. Status at v0.8.0
 
 - Released version: **0.8.0**.
 - Active profile: 0.8.0 installed; restart may be required.

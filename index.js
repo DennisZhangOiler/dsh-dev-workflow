@@ -72,7 +72,7 @@ const SKILLS = [
     name: 'rd-workflow-program',
     file: 'rd-workflow-program.md',
     description:
-      'Program-mode playbook: architecture/IA, independent demo score before freeze, vertical modules, contract tests, runtime isolation, recursive leads, and integration.',
+      'Program orchestration playbook: architecture/IA, independent demo score before freeze, vertical modules, contract tests, runtime isolation, recursive leads, and integration.',
     whenToUse:
       'Load for a new system, multi-module product, architecture/IA redesign, or a large feature split across agents.',
   },

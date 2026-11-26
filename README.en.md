@@ -2,410 +2,296 @@
 
 [中文](README.md) | [English](README.en.md)
 
-A **non-default** agent preset for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-Pick **研发流程** from the native preset roster. The preset starts in
-**Standard**, and an always-visible **流程强度** selector sits in the composer
-tool row (轻量 / 标准 / 深度) before and during the conversation. The selector
-sends a session-level mode instruction — it does not swap the preset or its
-tool set; after the first turn DSH would refuse a preset swap anyway. The agent
-routes the request to a technical-research, development, or program pipeline
-instead of asking you to paste a long prompt each time.
+A **non-default** R&D workflow preset for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): one preset, three switchable intensity levels, covering Development, Research, and Program orchestration.
 
-Installing the bundle adds the preset plus a client-only UI package for the
-composer control. It does **not** change the profile's default preset, add a
-Host-wide prompt/skill/command, or affect sessions that use Standard or another
-preset.
+- Choose the **研发流程** preset when creating a session.
+- Use the always-visible **Intensity** selector in the composer tool row: **Light / Standard / Deep**.
+- Switching intensity changes session instructions only. It does **not** swap the preset or its tool set; DSH would refuse a preset swap after the first turn anyway.
+- Installing adds the preset and a client-only UI package. It does not change the profile default preset and does not inject the R&D prompt/skills/commands into other presets.
 
-![研发流程 (R&D Workflow) in the new-session preset menu](docs/screenshot-preset.png)
+> This README is the complete human-facing document. Agents have one document: [`AGENT.md`](AGENT.md).  
+> Release notes and verification records live in [`docs/`](docs/); the E2E packs are Deep-mode reference evidence, not a mandatory formality for every task.
 
-## Modes: Light, Standard, Deep
+## Contents
 
-Pick the process by risk, not by habit. The default is **Standard**; the agent
-asks once only if it cannot infer the mode, and you can switch at any time.
+- [Quick start](#quick-start)
+- [Concepts: intensity and workflows](#concepts-intensity-and-workflows)
+- [Development workflow](#development-workflow)
+- [Research workflow](#research-workflow)
+- [Program orchestration](#program-orchestration)
+- [Relationship to DSH Agent Teams](#relationship-to-dsh-agent-teams)
+- [Usage](#usage)
+- [Documentation structure](#documentation-structure)
+- [Links](#links)
+- [License](#license)
+- [What it does not do](#what-it-does-not-do)
+- [Compatibility and limitations](#compatibility-and-limitations)
+- [Uninstall](#uninstall)
+- [Development and verification](#development-and-verification)
 
-| Mode | Use it for | What you get |
-|---|---|---|
-| **Light** | copy/docs, one-file fix, diagnostic, small reversible change | short plan/check, tests or self-check, report; no contract file, reviewer, or full E2E |
-| **Standard** (default) | normal feature/bugfix/refactor, UI change, research question | contract for non-trivial work, implement/test, one independent review when risk/UI/decision warrants |
-| **Deep** | high-risk/security/migration/production/scale, large Program | full contract, independent plan/results/verifier reviews, scored UI/research, E2E/calibration, human gates |
+## Quick start
 
-The long pipeline below is the **Deep** playbook. Standard uses the same steps
-proportionally; Light keeps only the brief, change, and check. See
-[`docs/MODES.md`](docs/MODES.md).
+### 1. Install
 
-## What it does
-
-The first rule is a **request router**. On every message the agent classifies
-the request as a question, bugfix/polish, new feature/refactor, research, or
-program. If the objective changed, it says so and starts a new contract or
-research brief instead of continuing the previous bugfix loop.
-
-![A new feature request re-enters Phase 0/1 instead of continuing the bugfix loop](docs/screenshot-reentry.png)
-
-## Development workflow (Deep playbook)
-
-Deep uses the full table below. Standard uses the same steps proportionally; Light skips the contract/score/E2E ceremony. The rules live in a system-prompt section, so they survive context compaction
-and do not depend on the conversation history. Each preset appends a one-line
-`Mode:` marker; the prompt then applies the proportional checks.
-
-| Phase | Result |
-|---|---|
-| 0. Project understanding | Reads `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, `README.md`, and other docs; finds commands, delivery, layout, and where UI surfaces live |
-| 1. Contract and triage | Writes an acceptance contract: AC/DoD/NFR, risk tier, data/UI, traceability; classifies **UI design**, **UI behavior**, or **No UI**; asks material questions once |
-| 2. UI exploration | **UI design only:** directions per project policy (small/local may use one; large asks once) with real desktop and mobile screenshots |
-| 3. Independent UI score | **UI design only:** a separate scorer scores every direction (even one) against the rubric; gate is **per-area floors + total >= 85 + no P0/P1**, plus real mobile/keyboard/a11y checks |
-| 4. User confirmation | AC/DoD/NFR plus direction/screenshots/change list; changed states for UI behavior; functional list for No UI; explicit yes |
-| 5. Development | One feature agent owns the change and, for UI work, both UI and behavior; a separate test author writes tests only |
-| 6. Independent testing | Tests each AC; functional/CLI/API, UI behavior, or UI design checks; real APIs/mutations, markers/cleanup; test/lint/typecheck/build |
-| 7. Independent verification | Read-only verifier checks every AC + evidence, scope, commands, data/edges/residue, and final UI score; records reviewer identity/hash/verdicts |
-| 8. User preview | Preview steps/test data/checklist; for No UI a command, sample request, or output sample; internal PASS is not user acceptance |
-| 9. Delivery | Follows documented delivery; migration `MIGRATION.md` rehearsal/rollback; post-deploy smoke/monitoring; no assumed MR/PR/CI/deploy |
-
-### Contract, risk, and evidence
-
-Before implementation, the agent writes an acceptance contract (`AC-1..n`,
-Definition of Done, applicable NFRs, risk tier, data/UI/migration, and an
-AC→test→evidence matrix). The user confirms AC/DoD/NFR, not only a direction.
-Risk tiers add gates: high-risk work needs a threat model, SCA/license, SAST,
-migration rehearsal, rollback/post-deploy plan, and human code/release approval.
-See `rd-workflow-contract` and `rd-workflow-delivery`.
-
-![Acceptance contract with AC, DoD, NFR, risk tier, and rollback](docs/screenshot-contract.png)
-
-![Delivery record: 18/18 tests, independent verifier PASS, hashes, and honestly skipped commands](docs/screenshot-e2e.png)
-
-A claim is labeled **implemented**, **statically tested**, **exercised
-end-to-end**, or **observed in production**. The workflow does not turn a unit
-test into production proof, a plan screenshot into execution evidence, or an
-internal PASS into user acceptance. It does not replace human code review,
-security review, or release ownership for high-risk changes.
-
-### Technical research mode
-
-For a non-trivial technical/codebase investigation, architecture or dependency
-comparison, feasibility study, or root cause, the agent runs an
-**experiment-first** research pipeline. Documents and upstream benchmarks only
-generate hypotheses; the final evidence is measured in this project or a
-representative sandbox.
-
-| Stage | Result |
-|---|---|
-| R0 Context | Read docs/code; define the decision, current baseline, metrics, constraints, timebox, and output |
-| R1 Directions | Propose a **broad set** of genuinely different directions (no fixed 2-3); user selects which to pursue; no build before this gate |
-| R2 Plan + plan review | Baseline/candidate, MDE/CI/noise, runs/variance, slice/exclusions, thresholds, stop, artifacts; **independent plan review uses per-area floors + total >=80 + no P0/P1 + <=3 unresolved P2** before any demo |
-| R3 Small demos | Small falsifiable demos and baseline under the same conditions, in a sandbox; semantic parity, commands/versions/data; failures kept; production code untouched |
-| R4 Measurement | Correctness, performance with variance, cost, failure modes; observation separated from interpretation; no cherry-picking |
-| R5 Results review | A fresh reviewer extracts claims from raw data, audits process/data/baseline, marks supported/partial/unsupported with exact allowed wording; `partial` cannot support adopt/migrate; freeze the memo hash |
-| R6 Decision | Memo containing only reviewed claims, with `measured-here` / `measured-sandbox` / `reported` labels; rejected directions, confidence, open questions, what cannot be concluded |
-| R7 Handoff | Development/Program input; sandbox-only = candidate; adopt/migrate/security needs a pilot or written user risk acceptance + `MIGRATION.md`; research never migrates production |
-
-There is **no separate migration-validation phase**. Experiments use a
-representative project slice or copy so fit is exercised during measurement; if
-real migration is needed, it goes through the normal development pipeline.
-
-Standard depth = user-selected directions, an approved plan, one measured demo
-per selected viable direction, and a results review. Deep adds more demos/runs,
-independent rerun, second reviewer, mandatory pilot/risk acceptance and
-`MIGRATION.md`. Quick is a valid low-risk path but cannot support adopt/migrate
-claims.
-
-Review feedback is explicit: severity, location, evidence, why it matters, the
-required action, and the pass condition. A score without findings, or feedback
-such as "improve this" or "looks reasonable", is a failed review. Only reviewed
-conclusions are shown to the user.
-
-This version covers technical/codebase research. External market and user
-research are out of scope.
-
-![Small demos, semantic checks, and measurement under the research sandbox](docs/screenshot-research.png)
-
-### Large projects: Program mode
-
-For a new system, a multi-module product, or an architecture/IA redesign, the
-lead becomes a program orchestrator instead of implementing everything itself:
-
-1. **Architecture first.** Clarify users, core flows, modules, boundaries,
-   interfaces, data ownership, non-goals, and open decisions. Do not write
-   module code yet; get architecture approval.
-2. **UI direction selection.** Follow the project's UI policy. If it sets a
-   direction count, satisfy it; if not, ask for a large/structural UI change
-   (recommend three) and wait for the user's choice. Never self-confirm.
-3. **Static frontend demo.** Build a pure frontend demo with mock data, iterate
-   with user feedback; get an **independent score before freeze**, then freeze
-   tokens, components, screens, states, and responsive rules.
-4. **Module plan.** Split into complete vertical modules with interfaces,
-   owned paths, shared-file rules, dependencies, acceptance criteria, and
-   provider/consumer contract tests; isolate ports/DB/fixtures/env.
-5. **Module agents.** Dispatch module leads through `subagent`; each runs this
-   pipeline in its module. Frozen UI is not redesigned; a material missing UI
-   detail spawns a child UI design/scoring flow. A module lead may spawn its own
-   UI, feature, test, and verifier children (depth up to 3 below the root).
-6. **Integration.** A read-only integration verifier runs cross-module contract
-   tests and checks shared files, migrations, permissions, fixture residue, and
-   runtime-resource collisions; then preview and documented delivery.
-
-The program lead is the only user interface; module leads report evidence back
-to it. Shared files have one owner and change sequentially; independent modules
-may run in parallel. See the `rd-workflow-program` skill for the full playbook.
-
-### Conventions are learned once
-
-The agent reads the project's convention docs first. If a rule it needs is
-missing or unclear (UI direction count, static demo, delivery, test commands),
-it infers what it can, asks **one batched question** with a recommended default,
-then writes the answer into the project's convention docs - updating existing
-files first, otherwise `docs/DEV_WORKFLOW.md`, `docs/UI.md`,
-`docs/DELIVERY.md`, or `docs/RESEARCH.md`. Later sessions read that document
-and do not ask again.
-
-So you do not have to restate "give me three UI options" or "deliver locally" on
-every task. State it once (or let the agent ask once), and it becomes part of the
-project.
-
-### UI impact is decided per change
-
-Phase 1 classifies the change, not the project:
-
-- **UI design** - new or materially changed hierarchy, layout, interaction
-  pattern, or UI surface. Runs Phases 2-3 and the independent UI score.
-- **UI behavior** - user-visible behavior, copy, or state change without a new
-  design direction. Skips Phases 2-3; keeps UI functional checks and preview,
-  but no design score.
-- **No UI** - library, CLI, backend, infrastructure, data, build, or docs work.
-  Skips all UI phases and the UI score; tests are functional/CLI/API only.
-
-A project that is CLI-only today can get **UI design** when the change adds a
-GUI; an existing UI project can get **No UI** for a backend-only change. The
-triage is stated in the Phase 1 contract and can be revisited if a new surface
-appears.
-
-Project documents are treated as natural language. If the project does not
-document delivery, changes stay local and the agent asks **once** how to deliver.
-Credentials never go into project files. Remote or destructive commands need
-explicit confirmation immediately before they run.
-
-## Install
-
-### From GitHub
-
-Release notes: [`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md).
-
-0.9.1 is published as a scoped package to the npm public registry and GitHub
-Packages. Install from npm:
+#### Option A: npm public registry (recommended)
 
 ```text
-plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.1
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
 ```
 
-If npm name lookup is still propagating, install from GitHub Packages (below) or
-use the release tarball. For GitHub Packages, configure the scope and
-authenticate (do not commit the token), then use the same target:
+CLI equivalent:
+
+```sh
+dsh plugin --profile <profile> add @denniszhangoiler/dsh-rd-workflow@0.9.2
+```
+
+> **About `npm install`:** the package is on npm, but a DSH plugin is not activated by putting it in a project `node_modules`. To inspect the package:
+>
+> ```sh
+> npm view @denniszhangoiler/dsh-rd-workflow@0.9.2
+> npm pack @denniszhangoiler/dsh-rd-workflow@0.9.2
+> npm install @denniszhangoiler/dsh-rd-workflow@0.9.2
+> ```
+>
+> The last command only installs the package into the current directory; it does **not** register a DSH plugin. Use `plugin_manager` or `dsh plugin add` for DSH.
+
+#### Option B: GitHub Packages
+
+Configure the scope and a read token; do not commit the token:
 
 ```ini
 @denniszhangoiler:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
-The old 0.8.0 GitHub Release tarball remains available, but 0.9.1 is the scoped
-registry release. The two names are different packages; reinstall when moving to
-0.9.1. The `dev-workflow` preset id is unchanged.
-
-Then open a new session, open the preset menu, and choose **研发流程**. Installing
-adds the preset plus the client-only UI package; it changes no default preset and
-does not affect other presets. A preset update may report `restart-required`.
-
-### Before installing
-
-Back up the profile so the change is reversible:
-
-```sh
-PROFILE_DIR="$DSH_HOME/profiles/<profile>"
-cp -a "$PROFILE_DIR" "$PROFILE_DIR.backup-$(date +%Y%m%d-%H%M%S)"
-```
-
-### From the DSH Web UI
-
-1. Open **Plugins**.
-2. Choose **Add plugin** and select a local `dsh-rd-workflow` checkout; for the
-   GitHub source use the `plugin_manager` command above instead.
-3. Keep the bundle enabled. It adds the preset only; it does not select it.
-4. Open a new session, open the preset menu, choose **研发流程**.
-
-### With the `plugin_manager` agent tool
+Then use the same target:
 
 ```text
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow
-# or a packed release tarball:
-plugin_manager action=install_bundle target=/absolute/path/to/dsh-rd-workflow-0.8.0.tgz
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
 ```
 
-The target is the bundle directory containing `package.json` and
-`cordis.patch.yml`, or a packed release tarball. Installing runs package
-management and bundle selection; no manual profile edit is needed. Installing
-bundle code requires Full access or approval in DSH. A preset change can
-report `restart-required`; restart DSH once, then open a new session.
+#### Option C: GitHub Release tarball
 
-### Command-line alternative
-
-If you manage the profile from a terminal, the CLI uses the same package
-selection and patch validation and takes effect on the next start:
-
-```sh
-# GitHub source
-dsh plugin --profile <profile> add git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
-# or a local checkout
-dsh plugin --profile <profile> add /absolute/path/to/dsh-rd-workflow
-# after a restart, verify below; to remove:
-dsh plugin --profile <profile> remove dsh-rd-workflow
-```
-
-### Verify the preset
-
-```sh
-dsh --profile <profile> --dump-config | grep -A3 preset-dev-workflow
-dsh --profile <profile> --dump-config | grep -A2 agent-preset-registry
-```
-
-The second command should still show the original default (for example
-`default: standard`). A new session's preset roster should list **研发流程** (R&D Workflow).
-
-## Use
-
-Start a session with the preset and describe the change:
+Download from [v0.9.1](https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/tag/v0.9.2):
 
 ```text
-The settings page still uses an old table. Make it a filterable card list,
-keep the existing design system, and make it work on mobile.
+plugin_manager action=install_bundle target=https://github.com/DennisZhangOiler/dsh-rd-workflow/releases/download/v0.9.2/denniszhangoiler-dsh-rd-workflow-0.9.2.tgz
 ```
 
-The preset's contract section then runs the pipeline. Playbooks: `rd-workflow`,
-`rd-workflow-contract`, `rd-workflow-delivery`, `rd-workflow-research`,
-`rd-workflow-research-review`, `rd-workflow-program`,
-`rd-workflow-project-docs`, `rd-workflow-ui-rubric`, `rd-workflow-roles`.
+#### Option D: Git tag / local checkout
 
-### Recommended project documents
+```text
+plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git#v0.9.2
+```
 
-The preset works without any of them, but projects get better results with:
+For local development, use the absolute path to this repository.
 
-- `AGENTS.md` - commands, boundaries, allowed paths, style rules.
-- `docs/DEV_WORKFLOW.md` - how changes are developed and reviewed.
-- `docs/DELIVERY.md` - how a change reaches users (branch, MR/PR, CI, deploy,
-  manual release, patch only).
-- `README.md` - setup and common commands.
+A restart may be required; preset updates commonly return `restart-required`.
 
-Examples are in the `rd-workflow-project-docs` skill and in
-[`docs/project-conventions.md`](docs/project-conventions.md). They are examples,
-not a required schema.
+### 2. Select and verify
 
-## Reference evidence (Deep mode)
+1. Create a new session.
+2. Choose **研发流程** in the preset roster.
+3. The composer shows the **Intensity** selector, default **Standard**.
+4. Send a normal task; the agent should not ask you to paste the long workflow prompt.
 
-The `docs/e2e/0.8/` packs are **Deep-mode reference evidence**, not a requirement
-for every task. They show what a serious gate looks like:
+![Composer intensity selector, aligned with the permission selector](docs/screenshot-mode-selector.png)
 
-- No-UI fixture: contract hash, AC1–AC7, 8/8 tests, independent verifier 89 PASS.
-- UI design: A · Ledger readiness dashboard, independent score 91 PASS.
-- Program: two-module contract/isolation E2E; independent review 86 narrow PASS.
-- High-risk: 0.7→0.8 config-migration rehearsal, 7/7 tests, byte-identical
-  rollback; human approval for rehearsal only; real apply remains blocked.
-- Research: plan review REVISE→PASS, results review PASS, memo review PASS,
-  reduced-scope calibration.
+The menu also works in an existing conversation:
 
-These scores are **not** a universal release gate. Light/Standard tasks use the
-proportional checks in [`docs/MODES.md`](docs/MODES.md). The 0.8.0 preset and
-client UI are released on GitHub; the npm package is not published.
+![Intensity menu in an existing conversation](docs/screenshot-mode-menu.png)
 
-## Documentation
+### 3. Switch intensity
 
-- [Documentation index](docs/README.md)
-- [Modes: Light / Standard / Deep](docs/MODES.md)
-- [Relationship to DSH Agent Teams](docs/AGENT-TEAMS.md)
-- [Publishing and registries](docs/PUBLISHING.md)
-- [0.9.1 release notes](docs/RELEASE-0.9.1.md)
-- [Verification record](docs/VERIFICATION.md)
-- [Changelog](CHANGELOG.md)
+- Before the first turn or mid-conversation.
+- The next turn uses the new intensity.
+- Switching adds only a small `mode` completion row command row; no large user bubble is injected.
 
-## Agent Teams
+## Concepts: intensity and workflows
 
-DSH Agent Teams is the platform coordination layer: a durable shared task board
-for a subagent tree, with task ownership, dependencies, and write-scope hints.
-This preset is a process policy: Light/Standard/Deep, contracts, independent
-review, UI/research gates, and evidence. They are complementary — use the Team
-task board as the source of truth for work items, and keep the preset's quality
-gates. A completed Team task is not an accepted delivery, and a teammate is not
-automatically an independent reviewer. Recommended default: keep Team off for
-Light/Standard; enable it for Deep Program, multi-module parallel work, or
-parallel research/audit. See the Chinese
-[Agent Teams note](docs/AGENT-TEAMS.md) for the full comparison.
+Two dimensions are intentionally separate:
 
-## Requirements and compatibility
+| Dimension | Values | Decides |
+|---|---|---|
+| **Intensity** | Light / Standard / Deep | How much ceremony: contract, independent review, UI scoring, E2E, human gate |
+| **Workflow** | Development / Research / Program orchestration | What kind of work this is and which pipeline it follows |
 
-- DSH `>=0.2.2-rc.5 <0.3.0` (declared in `engines.dsh`).
-- Node.js 22 or newer (DSH requirement).
-- The profile must provide the Host services this preset mounts: system prompt,
-  skills, tools, plan mode, subagents, and workflows. The shipped Web profile
-  does. Headless/SDK/ACP profiles do not load the Web preset registry and are
-  not supported by this bundle.
-- No credentials, network service, or database is added by this plugin.
+### Intensity
+
+Default **Standard**; choose by risk, not habit.
+
+| Intensity | Use for | Contract and review | UI / research | Delivery |
+|---|---|---|---|---|
+| **Light** | copy/docs, one-file fix, diagnostic, small reversible change | short AC/check in chat; no independent reviewer | screenshot yourself when visual; one spike + internal unreviewed research note | run relevant tests/checks and state what was skipped |
+| **Standard** | normal feature, bugfix, refactor, UI behavior, research question | contract for non-trivial work; one independent review for medium/high risk, UI design, or a consequential decision | one UI direction; one review for a consequential research decision | implement, test, verify; no full E2E by default |
+| **Deep** | high-risk/security/PII/migration/production/scale, large Program, regulated work | full contract + hash + user confirmation; independent plan/results/verifier reviews | multiple directions, per-area floors, independent score, freeze | full evidence pack, E2E/calibration, human gates |
+
+**Never optional:** safety, secrets, protected branches, explicit confirmation for destructive/remote operations, and human approval for high-risk production work. No intensity skips these.
+
+### Workflows
+
+| Workflow | Use for | Typical outcome |
+|---|---|---|
+| **Development** | features, bugfixes, refactors, UI behavior, delivery | contract, implementation, tests, independent verification |
+| **Research** | technology choices, feasibility, performance/cost validation, codebase research | decision frame, spikes, evidence, reviewed conclusion/handoff |
+| **Program orchestration** | multi-module systems, cross-module interfaces, large Programs | architecture/interfaces first, UI freeze, vertical modules, integration verification |
+
+On every message the agent routes the request as question, development, research, or program. If the objective changes, it says so and re-enters the right workflow instead of continuing the previous bugfix loop.
+
+## Development workflow
+
+Higher intensity means more complete execution; Light/Standard use proportional checks.
+
+| Phase | What happens |
+|---|---|
+| 1. Read the project | `AGENTS.md`, `README.md`, `docs/DEV_WORKFLOW.md`, `docs/DELIVERY.md`, UI/research docs; find commands, layout, conventions |
+| 2. Contract | AC-1..n, DoD, NFR, risk tier, data/UI, AC→test→evidence; triage UI as design / behavior / No UI |
+| 3. Confirm scope | ask only material questions; confirm goals/acceptance/risk, not a mere recommendation |
+| 4. Implement | one feature agent owns the change; separate test authors/reviewers when needed, with disjoint scopes |
+| 5. Test | normal, negative, permission, boundary, state; run test/lint/typecheck/build |
+| 6. Independent verification | one review for medium/high risk/UI/decisions; Deep uses a verifier checking every AC and evidence item |
+| 7. Preview and delivery | give a reproducible preview/acceptance path; follow project delivery rules; do not assume MR/CI/deploy |
+
+**UI work:** follow project UI policy. Standard usually uses one direction; Deep requires independent scoring, per-area floors, total >=85, and no P0/P1. A score is a gate, not a number to optimize.
+
+## Research workflow
+
+The output is a **reviewable decision**, not a persuasive essay.
+
+| Phase | What happens |
+|---|---|
+| R0 decision frame | decision, baseline, metrics, constraints, timebox, output |
+| R1 directions | several directions, including do-nothing; user selects |
+| R2 plan | baseline/candidate, workload, MDE/CI/noise, runs, thresholds, stop conditions, representative slice |
+| R3 spikes | sandbox `research/<topic>/spikes`; same conditions, semantic parity, keep failures |
+| R4 evidence | correctness, performance, variance, cost, failure modes; observation vs inference |
+| R5 independent review | extract claims from raw data; supported/partial/unsupported; rerun when needed |
+| R6 conclusion | only reviewed claims; label measured-here/sandbox/reported; list what cannot be concluded |
+| R7 handoff | development/program input; sandbox-only = candidate/pilot; adopt/migrate/security needs a pilot or written risk acceptance + `MIGRATION.md` |
+
+Light research: decision frame + one spike + an internal note, explicitly unreviewed; it cannot justify adopt/migrate.
+
+## Program orchestration
+
+For large, multi-module, parallel or staged work; usually with Deep intensity.
+
+1. **Architecture/IA first:** users, flows, module boundaries, interfaces, data, non-goals, open decisions; confirm.
+2. **UI direction and freeze:** choose a direction, build a pure demo, independent score, then freeze. Frozen UI is not redesigned; gaps go to child UI design/scoring.
+3. **Split modules:** interfaces, owned paths, shared-file rules, dependencies, acceptance, tests.
+4. **Vertical implementation:** module leads follow the same workflow; children may delegate further, with disjoint write scopes.
+5. **Contract tests:** provider/consumer, shared files, migrations, permissions, fixtures; isolate ports/DB/environments or serialize explicitly.
+6. **Integration verification:** the Program lead is the only user interface; the integration verifier checks cross-module and regression behavior.
+
+Small projects do not need Program to look formal; Standard is usually better.
+
+## Relationship to DSH Agent Teams
+
+**No conflict, no duplication: Team coordinates, this preset defines standards.**
+
+| Dimension | DSH Agent Teams | This preset |
+|---|---|---|
+| Problem | Who does the work; task assignment and tracking | What steps to follow; what counts as done |
+| Provides | shared task board, ownership/dependencies/write scopes, member messaging | Light/Standard/Deep, contracts/AC/DoD, independent review, UI/research/Program gates, evidence |
+| Creates a team | No; reuses the standard subagent tree | No; reuses `subagent`/`workflow` |
+| Replaces acceptance | No; task completion is not acceptance | Yes; provides the quality gates and reviewer independence |
+
+**Recommended default:**
+
+- **Light/Standard: keep Team off.** Single-threaded work plus the preset's proportional checks is more controllable.
+- **Deep, Program, multi-module parallel work, parallel research/audit: enable Team.**
+- Enable only when the work can be split into at least three tasks with clear interfaces and largely disjoint write scopes.
+- When enabled, the Team task board is the single source of truth for work items; the preset's contract references task IDs, and write scopes map to `write_scopes`. Do not create a second checklist.
+- A Team member is not automatically an independent reviewer; independent review still needs fresh context or a different model.
+- `complete` means the work item is done, not that tests, UI scoring, or user acceptance passed.
+
+## Usage
+
+- Composer tool-row **Intensity** selector: before or during the conversation; the selection updates the session instructions.
+- A genuinely different tool set still requires a new session/preset; intensity does not swap tools.
+- Recommended project docs:
+  - `AGENTS.md` — project agent conventions
+  - `docs/DEV_WORKFLOW.md` — development/review/test policy
+  - `docs/DELIVERY.md` — delivery, migration, rollback, release
+  - `docs/UI.md` — UI design/scoring/acceptance
+  - `docs/RESEARCH.md` — research evidence and review rules
+- When these are missing, the agent infers, asks once, and records the convention; later sessions follow it.
+
+## Documentation structure
+
+Two audiences only:
+
+| Audience | Document | Language |
+|---|---|---|
+| **Humans** | [`README.md`](README.md) / [`README.en.md`](README.en.md) | Chinese / English |
+| **Agents** | [`AGENT.md`](AGENT.md) | one English operating document |
+
+Maintainer/release/history docs (not user entry points):
+
+- [`CHANGELOG.md`](CHANGELOG.md) — changelog
+- [`docs/PUBLISHING.md`](docs/PUBLISHING.md) — npm / GitHub Packages publishing and verification
+- [`docs/VERIFICATION.md`](docs/VERIFICATION.md) — historical 0.8.0 verification snapshot
+- [`docs/TEST-PLAN.md`](docs/TEST-PLAN.md) — historical test plan (terminology updated)
+- [`docs/QUALITY-GATE.md`](docs/QUALITY-GATE.md), [`docs/project-conventions.md`](docs/project-conventions.md) — quality-gate and project-convention templates
+- [`docs/DETAIL.md`](docs/DETAIL.md) / [`docs/DETAIL.zh.md`](docs/DETAIL.zh.md) — English/Chinese plugin detail
+- [`docs/RELEASE-0.9.2.md`](docs/RELEASE-0.9.2.md) — current documentation release
+- [`docs/RELEASE-0.9.1.md`](docs/RELEASE-0.9.1.md), [`docs/RELEASE-0.9.0.md`](docs/RELEASE-0.9.0.md), [`docs/RELEASE-0.8.0.md`](docs/RELEASE-0.8.0.md) — historical release notes
+- [`docs/e2e/`](docs/e2e/) — historical E2E evidence, Deep reference packs
 
 ## What it does not do
 
-- It does not make **研发流程** the default.
-- DSH 0.2.2-rc.5 translates only shipped presets (`presetDisplayText`);
-  user-authored preset metadata is static. This bundle declares Chinese roster
-  copy (**研发流程**) to match a zh-CN system. The bundle card and detail page
-  are localized through `locale/*.json`. For an English roster, replace the
-  two strings in `cordis.patch.yml` before installing; changing DSH's UI
-  language alone does not retranslate them.
-- It does not enforce role isolation at the sandbox level; the roles and write
-  scopes are enforced by prompts and by the parent's review. If a future DSH
-  release adds per-child tool restrictions, wire them in.
-- It does not install project skills, a design system, a browser, or a test
-  framework. It uses what the project and the session already have.
-- It does not promise a central plugin-market listing. See
-  [`docs/PUBLISHING.md`](docs/PUBLISHING.md) for the current index format.
+- It is not a new model, tool, or task board; it does not create a team runtime.
+- It does not automatically upgrade ordinary work to Deep; intensity follows scope and risk.
+- It does not replace human code review, security review, or release ownership.
+- It does not require full E2E/calibration for every task; those are Deep reference practices.
+- It does not install project dependencies, provide credentials, or bypass DSH permissions/approvals.
 
-## Development
+## Compatibility and limitations
 
-```sh
-npm test          # plugin, prompt, and skill contract tests
-npm run check     # packaging, manifest, locale, detail, and patch checks
-npm run test:smoke # disposable profile: install tarball, check preset, remove
-```
-
-`test:smoke` needs `dsh` and `pnpm` on `PATH`; set `DSH_BIN` when the CLI is
-somewhere else. It creates a temporary `DSH_HOME`, uses no credentials, and
-cleans up after itself.
-
-No dependencies are installed for these checks. `node --test` and Node 22 are
-enough. YAML validation in `npm run check` uses `python3` + PyYAML when
-available and reports when it is skipped.
-
-Layout:
-
-```text
-index.js                 Host-side preset plugin: prompt section + skills
-prompt.md                Source of the system-prompt section
-cordis.patch.yml         @deepseek-ai/dsh-agent-preset declaration
-skills/                  On-demand playbooks loaded through the skill tool
-locale/en.json|zh.json   Bundle card metadata
-docs/DETAIL*.md          Bundle detail document (one preview image)
-docs/preview.svg         Feature image
-icon.svg                 Plugin icon
-test/                    Unit, packaging, and disposable-profile smoke tests
-```
+- DSH `>=0.2.2-rc.5 <0.3.0`.
+- Node.js 22+.
+- Only profiles that load the Web preset registry (the official Web profile); headless/SDK/ACP do not load it.
+- One preset, default Standard; intensity is prompt-level and does not swap tools.
+- A different tool composition requires a new session/preset.
+- A bare npm install does not register the DSH plugin; use `plugin_manager` or `dsh plugin add`.
+- On mount the chip syncs its mode to the Host once, which may add one light command row; a second stateless client can sync its own initial mode.
+- No credentials, network service, or database is added.
 
 ## Uninstall
 
-In **Plugins**, remove the **dsh-rd-workflow** bundle, or:
-
 ```text
-plugin_manager action=remove_bundle target=dsh-rd-workflow
+plugin_manager action=remove_bundle target=@denniszhangoiler/dsh-rd-workflow
 ```
 
-Removing the bundle removes the preset and its prompt section. Sessions already
-running keep the preset composition they started with until they are replaced.
-No project files are modified by install or removal.
+Or:
+
+```sh
+dsh plugin --profile <profile> remove @denniszhangoiler/dsh-rd-workflow
+```
+
+The client package is a dependency and is removed with the main package; session history is preserved.
+
+## Development and verification
+
+```sh
+npm test
+npm run check
+DSH_BIN=<dsh-bin> npm run test:smoke
+```
+
+- `npm test`: unit tests + E2E gate
+- `npm run check`: package contents and patch checks
+- `npm run test:smoke`: disposable-profile install/remove
+
+Publishing: [`docs/PUBLISHING.md`](docs/PUBLISHING.md).
+
+## Links
+
+- [GitHub Releases](https://github.com/DennisZhangOiler/dsh-rd-workflow/releases)
+- [npm package](https://www.npmjs.com/package/@denniszhangoiler/dsh-rd-workflow)
+- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
+- [Agent Teams package](https://github.com/deepseek-ai/deepseek-harness/tree/main/packages/team/agent-team)
+- [License](LICENSE)
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT

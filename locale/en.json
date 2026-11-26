@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "R&D Workflow",
-    "description": "Adds a non-default R&D Workflow agent preset with development and technical-research pipelines, convention bootstrap, independent review, UI scoring, and recursive module/program orchestration. Select it in the new-session preset menu; it does not change the default preset or other sessions.",
+    "description": "Adds a non-default R&D Workflow agent preset with Development, Research, and Program orchestration workflows, convention bootstrap, independent review, UI scoring, and recursive module/program orchestration. Select it in the new-session preset menu; it does not change the default preset or other sessions.",
     "detail": "docs/DETAIL.md"
   }
 }

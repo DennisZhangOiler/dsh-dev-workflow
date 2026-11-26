@@ -1,235 +1,136 @@
-# Publishing and marketplace notes
+# 发布与 registry 指南
 
-> 中文导读：0.9.0 已以 scoped 包发布到 npm 公共 registry 和 GitHub Packages；
-> `@denniszhangoiler/dsh-rd-workflow` 与 `...-client`。npm 安装不需要 scope 配置；
-> GitHub Packages 需要 `@denniszhangoiler:registry=https://npm.pkg.github.com` 和
-> 一个可读取 packages 的 token。本文其余部分保留英文，便于对照 DSH/npm 原始字段。
+本文是维护者文档，描述当前 0.9.2 的发布方式和验证步骤。它不是用户安装入口；用户安装请看 [`README.md`](../README.md#快速开始)。
 
-This document records the official mechanism as read from DeepSeek Harness
-`0.2.2-rc.5`. Do not assume a central upload or review process; verify against
-the DSH release you target before publishing.
+## 当前状态
 
-Sources read in the installed DSH package:
+- 主包：`@denniszhangoiler/dsh-rd-workflow@0.9.2`
+- 客户端包：`@denniszhangoiler/dsh-rd-workflow-client@0.9.0`（本次无代码变化）
+- npm 公共 registry：已发布
+- GitHub Packages：已发布
+- GitHub repo：<https://github.com/DennisZhangOiler/dsh-rd-workflow>
+- GitHub Release：`v0.9.2`（发布后创建/更新）
+- Marketplace index：暂未提供公共索引；GitHub/npm/GitHub Packages 是当前安装渠道
 
-- `@deepseek-ai/dsh` user guide: `docs/user/guide/plugin-market.md`
-  ("Publish an index", "Index format reference").
-- `@deepseek-ai/dsh-plugin-market-index` README and `src/types.ts`
-  (format 1 validator and install targets).
-- `@deepseek-ai/dsh-plugin-market` README (Discover, index sources,
-  compatibility checks).
-
-## Current status
-
-- GitHub repo: <https://github.com/DennisZhangOiler/dsh-rd-workflow> (public).
-- Latest GitHub Release: **v0.8.0** (unscoped install target).
-- **0.9.0 scoped packages**:
-  `@denniszhangoiler/dsh-rd-workflow` and
-  `@denniszhangoiler/dsh-rd-workflow-client`.
-- npm public: **published** at `https://registry.npmjs.org`.
-- GitHub Packages: **published** at `https://npm.pkg.github.com`.
-- Marketplace index: not served publicly yet.
-
-## Publish 0.9.0 to both registries
-
-Publish the client package first, then the main package, to each registry.
-
-```sh
-# npm public
-npm publish --registry=https://registry.npmjs.org --access public   # run in client-package/
-npm publish --registry=https://registry.npmjs.org --access public   # run in repo root
-
-# GitHub Packages (scoped; token with write:packages)
-npm publish --registry=https://npm.pkg.github.com --access public   # client-package/
-npm publish --registry=https://npm.pkg.github.com --access public   # repo root
-```
-
-Do not commit registry tokens. GitHub Packages installation requires the
-`@denniszhangoiler` scope to be configured and an authenticated read token.
-
-## What DSH currently supports
-
-- A plugin index is one UTF-8 JSON file served over `http:`/`https:` without a
-  redirect. DSH ships **no index source**.
-- Users enable **Custom plugin indexes** and add an index URL; DSH shows a
-  **Discover** tab and installs a listed version after confirmation.
-- The index format is `format: 1`. A version's `source` is either npm
-  (`{ "type": "npm", "registry"?: url }`) or Git
-  (`{ "type": "git", "url": https-url, "commit": 40-hex-sha, "path"?: dir }`).
-- The package must declare `dsh.bundle` and a `dsh.bundle.patch`; DSH checks
-  `engines.dsh` (or `@deepseek-ai/dsh*` peer dependencies) again at install.
-- There is no central marketplace account, upload endpoint, review queue, or
-  approval API in this installed version. "Publishing" means serving an index
-  and, usually, publishing the npm package or a pinned Git commit.
-- Index content is third-party data. DSH validates the format and install
-  target, not the publisher's claims.
-
-## Before publishing
-
-1. The package name is `dsh-rd-workflow` and the npm name is available.
-   Confirm you control it before publishing; the preset plugin row `name` in
-   `cordis.patch.yml` must match the package name.
-2. Fill the metadata deliberately in `package.json`:
-   - `repository`, `homepage`, and `bugs` with your real URLs;
-   - `author` with the publisher name;
-   - `keywords` (already present);
-   - `engines.dsh` matching the DSH versions you tested.
-3. Confirm `dsh.bundle.patch` and the `files` list include everything the
-   runtime needs.
-4. Run the checks:
-
-   ```sh
-   npm test
-   npm run check
-   npm pack --dry-run
-   ```
-
-5. Inspect the packed file list. It must include `index.js`, `prompt.md`,
-   `cordis.patch.yml`, `skills/`, `locale/`, `docs/`, and `icon.svg`.
-6. Scan for secrets and machine-specific paths:
-
-   ```sh
-   grep -RInE '(ghp_|npm_|sk-|BEGIN [A-Z ]*PRIVATE KEY)' .
-   # also scan for absolute home paths and machine-specific paths with your own tooling
-   ```
-
-7. Verify the icon and detail image render in light and dark themes, and that
-   the detail document has exactly one image line.
-8. Install from the packed artifact (not the checkout) in a disposable profile
-   and verify the preset appears and the default preset is unchanged.
-
-## Publish an npm package (optional, scoped)
-
-Optional for this release. If you publish to npm, keep `package.json` `name`,
-the preset plugin row in `cordis.patch.yml`, and the install target aligned:
-
-```sh
-npm login
-npm publish --access public
-```
-
-Requires npm login and explicit user approval; do not run this on the user's
-behalf without confirmation.
-
-## Publish a Git-only version
-
-The public repository is the release source:
-
-```sh
-git remote add origin git@github.com:DennisZhangOiler/dsh-rd-workflow.git
-git push -u origin main
-git tag -a v0.8.0 -m "dsh-rd-workflow 0.8.0"
-git push origin v0.8.0
-```
-
-Install from GitHub (the repository root is the package):
+## 包结构
 
 ```text
-plugin_manager action=install_bundle target=git+https://github.com/DennisZhangOiler/dsh-rd-workflow.git
+@denniszhangoiler/dsh-rd-workflow         主包：preset Host + prompt + skills + bundle patch
+@denniszhangoiler/dsh-rd-workflow-client  客户端包：composer 强度选择器
 ```
 
-Pin the **full 40-character commit SHA** for a reproducible install. A Git
-index entry installs that exact commit:
+主包依赖同版本的客户端包。两个包必须一起存在；不要只发布主包。
 
-```json
-{
-  "type": "git",
-  "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow",
-  "commit": "<40-hex-sha>",
-  "path": "."
-}
-```
+## 认证
 
-Publish only a public repository unless you accept that installation may need
-credentials.
-
-## Build the index entry
-
-Minimal format-1 index with this plugin (fill version, timestamp, and repository
-before serving):
-
-```json
-{
-  "format": 1,
-  "title": { "en": "R&D Workflow plugin", "zh": "研发流程插件" },
-  "plugins": [
-    {
-      "name": "dsh-rd-workflow",
-      "title": { "en": "R&D Workflow", "zh": "研发流程" },
-      "description": {
-        "en": "Non-default R&D preset with development and technical-research pipelines, independent review, UI scoring, and program orchestration.",
-        "zh": "非默认的研发流程预设，包含开发/技术调研双流程、独立评审、UI 评分和大型项目编排。"
-      },
-      "icon": "icons/dsh-rd-workflow.svg",
-      "author": "DennisZhangOiler",
-      "homepage": "https://github.com/DennisZhangOiler/dsh-rd-workflow#readme",
-      "repository": { "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow" },
-      "versions": [
-        {
-          "version": "0.8.0",
-          "publishTimestamp": 0,
-          "source": {
-            "type": "git",
-            "url": "https://github.com/DennisZhangOiler/dsh-rd-workflow",
-            "commit": "<40-hex-sha>",
-            "path": "."
-          },
-          "engines": { "dsh": ">=0.2.2-rc.5 <0.3.0" }
-        }
-      ]
-    }
-  ]
-}
-```
-
-- `publishTimestamp` is Unix **seconds**, not milliseconds.
-- `icon` may be a relative URL beside the index and its `icons/` directory.
-- The default version chosen by DSH is the highest compatible non-prerelease
-  version, or the highest compatible prerelease when none exists.
-- Do not invent a `version`, timestamp, commit, or compatibility range.
-
-The DSH repository includes a reference generator; the installed user guide
-documents it. Use it when available rather than hand-building a large index.
-
-## Serve the index
-
-Any static HTTPS host works (GitHub Pages, GitLab Pages, an object store, a
-static web server). Requirements:
-
-- HTTPS (use HTTPS for anything outside a fully trusted network).
-- No redirects.
-- A 2xx response and `application/json` (or a JSON-compatible type).
-- The index and its icons served together.
-
-Example local smoke check only (not a public host):
+### npm 公共 registry
 
 ```sh
-python3 -m http.server 8088 --directory market-site
-# browse: http://127.0.0.1:8088/index.json
+npm login --registry=https://registry.npmjs.org
+npm whoami --registry=https://registry.npmjs.org
 ```
 
-## Marketplace checklist
+本机 npm 的全局 registry 可能指向 cnpm/npmmirror；发布时**显式**使用上面两个命令的 registry，不要依赖全局配置。
 
-- [ ] npm package or public Git commit exists.
-- [ ] `package.json` declares `dsh.bundle.patch` and `engines.dsh`.
-- [ ] Version in the index matches the package/commit.
-- [ ] `publishTimestamp` is real Unix seconds.
-- [ ] Repository/homepage URLs are real and public.
-- [ ] Icon is a valid SVG/PNG/JPEG/WebP within limits and uses a relative or
-  HTTPS URL.
-- [ ] Index validates against format 1; DSH shows no path error.
-- [ ] A disposable profile can install the version and see the preset.
-- [ ] Uninstall leaves no preset, package, or prompt-section residue.
-- [ ] No secrets, tokens, local paths, or private endpoints in package, docs,
-  index, or screenshots.
-- [ ] README/CHANGELOG/LICENSE/screenshots are present.
-- [ ] User has approved publication and account operations.
+### GitHub Packages
 
-## Not done in this repository
+需要一个有 `write:packages` 的 token：
 
-- No npm publication has been performed; the name is available.
-- A public GitHub repository and the `v0.8.0` GitHub Release/tarball exist.
-- No marketplace index has been served publicly.
-- No "listed" or "approved" status is claimed.
+```sh
+gh auth refresh -s write:packages
+```
 
-The index and any scoped npm package need the user's account and explicit
-confirmation.
+发布时使用临时 npmrc，不要把 token 写入仓库：
+
+```sh
+NPMRC=$(mktemp)
+printf '//npm.pkg.github.com/:_authToken=%s\n' "$(gh auth token)" > "$NPMRC"
+npm publish --userconfig "$NPMRC" --registry=https://npm.pkg.github.com --access public
+rm -f "$NPMRC"
+```
+
+安装 GitHub Packages 包需要 `@denniszhangoiler:registry=https://npm.pkg.github.com` 和可读取 packages 的 token。
+
+## 发布流程
+
+### 1. 只改文档的主包补丁
+
+客户端包不变时，只发布主包：
+
+```sh
+# npm 公共
+npm publish --registry=https://registry.npmjs.org --access public
+
+# GitHub Packages
+NPMRC=$(mktemp)
+printf '//npm.pkg.github.com/:_authToken=%s\n' "$(gh auth token)" > "$NPMRC"
+npm publish --userconfig "$NPMRC" --registry=https://npm.pkg.github.com --access public
+rm -f "$NPMRC"
+```
+
+### 2. 客户端包也变化时
+
+先发布客户端，再发布主包：
+
+```sh
+cd client-package
+npm publish --registry=https://registry.npmjs.org --access public
+# GitHub Packages 同样用临时 npmrc
+cd ..
+npm publish --registry=https://registry.npmjs.org --access public
+```
+
+### 3. 验证发布
+
+```sh
+npm view @denniszhangoiler/dsh-rd-workflow version --registry=https://registry.npmjs.org
+npm view @denniszhangoiler/dsh-rd-workflow-client version --registry=https://registry.npmjs.org
+```
+
+registry 的 tarball/CDN 传播可能需要几分钟；metadata 先出现、tarball 后出现是正常现象。以实际 `npm install`/`plugin_manager` 安装成功为准。
+
+```text
+plugin_manager action=install_bundle target=@denniszhangoiler/dsh-rd-workflow@0.9.2
+```
+
+## 发布前检查
+
+```sh
+npm test
+npm run check
+DSH_BIN=<dsh-bin> npm run test:smoke
+npm pack --dry-run
+```
+
+检查：
+
+- `package.json` 的 `version` 与 README/RELEASE 一致；
+- 包内包含 `AGENT.md`、`README.md`、`README.en.md`、`docs/screenshot-*.png`；
+- `cordis.patch.yml` 的 preset row 和 client row 指向正确的 scoped 包名；
+- 没有 token、绝对 home 路径或机器专属配置；
+- 临时 profile 安装后 preset 出现，且默认 preset 不变；
+- 卸载后没有依赖、bundle、node_modules 或 lockfile 残留。
+
+## Git tag / GitHub Release
+
+版本号确定后：
+
+```sh
+git tag -a v0.9.2 -m "dsh-rd-workflow 0.9.2"
+git push origin main
+git push origin v0.9.2
+gh release create v0.9.2 \
+  denniszhangoiler-dsh-rd-workflow-0.9.2.tgz \
+  --notes-file docs/RELEASE-0.9.2.md
+```
+
+安装 target 与 Release asset 必须对应同一个 commit/tarball。
+
+## 历史
+
+- **0.9.2**：文档结构重构；主包补丁；客户端保持 0.9.0。
+- **0.9.1**：中文默认文档、单一 Agent 文档的上一版布局；npm/GitHub Packages 已发布。
+- **0.9.0**：首次 scoped 包发布；主包 0.9.0，客户端 0.9.0。
+- **0.8.0**：unscoped GitHub Release（历史安装名）；不再作为当前安装入口。
+
+Marketplace 索引暂时没有公开服务；不要声称“已上架”或“已审核”。GitHub Release 不是 npm 包，二者是不同分发渠道。

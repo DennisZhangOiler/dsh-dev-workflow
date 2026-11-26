@@ -1,4 +1,6 @@
-# Test plan
+# Test plan (historical)
+
+> 历史测试计划，适用于 0.7/0.8；当前术语已更新为开发流程 / 调研流程 / 项目编排流程。
 
 The plugin must prove four things: the bundle boots, the preset appears without
 becoming default, selecting it injects the prompt and mounts the tools, and
@@ -74,7 +76,7 @@ Run these as analysis-only prompts; no code change is needed.
    needs an independent score; no selection menu.
 4. If the user says "you decide", record that as the user's decision.
 
-## A5. Program mode
+## A5. Program orchestration / 项目编排
 
 1. A new multi-module request starts with architecture/IA and open decisions,
    not module code.
@@ -98,7 +100,7 @@ Run these as analysis-only prompts; no code change is needed.
 4. Ask for a bugfix inside the existing contract: expected to stay in the
    existing contract.
 
-## A7. Experiment-driven technical research and reviews
+## A7. Experiment-driven research workflow and reviews
 
 1. Ask a non-trivial codebase/architecture question without requesting code
    changes. Expected: a **broad** set of directions (not capped at 2-3) with
